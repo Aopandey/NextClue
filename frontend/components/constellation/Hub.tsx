@@ -72,6 +72,7 @@ type HubProps = NodeEvents & {
   scale: number;
   selected: boolean;
   dim: boolean;
+  hover: boolean;
 };
 
 /** An open question: an ink ring with its name inside and "open · N findings" under it. */

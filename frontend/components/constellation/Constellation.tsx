@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type RefObject } from "react";
+import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import type { AnalysisRun, Finding } from "@/lib/contracts";
 import { VIEW_NARROW, type EdgePos, type HubPos, type Layout, type NodeKind, type NodePos } from "@/lib/constellation/layout";
 import { CheckFirst, checkFirstBox, checkFirstItem } from "./CheckFirst";
@@ -137,12 +137,22 @@ export function placeLabels(
   return out;
 }
 
+const HOVER_GRACE_MS = 100; // lets the pointer cross the gap between two nodes without the graph flashing back
+
 const EDGE_COLOR = { previously_tested: "var(--blood)", would_clarify: "var(--sig)" } as const;
 
 /** The clue constellation drawn from a layout: edges, open-question hubs, nodes and the Check first marker. */
 export function Constellation({ run, layout, selectedId, onSelect, zoomScale, transform = { x: 0, y: 0, k: 1 }, svgRef }: Props) {
   const [hoverId, setHoverId] = useState<string | null>(null);
   const [focusId, setFocusId] = useState<string | null>(null);
+  const leaveTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  useEffect(() => () => clearTimeout(leaveTimer.current), []);
+  const onHover = (id: string | null) => {
+    clearTimeout(leaveTimer.current);
+    if (id) setHoverId(id);
+    else leaveTimer.current = setTimeout(() => setHoverId(null), HOVER_GRACE_MS);
+  };
+  const hubR = Math.max(0, ...layout.hubs.map((h) => h.r));
   const activeId = hoverId ?? focusId;
   const connected = useMemo(() => (activeId ? connectedTo(activeId, layout.edges) : null), [activeId, layout.edges]);
   const dim = (id: string) => connected !== null && !connected.has(id);
@@ -160,7 +170,7 @@ export function Constellation({ run, layout, selectedId, onSelect, zoomScale, tr
     return placeLabels(layout, narrow, zoom, findings, [...status, ...fixed]);
   }, [layout, narrow, zoom, findings, checkFirst]);
   const systemOf = new Map(layout.nodes.map((n) => [n.id, n.system]));
-  const events = { onSelect, onHover: setHoverId, onFocus: setFocusId };
+  const events = { onSelect, onHover, onFocus: setFocusId };
 
   return (
     <svg ref={svgRef} className="cn" viewBox={`0 0 ${layout.view.w} ${layout.view.h}`} role="group" aria-label="Clue constellation">
@@ -172,11 +182,12 @@ export function Constellation({ run, layout, selectedId, onSelect, zoomScale, tr
             edge={e}
             color={e.relation === "supports" ? `var(--${systemOf.get(e.from) ?? "other"})` : EDGE_COLOR[e.relation]}
             dim={dim(e.id)}
+            lit={connected?.has(e.id) ?? false}
           />
         ))}
       </g>
       {layout.hubs.map((h) => (
-        <Hub key={h.id} hub={h} narrow={narrow} zoom={zoom} scale={zoomScale} selected={h.id === selectedId} dim={dim(h.id)} {...events} />
+        <Hub key={h.id} hub={h} narrow={narrow} zoom={zoom} scale={zoomScale} selected={h.id === selectedId} dim={dim(h.id)} hover={h.id === hoverId} {...events} />
       ))}
       {layout.nodes.map((n, i) => (
         <Node
@@ -188,6 +199,8 @@ export function Constellation({ run, layout, selectedId, onSelect, zoomScale, tr
           scale={zoomScale}
           selected={n.id === selectedId}
           dim={dim(n.id)}
+          hover={n.id === hoverId}
+          hubR={hubR}
           order={i + 1}
           missing={missing.get(n.id)}
           {...events}
