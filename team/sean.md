@@ -1,49 +1,46 @@
-# Sean — Pitch, Evidence, and Team Support
+# Sean — Story, QA, and submission
 
-**Your job:** help judges understand the problem, remember the demo, and trust what the team actually built.
+**Your goal:** make the value clear and get a complete, compliant entry submitted on time.
 
-## Start here
+Our **H3 healthcare coordination** story: a patient sees several specialists; NextClue helps the next clinician understand the evidence and continue the investigation.
 
-Confirm the event's challenge, judging criteria, submission requirements, preparation rules, and Kiro workflow. Turn those into a short team checklist.
+## Own these pieces
 
-Then build the story around this sentence:
+- Keep the pitch simple: **a clearer handoff between neurology and genetics.**
+- Check the demo's medical sources and wording with Avinash. Keep Sarah fictional and her case unconfirmed.
+- Test the full flow with Mike and Daniel; keep a short list of demo blockers.
+- Collect actual Kiro examples and write a brief account of which features helped the team build.
+- Record a public YouTube or Vimeo demo under 3 minutes; aim for 2:30–2:45.
+- Help whichever teammate is blocking the full demo.
 
-> NextClue connects years of medical clues and shows clinicians what evidence to investigate next.
-
-## What you own
-
-- A concise seven-slide deck and a 2–3 minute demo script.
-- A small set of verified medical sources and carefully qualified problem statistics.
-- Clear UI wording, screenshots, recording, and submission materials.
-- A simple log of evaluation scenarios and actual outcomes.
-- Timed rehearsals and submission confirmation.
-
-After the initial story and sources are ready, become the floating teammate: help with source collection, sample data, QA, deployment, or whichever task blocks integration.
+Judges assess **Potential Value, Implementation, and Quality and Design**. Effective, strategic Kiro use is explicitly part of Implementation.
 
 ## Your schedule
 
-| Time | Deliverable |
+**October 24, all times Eastern.**
+
+| By | Deliver |
 | --- | --- |
-| Hour 0–1 | Rules confirmed; pitch skeleton and hook |
-| Hour 1–2 | Source pack and synthetic-case consistency check |
-| Hour 2–3 | Test the connected workflow; unblock the team |
-| Hour 3–4.5 | First deck and complete demo script |
-| Hour 4.5–6 | Evaluation with Avinash; accurate slide claims |
-| Hour 6–8 | Recording, rehearsals, and submission package |
-| Hour 8–9 | Submit, verify receipt, and preserve recovery time |
+| 12:30 PM | Rules check, H3 story, and team representative agreed |
+| 2:30 PM | Source checks and first integrated-flow review |
+| 4 PM | Complete demo script and QA pass |
+| 5 PM | Feature freeze; fix blockers and rehearse |
+| 6 PM | Begin submission with video, links, and Kiro write-up |
+| 7:30 PM | Verify the entry and save confirmation |
+| 8 PM | Hard deadline |
 
-## The demo story
+After 8 PM, change the submitted version only with organizer approval.
 
-Meet synthetic Sarah → connect her scattered history → inspect the old normal test → explain its limitation → reveal the missing report → show the clinician's next question.
+## Submission checklist
 
-## Keep the pitch honest
+- All four teammates listed; Healthcare & Biotech track and H3 challenge identified; representative authorized.
+- Public GitHub repo with source, assets, accurate run instructions, and genuine root `.kiro/` artifacts.
+- Short feature description and account of actual Kiro use and its benefit. Insufficient use can disqualify the entry.
+- Public video under 3 minutes showing the functioning project.
+- Working project freely accessible to judges, with testing instructions.
 
-DeepRare and other tools already support rare-disease investigation. Explain our narrower focus on reviewing old results and unresolved evidence.
+The app and Kiro artifacts are still build tasks; don't describe them as completed until verified.
 
-Report source-consistency and engineering checks as such. Do not claim clinical validation, invented diagnostic accuracy, or years of delay already prevented. Describe prepared assets and completed features accurately.
+**Done means:** the handoff benefit is obvious, the demo works, links open publicly, and submission is confirmed.
 
-## Done means
-
-A judge understands the product in ten seconds, the demo fits its time limit, and the submission is complete before the deadline.
-
-**Skip:** market-size research rabbit holes, crowded slides, and promises beyond the working prototype.
+**Skip:** long decks, unsupported medical or performance claims, claims that rare-disease AI is new, and last-minute features.

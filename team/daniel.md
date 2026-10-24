@@ -1,50 +1,43 @@
-# Daniel — Backend and Integration
+# Daniel — Backend and integration
 
-**Your job:** make the frontend, patient data, and AI work together reliably from the beginning.
+**Your goal:** make the complete demo work reliably from patient history to clinician handoff.
 
-## What you own
+For **H3 healthcare coordination**, preserve the evidence behind every item in the referral-ready brief.
 
-- Agree on the shared input/output JSON with Avinash and Mike.
-- Serve the synthetic patient and an explicitly labeled UI fixture.
-- Run the AI pipeline and validate its output before the frontend receives it.
-- Store versioned analyses and cached evidence using SQLite and JSON files.
-- Handle timeouts, failures, deployment, and a tested local presentation setup.
+## Own these pieces
 
-Use Python, FastAPI, and Pydantic. Keep orchestration in one backend process.
+- Agree on JSON contracts with Avinash and Mike immediately; provide a synthetic patient and sample response.
+- Build FastAPI endpoints for health, patient records, analysis, and source lookup.
+- Validate AI output with Pydantic. Preserve finding IDs, source links, uncertainties, and missing-report questions.
+- Save the small demo dataset and results in SQLite.
+- Handle timeouts, failures, restart recovery, and deployment.
 
-## The minimum API
+Keep keys on the server. Use synthetic data only. A fallback may use a clearly labeled, matching real prior analysis; never silently substitute a prepared answer for a failed live run.
 
-| Endpoint | Purpose |
-| --- | --- |
-| `GET /health` | Check readiness |
-| `GET /patients/{id}` | Return the versioned synthetic record |
-| `POST /analyses` | Start or retrieve an analysis |
-| `GET /analyses/{run_id}` | Return status or completed output |
-| `GET /sources/{source_id}` | Return registered medical evidence |
+## Use Kiro
 
-Give Mike the sample response immediately. Give Avinash a clear input contract and a place to connect his pipeline.
+Use Kiro to build the API and validation from the shared spec. Keep genuine artifacts in the root `.kiro/` folder and ensure it is tracked, not ignored. Send Sean a short note explaining actual Kiro use and its benefit.
+
+Add accurate setup/run instructions when the app works. Make the demo freely accessible to judges, with simple testing instructions.
 
 ## Your schedule
 
-| Time | Deliverable |
+**October 24, Eastern; team milestones, not extra event deadlines.**
+
+| By | Deliver |
 | --- | --- |
-| Hour 0–1 | API skeleton, sample data, deployment path |
-| Hour 1–2 | Analysis endpoint, polling, schema validation |
-| Hour 2–3 | Real AI response visible in Mike's interface |
-| Hour 3–4.5 | Persistent runs and complete end-to-end flow |
-| Hour 4.5–6 | Timeouts, cache checks, restart and fallback testing |
-| After Hour 6 | Reliability, release, and submission support |
+| 12:30 PM | Contracts, API skeleton, and sample response |
+| 2:30 PM | Real AI connected to the interface |
+| 4 PM | Complete flow with persistence |
+| 5 PM | Failure handling and deployment checks; feature freeze |
+| 6 PM | Stable demo URL and verified run instructions |
 
-## Reliability rules
+After 5 PM, fix blockers and support submission. Submission closes at **8 PM**; no changes to the submitted version afterward without organizer approval.
 
-Cache identity includes the patient input, exclusions, schema, model, prompt, and evidence versions. Changed records invalidate previous results.
+## Demo check
 
-If retrieval fails, use labeled cached evidence. If inference fails, offer a matching previously validated run. If none exists, show an honest failure. A hand-authored fixture is never a previous AI run.
+Load Sarah → run analysis → inspect evidence → open the handoff brief → refresh without losing the result.
 
-Keep API keys server-side and out of Git. Use synthetic data only.
+**Done means:** a teammate can run the app, source links resolve, results survive a restart, and failures are explained honestly.
 
-## Done means
-
-The team can complete the demo after a restart, every ID resolves, and fallback behavior is clearly labeled.
-
-**Skip:** EHR integration, authentication, Redis/Celery, vector databases, and unfamiliar infrastructure.
+**Skip:** EHR integration, authentication, queues, vector databases, and extra infrastructure.

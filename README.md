@@ -1,48 +1,52 @@
 # NextClue
 
-**Connect years of medical clues. Help a clinician decide what to investigate next.**
+**Connect scattered medical clues. Give the next clinician a clearer starting point.**
 
-Built for a four-person, nine-hour Hackachusetts healthcare project. **Current status: project plan; the application has not been implemented.**
+**Healthcare & Biotech · H3 — Improving healthcare access and coordination.** Our focus is the handoff between neurology and genetics.
+
+**Status:** project plan; the app has not been implemented.
 
 ## The idea, simply
 
-A patient might see one doctor for nerve pain, another for stomach problems, and another for a kidney issue. Important clues can remain scattered across their records.
+A patient may see several doctors for symptoms that seem unrelated. Important findings and old test results can get lost between visits.
 
-NextClue brings that history together, connects relevant findings, and highlights the questions that still need answers. The clinician can inspect the original records and medical sources before choosing a next step.
+NextClue brings that history together and prepares a short, evidence-backed investigation brief: **what happened, what is still unclear, and what the next clinician should review.** Clinicians decide what happens next.
 
-## What the demo should do
+## Our small demo
 
-1. **Connect the history:** show one synthetic patient's findings on a clear timeline and small clue graph.
-2. **Review the evidence:** compare possible explanations and show what previous tests actually established.
-3. **Clarify the next step:** identify missing information, explain why it matters, and check for existing reports first.
+Use one fictional patient, Sarah, to show three things:
 
-Every important claim should link to both the patient evidence and an appropriate medical source.
+1. A timeline and small graph connecting her medical clues.
+2. Original records and medical sources explaining what earlier tests established.
+3. A referral-ready brief with unresolved questions and missing reports to check first.
 
-## The memorable example
+The key moment: an old normal enzyme screen may not settle Sarah's case. NextClue highlights whether a relevant genetic testing report already exists. Her case remains unconfirmed.
 
-Sarah is a fictional patient with years of nerve pain, stomach symptoms, and kidney findings. An old normal enzyme screen looked reassuring. NextClue explains why that result may not fully exclude Fabry disease in a woman, then highlights the next question: **does a relevant genetic testing report already exist?** The case remains unconfirmed.
+## Build requirements
 
-Rare-disease AI already exists. Our focus is making previous results, unresolved evidence, and the next investigation easy to review.
+- **Use Kiro meaningfully to build the project.** Commit the real root `.kiro/` folder and briefly document the features used and how they helped. Insufficient Kiro use can disqualify the entry.
+- Keep the public repo runnable, with setup instructions and free access for judges.
+- Submit a public video **under 3 minutes**, showing the working project; use YouTube or Vimeo.
 
-## Build only what matters
+These are build tasks, not claims of completed work. Use a small Kiro spec and steering guidance; add hooks only when useful.
 
-**Stack:** Next.js + TypeScript, React Flow, Python + FastAPI, SQLite, one LLM, and PubMed with cached evidence. Use Kiro as required by the event.
+**Stack:** Next.js, TypeScript, React Flow, FastAPI, SQLite, one LLM, and PubMed with cached evidence. Skip real EHR integration, accounts, treatment advice, and extra infrastructure.
 
-**Cut:** real EHR integration, accounts, treatment advice, complex agent systems, and vector databases.
-
-## Team and finish line
+## Team and schedule
 
 | Teammate | Ownership |
 | --- | --- |
-| [Avinash](team/avinash.md) | AI, extraction, retrieval, evidence reasoning |
-| [Mike](team/mike.md) | Interface, timeline, graph, demo polish |
-| [Daniel](team/daniel.md) | APIs, contracts, persistence, reliable integration |
-| [Sean](team/sean.md) | Story, sources, testing, slides, submission |
+| [Avinash](team/avinash.md) | AI and evidence |
+| [Mike](team/mike.md) | Interface and demo |
+| [Daniel](team/daniel.md) | Backend and integration |
+| [Sean](team/sean.md) | Story, QA, and submission |
 
-Agree on JSON contracts first. Show real AI output in the interface by **Hour 3**, complete the demo by **Hour 4.5**, and freeze features at **Hour 6**. Use the remaining time for fixes, evaluation, and rehearsal.
+**October 24, all times Eastern:** 11:30 AM start → 2:30 PM real AI in the interface → 4 PM complete demo → 5 PM feature freeze → 6 PM start submission → **8 PM hard deadline**. Hacking lasts 8½ hours. After 8 PM, change the submitted version only with organizer approval.
 
-**Clinical decision support only.** Use synthetic data, show uncertainty, keep clinicians in control, and make no claims of clinical validation.
+**Clinical decision support only:** synthetic data, visible uncertainty, source links, and clinician review. No claims of clinical validation.
+
+[Event schedule](https://massaicoalition.com/hackachusetts/#day-of-events) · [Official rules](https://docs.google.com/document/d/1aDagPzc29sNGHdycZ-30GMf2z-Np2SwqZX_hY46tLrQ/edit) · [Challenge tracks](https://hackachusetts2026.vercel.app/)
 
 ## How NextClue works
 
-![NextClue high-level flowchart showing patient history, timeline structure, evidence retrieval, review of prior results, missing evidence, and clinician follow-up.](assets/nextclue-flowchart.png)
+![NextClue flowchart: connect patient history, review evidence and earlier tests, identify missing information, and support clinician follow-up.](assets/nextclue-flowchart.png)
