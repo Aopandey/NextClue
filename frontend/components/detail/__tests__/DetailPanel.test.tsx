@@ -107,7 +107,7 @@ describe("DetailPanel content", () => {
 
   it("placeholder source shows PMID pending + Search PubMed", () => {
     renderPanel("hyp-separate-conditions");
-    openDetails("More about this disease");
+    openDetails("Supporting claims");
     expect(screen.getAllByText("PMID pending").length).toBeGreaterThan(0);
     expect(screen.getAllByRole("link", { name: /Search PubMed/ })[0]).toHaveAttribute("href", expect.stringMatching(/^https:\/\/pubmed\.ncbi\.nlm\.nih\.gov\/\?term=/));
     expect(document.body.textContent).not.toContain("PLACEHOLDER");
@@ -166,8 +166,22 @@ describe("DetailPanel content", () => {
     expect(screen.getAllByTestId("outcome-row").length).toBeGreaterThanOrEqual(2);
   });
 
-  it("disclosures are closed by default", () => {
+  it("on a hub, Supporting findings and Missing evidence are open and the other disclosures closed", () => {
     renderPanel("hyp-fabry");
+    const state = [...document.querySelectorAll("details")].map((d) => [d.querySelector("summary")!.firstChild!.textContent, d.open]);
+    expect(Object.fromEntries(state)).toMatchObject({
+      "Supporting findings": true,
+      "Missing evidence": true,
+      Summary: false,
+      "Supporting claims": false,
+      "Questions for the clinician": false,
+    });
+    expect(state.filter(([, open]) => open)).toHaveLength(2);
+  });
+
+  it("on a finding, every disclosure is closed", () => {
+    renderPanel("fnd-proteinuria");
+    expect(document.querySelectorAll("details").length).toBeGreaterThan(0);
     document.querySelectorAll("details").forEach((d) => expect(d.open).toBe(false));
   });
 
@@ -194,14 +208,22 @@ describe("DetailPanel content", () => {
     expect(screen.getAllByText("Clinical Description").length).toBeGreaterThan(0);
   });
 
-  it("More about this disease lists 7 supporting findings and 3 possible outcomes for GLA", () => {
+  it("a hub lists 7 supporting findings and 3 possible outcomes for GLA", () => {
     renderPanel("hyp-fabry");
-    openDetails("More about this disease");
     expect(screen.getAllByTestId("supporting-finding")).toHaveLength(7);
-    expect(screen.getAllByTestId("outcome-row").length).toBeGreaterThanOrEqual(3);
-    const outcomes = screen.getAllByRole("table")[0];
-    expect(within(outcomes).getAllByRole("columnheader").map((h) => h.textContent)).toEqual(["Outcome", "What it would mean"]);
+    const gla = screen.getAllByTestId("missing-item").find((el) => /GLA/.test(el.textContent ?? ""))!;
+    expect(within(gla).getAllByTestId("outcome-row")).toHaveLength(3);
+    expect(screen.queryByRole("table")).toBeNull();
+    openDetails("Questions for the clinician");
     expect(screen.getByText(/2019 outside genetics clinic report/)).toBeInTheDocument();
+  });
+
+  it("a short citation is one line: publisher, location and the ID link", () => {
+    renderPanel("hyp-fabry");
+    openDetails("Supporting claims");
+    const line = screen.getAllByTestId("citation-short").find((el) => el.textContent?.startsWith("GeneReviews · Clinical Description · NBK1292 ↗"));
+    expect(line).toBeDefined();
+    expect(within(line!).getByRole("link", { name: "NBK1292 ↗" })).toHaveAttribute("href", "https://www.ncbi.nlm.nih.gov/books/NBK1292/");
   });
 
   it("every link opens safely", () => {
@@ -237,20 +259,19 @@ describe("DetailPanel content", () => {
     expect(text.endsWith("…")).toBe(true);
   });
 
-  it("More about this disease lists missing evidence by priority, 1 first, with its number", () => {
+  it("a hub lists missing evidence by priority, 1 first, with its number", () => {
     const r = structuredClone(run);
     const [a, b] = r.output!.missing_evidence;
     a.priority = 2;
     b.priority = 1;
     b.hypothesis_ids = ["hyp-fabry"];
     show(r, "hyp-fabry");
-    openDetails("More about this disease");
     const items = [...document.querySelectorAll("[data-testid=missing-item]")].map((el) => el.textContent ?? "");
     expect(items).toHaveLength(2);
     expect(items[0]).toContain(b.description);
-    expect(items[0]).toContain("Priority 1");
+    expect(items[0]).toContain("P1");
     expect(items[1]).toContain(a.description);
-    expect(items[1]).toContain("Priority 2");
+    expect(items[1]).toContain("P2");
   });
 
   it("empty lists render no heading or empty table", () => {
@@ -259,9 +280,8 @@ describe("DetailPanel content", () => {
     fabry.supporting_finding_ids = [];
     r.output!.missing_evidence.forEach((m) => { m.possible_outcomes = []; });
     show(r, "hyp-fabry");
-    openDetails("More about this disease");
     expect(screen.queryByText("Supporting findings")).toBeNull();
-    expect(screen.queryAllByRole("table")).toHaveLength(0);
+    expect(screen.queryAllByTestId("outcome-row")).toHaveLength(0);
   });
 
   it("an uncertain finding says so in its meta line", () => {

@@ -62,55 +62,49 @@ function CitationBlock({ source, excerptId }: { source: Source | undefined; exce
               Search PubMed
             </Ext>
           )}
-          {c.unverified && (
-            <span className={`${TAG} border border-[#f0c4aa] bg-[#fdf1ea] text-[10px] font-semibold uppercase tracking-[.06em] text-[var(--sig)]`}>
-              Unverified paraphrase
-            </span>
-          )}
+          {c.unverified && <UnverifiedBadge />}
         </div>
       )}
     </div>
   );
 }
 
-/** One citation: the inline line by default, or the panel's `block`. */
-export function CitationLine({ source, excerptId, variant = "inline" }: { source: Source | undefined; excerptId: string; variant?: "inline" | "block" }) {
-  if (variant === "block") return <CitationBlock source={source} excerptId={excerptId} />;
+/** The unverified badge, shared by both variants. */
+function UnverifiedBadge() {
+  return (
+    <span className={`${TAG} whitespace-nowrap border border-[#f0c4aa] bg-[#fdf1ea] text-[10px] font-semibold uppercase tracking-[.06em] text-[var(--sig)]`}>
+      Unverified paraphrase
+    </span>
+  );
+}
+
+/** One line under a claim: publisher · location · ID link, then the unverified badge. */
+function CitationShort({ source, excerptId }: { source: Source | undefined; excerptId: string }) {
   const c = citationFor(source, excerptId);
   const pending = c.idLabel === "PMID pending";
+  // A trailing parenthetical is dropped: "GeneReviews (NCBI Bookshelf)" reads "GeneReviews".
+  const publisher = source?.publisher?.replace(/\s*\([^)]*\)\s*$/, "").trim() || c.text;
+  const parts: React.ReactNode[] = [publisher];
+  if (!pending && c.location) parts.push(c.location);
+  if (c.idLabel) {
+    if (pending || !c.idHref) parts.push(c.idLabel);
+    else parts.push(<Ext href={c.idHref} className="no-underline hover:underline">{c.idLabel}</Ext>);
+  }
+  if (c.searchHref) parts.push(<Ext href={c.searchHref} className="no-underline hover:underline">Search PubMed</Ext>);
+  if (c.unverified) parts.push(<UnverifiedBadge />);
   return (
-    <p data-testid="citation" className="text-[12.5px] text-[var(--mut)]">
-      {pending ? (
-        // Placeholder titles are not user copy: publisher, pending ID and a search link only.
-        <span>{source?.publisher}</span>
-      ) : c.href ? (
-        <Ext href={c.href}>{c.text}</Ext>
-      ) : (
-        <span>{c.text}</span>
-      )}
-      {c.idLabel && (
-        <>
-          {" · "}
-          {c.idHref ? (
-            <Ext href={c.idHref} className="font-mono text-[12px]">
-              {c.idLabel}
-            </Ext>
-          ) : (
-            <span className="font-mono text-[12px]">{c.idLabel}</span>
-          )}
-        </>
-      )}
-      {c.searchHref && (
-        <>
-          {" · "}
-          <Ext href={c.searchHref}>Search PubMed</Ext>
-        </>
-      )}
-      {c.unverified && (
-        <span className="ml-2 font-mono text-[10px] font-semibold uppercase tracking-wider text-[var(--sig)]">
-          Unverified paraphrase
+    <span data-testid="citation-short" className="mt-[3px] block text-[11.5px] text-[var(--mut)]">
+      {parts.map((part, i) => (
+        <span key={i}>
+          {i > 0 && " · "}
+          {part}
         </span>
-      )}
-    </p>
+      ))}
+    </span>
   );
+}
+
+/** One citation: the panel's `block`, or the one-line `short` under a claim. */
+export function CitationLine({ source, excerptId, variant }: { source: Source | undefined; excerptId: string; variant: "block" | "short" }) {
+  return variant === "block" ? <CitationBlock source={source} excerptId={excerptId} /> : <CitationShort source={source} excerptId={excerptId} />;
 }

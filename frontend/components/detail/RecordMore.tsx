@@ -1,4 +1,5 @@
 import type { Finding, PatientDocument } from "@/lib/contracts";
+import { Section } from "./Section";
 import { formatDate } from "./format";
 
 function Marked({ text, excerpt }: { text: string; excerpt: string }) {
@@ -25,8 +26,7 @@ export function RecordMore({
   onSelect: (id: string) => void;
 }) {
   return (
-    <details>
-      <summary>More about this record</summary>
+    <Section title="More about this record">
       <p className="font-mono text-[11px] text-[var(--mut)]">
         {[doc.title, doc.author_role, formatDate(doc.date), doc.specialty, doc.record_id].filter(Boolean).join(" · ")}
       </p>
@@ -69,6 +69,6 @@ export function RecordMore({
           </ul>
         </>
       )}
-    </details>
+    </Section>
   );
 }
