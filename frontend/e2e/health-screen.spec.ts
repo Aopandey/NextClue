@@ -177,22 +177,24 @@ test("no label overlaps at the first detail zoom", async ({ page }, info) => {
   expect(overlaps).toEqual([]);
 });
 
-test("disclosures show an open/closed marker and open from the keyboard", async ({ page }) => {
+test("disclosures show a chevron and open from the keyboard", async ({ page }) => {
   await page.goto(PATH);
   await page.getByRole("button", { name: /Fabry/ }).first().click();
-  const summary = page.locator("summary", { hasText: "More about this disease" });
-  const marker = () => summary.evaluate((el) => getComputedStyle(el, "::before").content);
-  expect(await marker()).toBe('"▸"');
+  const summary = page.locator("summary", { hasText: "Supporting claims" });
+  const details = summary.locator("xpath=..");
+  const chevron = () => summary.evaluate((el) => getComputedStyle(el, "::after").transform);
+  await expect(details).not.toHaveAttribute("open", "");
+  const closed = await chevron();
   await summary.focus();
   await page.keyboard.press("Enter");
-  await expect(summary.locator("xpath=..")).toHaveAttribute("open", "");
-  expect(await marker()).toBe('"▾"');
+  await expect(details).toHaveAttribute("open", "");
+  await expect.poll(chevron).not.toBe(closed);
 });
 
 test("every citation link has a real href and no fake PMID", async ({ page }) => {
   await page.goto(PATH);
   await page.getByRole("button", { name: /Fabry/ }).first().click();
-  await page.getByText("More about this disease").click();
+  await page.locator("summary", { hasText: "Supporting claims" }).click();
   const links = await page.evaluate(() =>
     [...document.querySelectorAll("details a[href]")].map((a) => ({
       href: a.getAttribute("href") ?? "",

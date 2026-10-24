@@ -1,14 +1,16 @@
 import type { AnalysisOutput, Claim, Hypothesis, Source } from "@/lib/contracts";
+import { systemFor } from "@/lib/constellation/systems";
 import { CitationLine } from "./CitationLine";
+import { Section } from "./Section";
 
 function ClaimList({ claims, sources }: { claims: Claim[]; sources: Record<string, Source> }) {
   return (
-    <ul className="cl-list">
+    <ul className="cl">
       {claims.map((c) => (
-        <li key={c.claim_id} className="py-1">
-          <p className="text-[13px] text-[var(--ink)]">{c.text}</p>
+        <li key={c.claim_id}>
+          {c.text}
           {c.source_refs[0] && (
-            <CitationLine source={sources[c.source_refs[0].source_id]} excerptId={c.source_refs[0].excerpt_id} />
+            <CitationLine variant="short" source={sources[c.source_refs[0].source_id]} excerptId={c.source_refs[0].excerpt_id} />
           )}
         </li>
       ))}
@@ -39,83 +41,70 @@ export function DiseaseMore({
   const questions = output.clinician_questions.filter((q) => q.missing_ids.some((id) => missingIds.has(id)));
 
   return (
-    <details>
-      <summary>More about this disease</summary>
-      <p className="text-[13px] text-[var(--ink)]">{hypothesis.summary}</p>
-
+    <>
       {findings.length > 0 && (
-        <>
-          <h3 className="hd">Supporting findings</h3>
-          <ul className="jl">
+        <Section title="Supporting findings" count={findings.length} open>
+          <ul className="fl">
             {findings.map((f) => (
               <li key={f.finding_id} data-testid="supporting-finding">
+                <span className="dot" style={{ background: `var(--${systemFor(f)})` }} />
                 <button type="button" onClick={() => onSelect(f.finding_id)}>
                   {f.label}
                 </button>
+                {f.specialty && <span className="sp">{f.specialty}</span>}
               </li>
             ))}
           </ul>
-        </>
-      )}
-
-      {supporting.length > 0 && (
-        <>
-          <h3 className="hd">Supporting claims</h3>
-          <ClaimList claims={supporting} sources={sources} />
-        </>
-      )}
-      {contradicting.length > 0 && (
-        <>
-          <h3 className="hd">Contradicting claims</h3>
-          <ClaimList claims={contradicting} sources={sources} />
-        </>
+        </Section>
       )}
 
       {missing.length > 0 && (
-        <>
-          <h3 className="hd">Missing evidence</h3>
+        <Section title="Missing evidence" count={missing.length} open>
           {missing.map((m) => (
-            <div key={m.missing_id} className="py-1" data-testid="missing-item">
-              <p className="text-[13px] font-semibold text-[var(--ink)]">
-                <span className="mr-1.5 font-mono text-[11px] font-normal text-[var(--mut)]">Priority {m.priority}</span>
-                {m.description}
-              </p>
-              <p className="text-[13px]">{m.why_it_matters}</p>
+            <div key={m.missing_id} className="mi" data-testid="missing-item">
+              <span className="p">P{m.priority}</span>
+              <span className="sr-only"> </span>
+              <span className="d">{m.description}</span>
+              <p className="w">{m.why_it_matters}</p>
               {m.possible_outcomes.length > 0 && (
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Outcome</th>
-                      <th>What it would mean</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {m.possible_outcomes.map((o, i) => (
-                      <tr key={`${m.missing_id}-${i}`} data-testid="outcome-row">
-                        <td>{o.outcome}</td>
-                        <td>{o.implication}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <ul className="oc">
+                  {m.possible_outcomes.map((o, i) => (
+                    <li key={`${m.missing_id}-${i}`} data-testid="outcome-row">
+                      <span className="o">{o.outcome}</span>
+                      <span className="i">{o.implication}</span>
+                    </li>
+                  ))}
+                </ul>
               )}
             </div>
           ))}
-        </>
+        </Section>
+      )}
+
+      <Section title="Summary">
+        <p className="text-[13.5px] text-[var(--ink)]">{hypothesis.summary}</p>
+      </Section>
+
+      {supporting.length > 0 && (
+        <Section title="Supporting claims" count={supporting.length}>
+          <ClaimList claims={supporting} sources={sources} />
+        </Section>
+      )}
+      {contradicting.length > 0 && (
+        <Section title="Contradicting claims" count={contradicting.length}>
+          <ClaimList claims={contradicting} sources={sources} />
+        </Section>
       )}
 
       {questions.length > 0 && (
-        <>
-          <h3 className="hd">Questions for the clinician</h3>
-          <ul className="cl-list">
+        <Section title="Questions for the clinician" count={questions.length}>
+          <ul className="cl">
             {questions.map((q) => (
-              <li key={q.question_id} className="py-1 text-[13px] text-[var(--ink)]">
-                {q.text}
-              </li>
+              <li key={q.question_id}>{q.text}</li>
             ))}
           </ul>
-        </>
+        </Section>
       )}
-    </details>
+    </>
   );
 }

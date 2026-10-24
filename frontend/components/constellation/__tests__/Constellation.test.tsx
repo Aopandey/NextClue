@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import fixtureJson from "@/fixtures/sarah-001.run.json";
@@ -382,13 +382,74 @@ describe("Constellation", () => {
     expect(edge("fnd-limb-pain--supports--hyp-fabry")).toHaveAttribute("data-dim", "true");
 
     await user.unhover(node("fnd-proteinuria"));
-    expect(document.querySelectorAll("[data-dim]")).toHaveLength(0);
+    expect(document.querySelectorAll("[data-dim]").length).toBeGreaterThan(0);
+    await waitFor(() => expect(document.querySelectorAll("[data-dim]")).toHaveLength(0));
 
     fireEvent.focus(node("mis-gla-report"));
     expect(node("hyp-separate-conditions")).not.toHaveAttribute("data-dim");
     expect(node("fnd-proteinuria")).toHaveAttribute("data-dim", "true");
     fireEvent.blur(node("mis-gla-report"));
     expect(document.querySelectorAll("[data-dim]")).toHaveLength(0);
+  });
+
+  it("marks the hovered node and lights the edges touching it", async () => {
+    draw();
+    const user = userEvent.setup();
+    await user.hover(node("fnd-proteinuria"));
+    expect(node("fnd-proteinuria")).toHaveAttribute("data-hover");
+    expect(node("hyp-fabry")).not.toHaveAttribute("data-hover");
+    expect(edge("fnd-proteinuria--supports--hyp-fabry")).toHaveAttribute("data-lit");
+    expect(edge("fnd-limb-pain--supports--hyp-fabry")).not.toHaveAttribute("data-lit");
+    await user.unhover(node("fnd-proteinuria"));
+    await waitFor(() => expect(document.querySelectorAll("[data-lit], [data-hover]")).toHaveLength(0));
+  });
+
+  it("moving straight from one node to another never clears the dim, and shows the new node's connections", () => {
+    vi.useFakeTimers();
+    try {
+      draw();
+      fireEvent.pointerEnter(node("fnd-proteinuria"), { pointerType: "mouse", buttons: 0 });
+      fireEvent.pointerLeave(node("fnd-proteinuria"), { pointerType: "mouse" });
+      act(() => {
+        vi.advanceTimersByTime(99);
+      });
+      expect(document.querySelectorAll("[data-dim]").length).toBeGreaterThan(0);
+      fireEvent.pointerEnter(node("hyp-separate-conditions"), { pointerType: "mouse", buttons: 0 });
+      act(() => {
+        vi.advanceTimersByTime(500);
+      });
+      expect(node("hyp-separate-conditions")).not.toHaveAttribute("data-dim");
+      expect(node("fnd-proteinuria")).toHaveAttribute("data-dim", "true");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("a pointer entering with a button held (a drag) sets no hover", () => {
+    draw();
+    fireEvent.pointerEnter(node("fnd-proteinuria"), { pointerType: "mouse", buttons: 1 });
+    expect(document.querySelectorAll("[data-dim], [data-hover]")).toHaveLength(0);
+  });
+
+  it("a node grows to 85% of the hub radius and its label slides clear of the hover ring; a hub does not grow", () => {
+    const { layout } = draw();
+    const hubR = Math.max(...layout.hubs.map((h) => h.r)) * 0.85;
+    const n = layout.nodes.find((x) => x.id === "fnd-proteinuria")!;
+    const style = node(n.id).style;
+    expect(Number(style.getPropertyValue("--grow-s"))).toBeCloseTo(hubR / n.r);
+    const ring = (hubR + 6) / (n.r + 6);
+    expect(Number(style.getPropertyValue("--ring-s"))).toBeCloseTo(ring);
+    // Growth, plus the ring's 6-unit offset, plus half its scaled 2px stroke.
+    const slide = hubR - n.r + 6 + ring;
+    const x = parseFloat(style.getPropertyValue("--lab-x"));
+    const y = parseFloat(style.getPropertyValue("--lab-y"));
+    const anchor = node(n.id).querySelector("[data-label]")!.getAttribute("text-anchor");
+    if (anchor === "end") expect([x, y]).toEqual([-slide, 0]);
+    else if (anchor === "start") expect([x, y]).toEqual([slide, 0]);
+    else expect([x, Math.abs(y)]).toEqual([0, slide]);
+    const hub = layout.hubs[0];
+    expect(node(hub.id).style.getPropertyValue("--grow-s")).toBe("1");
+    expect(node(hub.id).style.getPropertyValue("--lab-x")).toBe("0px");
   });
 
   it("shows the empty message when there are no open questions", () => {
@@ -408,7 +469,7 @@ describe("Constellation", () => {
     for (let depth = 1; depth > 0; end++) depth += css[end] === "{" ? 1 : css[end] === "}" ? -1 : 0;
     const inside = css.slice(start, end);
     expect(css.slice(0, start) + css.slice(end)).not.toMatch(/transition|animation|@keyframes/);
-    expect(inside).toMatch(/transition: opacity 150ms/);
+    expect(inside).toMatch(/transition: opacity 260ms ease, stroke-width 260ms ease/);
     expect(inside).toMatch(/animation-delay: calc\(var\(--i\) \* 40ms\)/);
   });
 });

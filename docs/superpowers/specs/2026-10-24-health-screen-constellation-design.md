@@ -30,13 +30,13 @@ Story for judges: seven findings from five specialties point at Fabry disease. A
 6. **Detail panel**, condensed, with 4 lines:
    1. the label, then date · specialty
    2. one verbatim record quote, with its `record_id`
-   3. "Why it matters": at most 14 words, the first clause of the linking claim
-   4. a citation line: publisher · title · location, with an ID and a link
+   3. "Why it matters" (on hubs, "Something you might have missed"): at most 14 words, the first clause of the linking claim
+   4. a source block: publisher, one title link (title › location), then the ID tag and unverified badge
 
-   Disclosures, all collapsed by default:
+   Disclosures other than Source quote are full-width section rows with a count and a chevron. Finding, prior and missing panels keep all collapsed; on hubs Supporting findings and Missing evidence are open by default:
    - **Source quote:** the full paraphrase.
    - **More about this record:** the full note text with the excerpt highlighted, its metadata, the observations table, and other findings from the same record.
-   - **More about this disease** (on hubs): the summary, supporting findings, supporting and contradicting claims with links, missing evidence with its why-it-matters and possible-outcomes table, and the related clinician questions.
+   - **Hubs**, in order: **Supporting findings** (open; system dot, label, specialty), **Missing evidence** (open; priority tag, why-it-matters, possible outcomes as a list), **Summary**, **Supporting claims** and **Contradicting claims** (one-line short citations with links), **Questions for the clinician** (related to the missing evidence).
 7. **Citations are hyperlinks.** Link to `url`, plus an ID link:
    - when `pmid` is set: "PMID n", linking to `https://pubmed.ncbi.nlm.nih.gov/n/`
    - otherwise an NCBI Bookshelf ID parsed from the url, such as `NBK1292`, linking to the url
@@ -55,7 +55,7 @@ Story for judges: seven findings from five specialties point at Fabry disease. A
     - loading
     - `queued` / `running`, with elapsed time while polling
     - `completed`, labelled by `provenance`:
-      - fixture: "Sample data · not AI output"
+      - fixture: "Sample data"
       - live: "Live analysis · <model>"
       - replayed: a notice showing `fallback_reason` with a "Retry live" button
     - `failed`: `error.message` and `error.code`, plus Retry if `retryable`; no findings drawn
@@ -67,8 +67,8 @@ Story for judges: seven findings from five specialties point at Fabry disease. A
     - Light only, with background `#fbf8f2`.
     - Atkinson Hyperlegible Next for UI, Atkinson Hyperlegible Mono for IDs and dates, Source Serif 4 for hub names.
     - No Inter, Lexend, Poppins, DM Sans, Space Grotesk or Plus Jakarta.
-    - No card grids, pills, drop shadows or decorative gradients.
-    - At most 2 animated transitions: a one-time reveal on load, and the hover dim. Both are disabled under `prefers-reduced-motion`.
+    - No card grids, pills, drop shadows or decorative gradients. Square-cornered (4px / 3px radius) count chips, ID tag and unverified badge are allowed.
+    - At most 2 animated transitions: a one-time reveal on load, and the hover (dim, lit edges, ring and node growth to 0.85x the hub radius, together). Both are disabled under `prefers-reduced-motion`.
 13. **Phone (390px).** The panel becomes a bottom sheet. Tap targets are at least 40px. Hub and node labels shorten to one word. Clusters only above 16 findings. No horizontal page scroll.
 
 ## Out of scope today

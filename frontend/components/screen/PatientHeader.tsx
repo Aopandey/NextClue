@@ -8,7 +8,7 @@ const SEX: Record<PatientRecord["demographics"]["sex_at_birth"], string | null> 
 };
 
 function provenanceTag(run: AnalysisRun): string {
-  if (run.provenance === "fixture") return "Sample data · not AI output";
+  if (run.provenance === "fixture") return "Sample data";
   if (run.provenance === "live") return `Live analysis · ${run.versions.model}`;
   return "Replayed run";
 }

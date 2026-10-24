@@ -814,7 +814,7 @@
       "default": null
     },
     "disclaimer": {
-      "default": "Clinical decision support prototype using synthetic data. Not clinically validated. Findings are unconfirmed and require clinician review.",
+      "default": "Clinical decision support prototype using synthetic data. Not clinically validated.",
       "title": "Disclaimer",
       "type": "string"
     }

@@ -125,8 +125,7 @@ export function LandingScreen() {
       </main>
 
       <footer className={`${COLUMN} space-y-1 pt-4 pb-7 text-[12.5px] text-[var(--mut)] sm:pt-5`}>
-        <p>{DISCLAIMER}</p>
-        <p>The clinician decides; nothing here is confirmed.</p>
+        <p>The clinician decides; nothing here is confirmed. *{DISCLAIMER}</p>
       </footer>
     </div>
   );

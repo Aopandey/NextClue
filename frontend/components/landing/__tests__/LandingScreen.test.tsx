@@ -57,8 +57,7 @@ describe("LandingScreen content", () => {
     expect(screen.getByText("Every finding links back to the record it came from. Open questions stay open until a clinician decides.")).toBeInTheDocument();
     const steps = within(screen.getByRole("region", { name: "How it works" })).getAllByRole("listitem");
     expect(steps.map((s) => within(s).getByRole("heading").textContent)).toEqual(["Gather", "Connect", "Hand off"]);
-    expect(screen.getByText(DISCLAIMER)).toBeInTheDocument();
-    expect(screen.getByText("The clinician decides; nothing here is confirmed.")).toBeInTheDocument();
+    expect(screen.getByText(`The clinician decides; nothing here is confirmed. *${DISCLAIMER}`)).toBeInTheDocument();
   });
 
   it("labels the illustration as such", () => {

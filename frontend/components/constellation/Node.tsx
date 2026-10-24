@@ -199,6 +199,9 @@ type ButtonProps = NodeEvents & {
   narrow: boolean;
   selected: boolean;
   dim: boolean;
+  hover: boolean;
+  /** Hover growth: shape scale, ring scale and the label's slide (layout units). Identity when omitted. */
+  grow?: { s: number; ring: number; x: number; y: number };
   /** Position in the load reveal (staggered 40ms apart). */
   order: number;
   testId?: string;
@@ -206,7 +209,7 @@ type ButtonProps = NodeEvents & {
 };
 
 /** The shared interactive shell of hubs and nodes: a focusable `<g role="button">` centred on (x, y). */
-export function NodeButton({ id, x, y, r, name, narrow, selected, dim, order, testId, onSelect, onHover, onFocus, children }: ButtonProps) {
+export function NodeButton({ id, x, y, r, name, narrow, selected, dim, hover, grow, order, testId, onSelect, onHover, onFocus, children }: ButtonProps) {
   return (
     <g
       role="button"
@@ -216,7 +219,16 @@ export function NodeButton({ id, x, y, r, name, narrow, selected, dim, order, te
       data-testid={testId}
       data-selected={selected || undefined}
       data-dim={dim || undefined}
+      data-hover={hover || undefined}
       className="cn-node"
+      style={
+        {
+          "--grow-s": grow?.s ?? 1,
+          "--ring-s": grow?.ring ?? 1,
+          "--lab-x": `${grow?.x ?? 0}px`,
+          "--lab-y": `${grow?.y ?? 0}px`,
+        } as CSSProperties
+      }
       transform={`translate(${x} ${y})`}
       onClick={() => onSelect(id)}
       onKeyDown={(e) => {
@@ -224,7 +236,8 @@ export function NodeButton({ id, x, y, r, name, narrow, selected, dim, order, te
         e.preventDefault();
         onSelect(id);
       }}
-      onPointerEnter={(e) => e.pointerType === "mouse" && onHover(id)}
+      // A held button is a drag (pan), not a hover.
+      onPointerEnter={(e) => e.pointerType === "mouse" && e.buttons === 0 && onHover(id)}
       onPointerLeave={() => onHover(null)}
       onFocus={() => onFocus(id)}
       onBlur={() => onFocus(null)}
@@ -309,16 +322,38 @@ type NodeProps = NodeEvents & {
   scale: number;
   selected: boolean;
   dim: boolean;
+  hover: boolean;
+  /** Radius of the largest hub: a hovered node grows toward it. */
+  hubR: number;
   order: number;
   missing?: MissingEvidence;
 };
 
+/** A hovered node grows to this share of the largest hub, so it reads as lifted without matching a hub. */
+const HOVER_GROW = 0.85;
+
 /** A finding, negative, prior result or missing item, with its label. */
-export function Node({ node, lines, side, narrow, scale, missing, ...button }: NodeProps) {
+export function Node({ node, lines, side, narrow, scale, missing, hubR, ...button }: NodeProps) {
+  const target = hubR * HOVER_GROW;
+  const growth = Math.max(0, target - node.r);
+  const ring = (node.r + growth + 6) / (node.r + 6);
+  // The hover ring sits 6 units outside the grown shape and its 2px stroke scales with it: the label clears both.
+  const slide = growth + 6 + ring;
+  const grow = {
+    s: Math.max(1, target / node.r),
+    ring,
+    x: side === "l" ? -slide : side === "r" ? slide : 0,
+    y: side === "t" ? -slide : side === "b" ? slide : 0,
+  };
   return (
-    <NodeButton id={node.id} x={node.x} y={node.y} r={node.r} name={node.label} narrow={narrow} {...button}>
-      <Shape node={node} missing={missing} />
-      <NodeLabel lines={lines} side={side} r={node.r} scale={scale} />
+    <NodeButton id={node.id} x={node.x} y={node.y} r={node.r} name={node.label} narrow={narrow} grow={grow} {...button}>
+      <g className="cn-shape">
+        <Shape node={node} missing={missing} />
+      </g>
+      {/* Outside NodeLabel's own scale(1/zoom) group: a CSS transform would override that SVG attribute. */}
+      <g className="cn-lab">
+        <NodeLabel lines={lines} side={side} r={node.r} scale={scale} />
+      </g>
     </NodeButton>
   );
 }

@@ -88,7 +88,7 @@ describe("HealthScreen run states", () => {
     show();
     expect(nodes()).toHaveLength(0);
     expect(screen.getByText("The analysis completed without output.")).toBeInTheDocument();
-    expect(screen.getByText(run.disclaimer)).toBeInTheDocument();
+    expect(screen.getByText(`The clinician decides; nothing here is confirmed. *${run.disclaimer}`)).toBeInTheDocument();
     await userEvent.click(screen.getByRole("button", { name: "Retry" }));
     expect(retry).toHaveBeenCalledOnce();
   });
@@ -123,7 +123,7 @@ describe("HealthScreen run states", () => {
     ]) {
       state(patch);
       const { unmount } = show();
-      expect(screen.getByText(run.disclaimer)).toBeInTheDocument();
+      expect(screen.getByText(`The clinician decides; nothing here is confirmed. *${run.disclaimer}`)).toBeInTheDocument();
       unmount();
     }
   });
@@ -172,7 +172,7 @@ describe("HealthScreen completed", () => {
     state({ run: { ...run, evidence_mode: "live" } });
     show();
     expect(screen.getByText("Sarah · 40 · F · 10 records 2012–2024")).toBeInTheDocument();
-    expect(screen.getByText("Sample data · not AI output")).toBeInTheDocument();
+    expect(screen.getByText("Sample data")).toBeInTheDocument();
     expect(screen.queryByText("Evidence: cached")).toBeNull();
   });
 
@@ -196,11 +196,10 @@ describe("HealthScreen completed", () => {
     expect(screen.getByText("Sarah · 45 · F · 10 records 2012–2024")).toBeInTheDocument();
   });
 
-  it("footer shows the disclaimer and the clinician line", () => {
+  it("footer shows the clinician line and the disclaimer as one line", () => {
     state({});
     show();
-    expect(screen.getByText(run.disclaimer)).toBeInTheDocument();
-    expect(screen.getByText("The clinician decides; nothing here is confirmed.")).toBeInTheDocument();
+    expect(screen.getByText(`The clinician decides; nothing here is confirmed. *${run.disclaimer}`)).toBeInTheDocument();
   });
 
   it("no open questions: calm message, no hubs", () => {

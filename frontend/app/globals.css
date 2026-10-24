@@ -114,11 +114,17 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font-ui)}
 
 /* Detail panel: disclosures, tables, links (reference.html .v-panel) */
 .detail-panel details{margin-top:4px;font-size:13px;color:var(--mut)}
+/* Source quote: 8px under the source block and quieter than the section disclosures. */
+.detail-panel .sq{margin-top:8px}
+.detail-panel .sq>summary{font-weight:400;color:var(--mut)}
 .detail-panel summary{cursor:pointer;min-height:32px;display:flex;align-items:center;width:max-content;font-size:12.5px;font-weight:600;color:var(--ink)}
 /* display:flex drops the native disclosure marker, so draw one: ▸ closed, ▾ open. */
 .detail-panel summary::before{content:"▸";width:1.1em;flex:none;color:var(--mut)}
 .detail-panel details[open]>summary::before{content:"▾"}
-.detail-panel .hd{margin:9px 0 2px;font-family:var(--font-mono);font-size:10px;font-weight:400;letter-spacing:.07em;text-transform:uppercase;color:var(--mut)}
+.detail-panel .hd{margin:20px 0 6px;font-family:var(--font-mono);font-size:10.5px;font-weight:400;letter-spacing:.09em;text-transform:uppercase;color:var(--mut)}
+/* Condensed groups: a full-width hairline between them, the same rule the section rows use. No boxes. */
+.detail-panel .blk+.blk{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.detail-panel .blk .hd:first-child{margin-top:0}
 .detail-panel mark{background:rgba(212,82,12,.17);color:inherit;padding:0 1px;border-bottom:1.5px solid var(--sig)}
 .detail-panel table{border-collapse:collapse;width:100%;font-size:12.5px;color:var(--ink);margin:2px 0 4px}
 .detail-panel th,.detail-panel td{border-top:1px solid var(--line);padding:4px 8px 4px 0;text-align:left;vertical-align:top;font-weight:400}
@@ -127,6 +133,37 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font-ui)}
 .detail-panel .jl{display:flex;flex-wrap:wrap;gap:0 14px;max-height:180px;overflow:auto}
 .detail-panel .jl button{min-height:40px;font-size:13px;color:var(--ink);text-align:left;text-decoration:underline dotted;text-underline-offset:3px}
 .detail-panel a{text-underline-offset:2px}
+
+/* Section rows (.sx): full-width disclosures with a count and a CSS chevron instead of the ▸/▾ marker.
+   Unlayered like the rules above, so they are scoped here rather than utility classes, which would lose. */
+.detail-panel details.sx{margin-top:0;border-top:1px solid var(--line);font-size:13px}
+.detail-panel :not(.sx)+details.sx{margin-top:18px}
+.detail-panel details.sx:not(:has(+details.sx)){border-bottom:1px solid var(--line)}
+.detail-panel details.sx>summary{width:100%;min-height:46px;justify-content:space-between;font-size:14px}
+.detail-panel details.sx>summary::before,.detail-panel details.sx[open]>summary::before{content:none}
+.detail-panel details.sx>summary::after{content:"";flex:none;width:8px;height:8px;margin-left:auto;border-right:1.6px solid var(--mut);border-bottom:1.6px solid var(--mut);transform:rotate(45deg) translateY(-3px)}
+.detail-panel details.sx[open]>summary::after{transform:rotate(225deg) translate(-2px,-1px)}
+.detail-panel .sx .c{margin-left:6px;font-family:var(--font-mono);font-size:11.5px;font-weight:400;color:var(--mut)}
+.detail-panel .sxb{padding-bottom:14px}
+.detail-panel .fl li{display:flex;align-items:center;gap:9px}
+.detail-panel .fl .dot{flex:none;width:9px;height:9px;border-radius:50%}
+.detail-panel .fl button{flex:1;min-width:0;min-height:40px;font-size:13.5px;color:var(--ink);text-align:left;text-decoration:underline dotted;text-underline-offset:3px;text-decoration-color:var(--faint)}
+.detail-panel .fl .sp{flex:none;font-family:var(--font-mono);font-size:11px;color:var(--mut)}
+.detail-panel .mi{padding:6px 0 10px}
+.detail-panel .mi+.mi{border-top:1px dashed var(--line);padding-top:10px}
+.detail-panel .mi .p{margin-right:6px;padding:0 5px;border:1px solid #f0c4aa;border-radius:3px;font-family:var(--font-mono);font-size:10.5px;font-weight:600;color:var(--sig)}
+.detail-panel .mi .d{font-size:14px;font-weight:600;color:var(--ink)}
+.detail-panel .mi .w{margin:4px 0 0;font-size:13.5px;color:var(--ink)}
+.detail-panel .oc{margin-top:8px;font-size:12.5px}
+.detail-panel .oc li{display:grid;grid-template-columns:minmax(0,1fr);padding:5px 0 5px 10px}
+.detail-panel .oc li+li{margin-top:4px}
+.detail-panel .oc .o{font-weight:600;color:var(--ink)}
+.detail-panel .oc .i{color:var(--mut)}
+.detail-panel .cl li{padding:7px 0;font-size:13.5px;color:var(--ink)}
+
+@media (prefers-reduced-motion:no-preference){
+  .detail-panel details.sx>summary::after{transition:transform 160ms}
+}
 
 @media (prefers-reduced-motion:reduce){
   [data-slot="sheet-content"]{animation:none!important;transition:none!important}

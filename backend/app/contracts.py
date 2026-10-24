@@ -18,7 +18,7 @@ SOURCE_SCHEMA_VERSION = "source.v1"
 
 DISCLAIMER = (
     "Clinical decision support prototype using synthetic data. Not clinically "
-    "validated. Findings are unconfirmed and require clinician review."
+    "validated."
 )
 
 # Typed ID prefixes let the validator catch a reference to the wrong kind of object.

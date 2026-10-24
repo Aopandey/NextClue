@@ -81,15 +81,34 @@ describe("DetailPanel content", () => {
     expect(screen.getByText(/Molecular testing identifies heterozygous females/)).toBeInTheDocument();
   });
 
-  it("hub panel computes the supporting count and specialties", () => {
+  it("hub panel shows the supporting count and specialties as chips", () => {
     renderPanel("hyp-fabry");
-    expect(screen.getByText("7 supporting findings across 5 specialties")).toBeInTheDocument();
+    const row = screen.getByTestId("stats");
+    expect([...row.children].map((c) => c.textContent)).toEqual(["7 findings", "5 specialties"]);
+    expect(row.textContent).toBe("7 findings 5 specialties");
     expect(lines()).toBeLessThanOrEqual(4);
+  });
+
+  it("hub labels its text 'Something you might have missed'; a finding keeps 'Why it matters'", () => {
+    renderPanel("hyp-fabry");
+    expect(within(screen.getByTestId("why")).getByText("Something you might have missed")).toBeInTheDocument();
+    expect(screen.queryByText("Why it matters")).toBeNull();
+    document.body.innerHTML = "";
+    renderPanel("fnd-proteinuria");
+    expect(within(screen.getByTestId("why")).getByText("Why it matters")).toBeInTheDocument();
+  });
+
+  it("the citation block holds the ID tag and the unverified badge", () => {
+    renderPanel("fnd-cornea-verticillata");
+    const block = screen.getByTestId("citation");
+    expect(within(block).getByText("Source")).toBeInTheDocument();
+    expect(within(block).getByRole("link", { name: "NBK1292 ↗" })).toHaveAttribute("href", "https://www.ncbi.nlm.nih.gov/books/NBK1292/");
+    expect(within(block).getByText("Unverified paraphrase")).toBeInTheDocument();
   });
 
   it("placeholder source shows PMID pending + Search PubMed", () => {
     renderPanel("hyp-separate-conditions");
-    openDetails("More about this disease");
+    openDetails("Supporting claims");
     expect(screen.getAllByText("PMID pending").length).toBeGreaterThan(0);
     expect(screen.getAllByRole("link", { name: /Search PubMed/ })[0]).toHaveAttribute("href", expect.stringMatching(/^https:\/\/pubmed\.ncbi\.nlm\.nih\.gov\/\?term=/));
     expect(document.body.textContent).not.toContain("PLACEHOLDER");
@@ -102,7 +121,7 @@ describe("DetailPanel content", () => {
     expect(screen.queryByTestId("citation")).toBeNull();
   });
 
-  const why = () => within(screen.getByTestId("condensed")).queryByText("Why it matters:")?.parentElement?.textContent ?? null;
+  const why = () => screen.queryByTestId("why")?.querySelector("p")?.textContent ?? null;
   const citation = () => screen.queryByTestId("citation")?.textContent ?? null;
 
   it("finding sharing a record with other claims gets the claim whose excerpt matches (father → inheritance)", () => {
@@ -148,8 +167,34 @@ describe("DetailPanel content", () => {
     expect(screen.getAllByTestId("outcome-row").length).toBeGreaterThanOrEqual(2);
   });
 
-  it("disclosures are closed by default", () => {
+  it("on a hub, Supporting findings and Missing evidence are open and the other disclosures closed", () => {
     renderPanel("hyp-fabry");
+    const state = [...document.querySelectorAll("details")].map((d) => [d.querySelector("summary")!.firstChild!.textContent, d.open]);
+    expect(Object.fromEntries(state)).toMatchObject({
+      "Supporting findings": true,
+      "Missing evidence": true,
+      Summary: false,
+      "Supporting claims": false,
+      "Questions for the clinician": false,
+    });
+    expect(state.filter(([, open]) => open)).toHaveLength(2);
+  });
+
+  it("switching nodes resets the disclosure state", async () => {
+    const props = { run, patient, sources, onClose: vi.fn(), onSelect: vi.fn() };
+    const user = userEvent.setup();
+    const { rerender } = render(<DetailPanel {...props} nodeId="hyp-fabry" />);
+    await user.click(screen.getByText("Summary", { selector: "summary" }));
+    await user.click(screen.getByText("Supporting findings", { selector: "summary" }));
+    const open = () => Object.fromEntries([...document.querySelectorAll("details")].map((d) => [d.querySelector("summary")!.firstChild!.textContent, d.open]));
+    expect(open()).toMatchObject({ Summary: true, "Supporting findings": false });
+    rerender(<DetailPanel {...props} nodeId="hyp-separate-conditions" />);
+    expect(open()).toMatchObject({ "Supporting findings": true, "Missing evidence": true, Summary: false });
+  });
+
+  it("on a finding, every disclosure is closed", () => {
+    renderPanel("fnd-proteinuria");
+    expect(document.querySelectorAll("details").length).toBeGreaterThan(0);
     document.querySelectorAll("details").forEach((d) => expect(d.open).toBe(false));
   });
 
@@ -176,14 +221,22 @@ describe("DetailPanel content", () => {
     expect(screen.getAllByText("Clinical Description").length).toBeGreaterThan(0);
   });
 
-  it("More about this disease lists 7 supporting findings and 3 possible outcomes for GLA", () => {
+  it("a hub lists 7 supporting findings and 3 possible outcomes for GLA", () => {
     renderPanel("hyp-fabry");
-    openDetails("More about this disease");
     expect(screen.getAllByTestId("supporting-finding")).toHaveLength(7);
-    expect(screen.getAllByTestId("outcome-row").length).toBeGreaterThanOrEqual(3);
-    const outcomes = screen.getAllByRole("table")[0];
-    expect(within(outcomes).getAllByRole("columnheader").map((h) => h.textContent)).toEqual(["Outcome", "What it would mean"]);
+    const gla = screen.getAllByTestId("missing-item").find((el) => /GLA/.test(el.textContent ?? ""))!;
+    expect(within(gla).getAllByTestId("outcome-row")).toHaveLength(3);
+    expect(screen.queryByRole("table")).toBeNull();
+    openDetails("Questions for the clinician");
     expect(screen.getByText(/2019 outside genetics clinic report/)).toBeInTheDocument();
+  });
+
+  it("a short citation is one line: publisher, location and the ID link", () => {
+    renderPanel("hyp-fabry");
+    openDetails("Supporting claims");
+    const line = screen.getAllByTestId("citation-short").find((el) => el.textContent?.startsWith("GeneReviews · Clinical Description · NBK1292 ↗"));
+    expect(line).toBeDefined();
+    expect(within(line!).getByRole("link", { name: "NBK1292 ↗" })).toHaveAttribute("href", "https://www.ncbi.nlm.nih.gov/books/NBK1292/");
   });
 
   it("every link opens safely", () => {
@@ -214,25 +267,24 @@ describe("DetailPanel content", () => {
 
   it("hub Why it matters is capped at 14 words", () => {
     show(sarahLive, "hyp-01");
-    const text = why()!.replace("Why it matters:", "").trim();
+    const text = why()!;
     expect(text.split(/\s+/).length).toBeLessThanOrEqual(14);
     expect(text.endsWith("…")).toBe(true);
   });
 
-  it("More about this disease lists missing evidence by priority, 1 first, with its number", () => {
+  it("a hub lists missing evidence by priority, 1 first, with its number", () => {
     const r = structuredClone(run);
     const [a, b] = r.output!.missing_evidence;
     a.priority = 2;
     b.priority = 1;
     b.hypothesis_ids = ["hyp-fabry"];
     show(r, "hyp-fabry");
-    openDetails("More about this disease");
     const items = [...document.querySelectorAll("[data-testid=missing-item]")].map((el) => el.textContent ?? "");
     expect(items).toHaveLength(2);
     expect(items[0]).toContain(b.description);
-    expect(items[0]).toContain("Priority 1");
+    expect(items[0]).toContain(`P1 ${b.description}`);
     expect(items[1]).toContain(a.description);
-    expect(items[1]).toContain("Priority 2");
+    expect(items[1]).toContain("P2");
   });
 
   it("empty lists render no heading or empty table", () => {
@@ -241,9 +293,8 @@ describe("DetailPanel content", () => {
     fabry.supporting_finding_ids = [];
     r.output!.missing_evidence.forEach((m) => { m.possible_outcomes = []; });
     show(r, "hyp-fabry");
-    openDetails("More about this disease");
     expect(screen.queryByText("Supporting findings")).toBeNull();
-    expect(screen.queryAllByRole("table")).toHaveLength(0);
+    expect(screen.queryAllByTestId("outcome-row")).toHaveLength(0);
   });
 
   it("an uncertain finding says so in its meta line", () => {

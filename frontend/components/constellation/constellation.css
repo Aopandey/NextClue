@@ -13,16 +13,22 @@
 .cn-edge-supports { opacity: .62; }
 .cn-edge-previously_tested { stroke-width: 2.4; stroke-dasharray: .1 6.5; }
 .cn-edge-would_clarify { stroke-width: 2; stroke-dasharray: 7 6; }
+.cn-edge[data-lit] { opacity: 1; }
+.cn-edge-supports[data-lit] { stroke-width: 2.25px; }
 
 /* Nodes */
 .cn-node { cursor: pointer; outline: none; }
 .cn-ring { fill: none; stroke: var(--ink); stroke-width: 2; opacity: 0; }
 .cn-node:focus-visible .cn-ring { opacity: 1; }
 .cn-node[data-selected] .cn-ring { opacity: 1; stroke-width: 1.5; stroke-dasharray: 2 4; }
+/* Hover: the node grows to hub size, its label slides clear and its ring becomes solid. */
+.cn-node[data-hover] .cn-shape { transform: scale(var(--grow-s, 1)); }
+.cn-node[data-hover] .cn-lab { transform: translate(var(--lab-x, 0), var(--lab-y, 0)); }
+.cn-node[data-hover] .cn-ring { opacity: 1; stroke-dasharray: none; stroke-width: 2; transform: scale(var(--ring-s, 1)); }
 .cn-check:focus-visible rect { stroke: var(--ink); stroke-width: 2; stroke-dasharray: none; }
 
 /* Hover / focus dim */
-.cn [data-dim="true"] { opacity: .25; }
+.cn [data-dim="true"] { opacity: .2; }
 
 /* Labels: a background halo keeps text readable over edges. */
 .cn-label, .cn-hub-status, .cn-check-text, .cn-empty {
@@ -44,9 +50,14 @@
 .cn-check-body { font-size: 13px; font-weight: 600; fill: var(--ink); }
 .cn-empty { font-size: 15px; fill: var(--mut); }
 
-/* Motion: the hover dim fade and the one-time load reveal, only when the user allows motion. */
+/* Motion: the hover easing and the one-time load reveal, only when the user allows motion. */
 @media (prefers-reduced-motion: no-preference) {
-  .cn-node, .cn-edge { transition: opacity 150ms ease; }
+  .cn-node, .cn-edge { transition: opacity 260ms ease, stroke-width 260ms ease; }
+  .cn [data-dim], .cn-edge[data-lit] { transition-duration: 180ms; }
+  .cn-shape, .cn-lab { transition: transform 280ms cubic-bezier(.34, 1.25, .64, 1); }
+  .cn-ring { transition: opacity 180ms ease, transform 280ms cubic-bezier(.34, 1.25, .64, 1); }
+  /* At rest the ring sits inside its hover size, so it grows outward; selected and keyboard-focus rings stay full size. */
+  .cn-node:not([data-selected]):not(:focus-visible):not([data-hover]) .cn-ring { transform: scale(.85); }
   .cn-reveal {
     animation: cn-reveal 320ms cubic-bezier(.2, .75, .25, 1) backwards;
     animation-delay: calc(var(--i) * 40ms);
