@@ -43,7 +43,12 @@ class FakeDb:
         return None
 
     def insert_run(self, run, input_key):
+        in_flight = [r for r in self.runs.values() if r.cache_key == run.cache_key
+                     and r.provenance == "live" and r.status in {"queued", "running"}]
+        if in_flight:
+            return in_flight[0].model_copy(deep=True), False
         self.runs[run.run_id] = run.model_copy(deep=True)
+        return run, True
 
     def save_run(self, run):
         self.runs[run.run_id] = run.model_copy(deep=True)
@@ -256,3 +261,165 @@ def test_pubmed_deadline_stops_run_without_cache_fallback_or_handoff(monkeypatch
     run = client.get(f"/analyses/{created.json()['run_id']}").json()
     assert run["status"] == "failed" and run["error"]["code"] == "timeout"
     assert run["output"] is None and generate.call_count == 1
+
+
+ORIGIN = {"Origin": "http://localhost:3000"}
+
+
+def test_unhandled_error_is_json_and_has_cors(monkeypatch):
+    def boom(*a, **k):
+        raise RuntimeError("db exploded")
+
+    monkeypatch.setattr(db, "list_patients", boom)
+    r = TestClient(app, raise_server_exceptions=False).get("/patients", headers=ORIGIN)
+    assert r.status_code == 500
+    assert r.headers["access-control-allow-origin"] == "http://localhost:3000"
+    assert r.json() == {"detail": {"code": "internal", "message": "Unexpected server error.", "retryable": True}}
+    assert "db exploded" not in r.text
+
+
+def test_handled_errors_keep_cors(monkeypatch, api):
+    from ai.configuration import ConfigurationError
+
+    client, _ = api
+    missing = client.get("/sources/nope", headers=ORIGIN)
+    assert missing.status_code == 404
+    assert missing.headers["access-control-allow-origin"] == "http://localhost:3000"
+
+    def misconfigured(*a, **k):
+        raise ConfigurationError("missing key")
+
+    monkeypatch.setattr(db, "get_source", misconfigured)
+    r = client.get("/sources/any", headers=ORIGIN)
+    assert r.status_code == 503
+    assert r.json()["detail"]["code"] == "configuration_error"
+    assert r.headers["access-control-allow-origin"] == "http://localhost:3000"
+
+
+def test_concurrent_miss_returns_existing_in_flight_run(monkeypatch, api):
+    from app.analyses import start_analysis
+    from app.contracts import AnalysisRequest
+
+    client, fake = api
+    request = AnalysisRequest(patient_id="sarah-001")
+    first, needs_execution = start_analysis(request)
+    assert needs_execution
+
+    real_find = fake.find_reusable_run
+    misses = iter([None])
+    monkeypatch.setattr(db, "find_reusable_run", lambda key: next(misses, None) or real_find(key))
+    second, needs_execution = start_analysis(request)
+    assert second.run_id == first.run_id and needs_execution is False
+
+    monkeypatch.setattr(db, "find_reusable_run", lambda key: None)
+    with patch("ai.pipeline.generate_json") as generate:
+        response = client.post("/analyses", json={"patient_id": "sarah-001"})
+    assert response.status_code == 200 and response.json()["run_id"] == first.run_id
+    generate.assert_not_called()
+
+
+def test_force_refresh_with_in_flight_run_returns_it(api):
+    from app.analyses import start_analysis
+    from app.contracts import AnalysisRequest
+
+    first, _ = start_analysis(AnalysisRequest(patient_id="sarah-001"))
+    run, needs_execution = start_analysis(AnalysisRequest(patient_id="sarah-001", force_refresh=True))
+    assert run.run_id == first.run_id and needs_execution is False
+
+
+def _age_in_flight_run(fake, run, multiple):
+    import datetime as dt
+
+    from app.config import get_settings
+
+    age = dt.timedelta(seconds=multiple * get_settings().analysis_timeout_seconds)
+    fake.runs[run.run_id].created_at = run.created_at - age
+
+
+def test_stale_in_flight_run_is_expired_and_replaced(api):
+    from app.analyses import start_analysis
+    from app.contracts import AnalysisRequest
+
+    _, fake = api
+    old, _ = start_analysis(AnalysisRequest(patient_id="sarah-001"))
+    _age_in_flight_run(fake, old, 3)
+
+    run, needs_execution = start_analysis(AnalysisRequest(patient_id="sarah-001"))
+    assert needs_execution is True and run.run_id != old.run_id
+    expired = fake.runs[old.run_id]
+    assert expired.status == "failed" and expired.error.code == "timeout"
+
+
+def test_force_refresh_escapes_stale_in_flight_run(api):
+    from app.analyses import start_analysis
+    from app.contracts import AnalysisRequest
+
+    _, fake = api
+    old, _ = start_analysis(AnalysisRequest(patient_id="sarah-001"))
+    _age_in_flight_run(fake, old, 3)
+
+    run, needs_execution = start_analysis(AnalysisRequest(patient_id="sarah-001", force_refresh=True))
+    assert needs_execution is True and run.run_id != old.run_id
+    assert fake.runs[old.run_id].status == "failed"
+
+
+def test_fresh_in_flight_run_is_still_reused(api):
+    from app.analyses import start_analysis
+    from app.contracts import AnalysisRequest
+
+    _, fake = api
+    first, _ = start_analysis(AnalysisRequest(patient_id="sarah-001"))
+
+    run, needs_execution = start_analysis(AnalysisRequest(patient_id="sarah-001"))
+    assert run.run_id == first.run_id and needs_execution is False
+    assert fake.runs[first.run_id].status == "queued"
+
+
+def _unique_violation_client(code, rows):
+    from unittest.mock import MagicMock
+
+    from postgrest.exceptions import APIError
+
+    client = MagicMock()
+    table = client.table.return_value
+    table.insert.return_value.execute.side_effect = APIError(
+        {"message": "dup", "code": code, "hint": None, "details": None})
+    table.select.return_value.eq.return_value.eq.return_value.in_.return_value \
+        .order.return_value.limit.return_value.execute.return_value.data = rows
+    return client
+
+
+def _queued_run():
+    from app.analyses import start_analysis
+    from app.contracts import AnalysisRequest
+
+    fake = FakeDb()
+    with patch.multiple(db, get_patient=fake.get_patient, get_source_registry=fake.get_source_registry,
+                        find_reusable_run=fake.find_reusable_run, insert_run=fake.insert_run):
+        run, _ = start_analysis(AnalysisRequest(patient_id="sarah-001"))
+    return run
+
+
+def test_insert_run_returns_existing_on_unique_violation(monkeypatch):
+    existing = _queued_run()
+    row = existing.model_dump(mode="json", exclude={"schema_version", "disclaimer"}) | {"input_key": "x"}
+    monkeypatch.setattr(db, "client", lambda: _unique_violation_client("23505", [row]))
+
+    result, inserted = db.insert_run(existing.model_copy(update={"run_id": "run-new"}), "x")
+    assert inserted is False and result.run_id == existing.run_id
+
+
+def test_insert_run_reraises_other_api_errors(monkeypatch):
+    from postgrest.exceptions import APIError
+
+    monkeypatch.setattr(db, "client", lambda: _unique_violation_client("42501", []))
+    with pytest.raises(APIError):
+        db.insert_run(_queued_run(), "x")
+
+
+def test_migration_dedupes_only_in_flight_runs():
+    from pathlib import Path
+
+    sql = next(Path(__file__).resolve().parents[2].glob("supabase/migrations/*inflight_unique.sql")).read_text()
+    assert "status in ('queued','running')" in sql
+    assert "'completed'" not in sql

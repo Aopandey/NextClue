@@ -62,6 +62,7 @@ Remaining quality issues (not caught by validation):
 - Occasional evidence misfit, e.g. a James claim citing the SFN cohort for a
   large-fiber neuropathy, or a garbled sentence about diabetes and neuropathy.
 - New-information items sometimes say a test "is necessary" despite the prompt.
+- Possible-outcome wording ("would establish", "confirm", "rule out") is now enforced by validation and one correction retry.
 - Hypothesis wording can drop qualifiers ("confirmed" for "consistent with").
 
 ## Codex integration follow-up — October 24

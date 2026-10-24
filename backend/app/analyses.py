@@ -52,6 +52,21 @@ def _now() -> dt.datetime:
     return dt.datetime.now(dt.timezone.utc)
 
 
+def _expire_if_stale(run: AnalysisRun) -> bool:
+    """Fail an in-flight run no live worker can own (execute_run enforces the timeout)."""
+    age = (_now() - run.created_at).total_seconds()
+    if run.status not in ("queued", "running") or age <= 2 * get_settings().analysis_timeout_seconds:
+        return False
+    run.status = "failed"
+    run.error = RunError(
+        code="timeout", message="The analysis was interrupted before it finished.", retryable=True
+    )
+    run.completed_at = _now()
+    db.save_run(run)
+    log.warning("expired stale run %s", run.run_id)
+    return True
+
+
 def _without_excluded(patient: PatientRecord, excluded: list[str]) -> PatientRecord:
     return patient.model_copy(
         update={"documents": [d for d in patient.documents if d.record_id not in excluded]}
@@ -91,6 +106,8 @@ def start_analysis(req: AnalysisRequest) -> tuple[AnalysisRun, bool]:
 
     if not req.force_refresh:
         existing = db.find_reusable_run(cache_key)
+        if existing is not None and _expire_if_stale(existing):
+            existing = None
         # A PubMed outage/empty match is an honest cache fallback, but must
         # not permanently suppress live retrieval on later requests.
         retry_retrieval = (
@@ -112,8 +129,11 @@ def start_analysis(req: AnalysisRequest) -> tuple[AnalysisRun, bool]:
         versions=versions,
         created_at=_now(),
     )
-    db.insert_run(run, compute_input_key(patient, excluded))
-    return run, True
+    input_key = compute_input_key(patient, excluded)
+    stored, inserted = db.insert_run(run, input_key)
+    if not inserted and _expire_if_stale(stored):
+        return db.insert_run(run, input_key)
+    return stored, inserted
 
 
 def _run_with_budget(patient: PatientRecord, sources: list[Source], budget: RequestBudget) -> PipelineResult:

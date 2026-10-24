@@ -12,7 +12,7 @@ import httpx
 import pytest
 
 from app.contracts import PatientRecord
-from app.data_files import load_fixture_output, load_patient_files, load_source_registry
+from app.data_files import load_fixture_output, load_patient_files, load_source_registry, load_source_topics
 from app.pipeline import run_pipeline
 from app.validation import AnalysisReferenceError
 from ai import evidence_tool, pubmed, scenarios
@@ -321,3 +321,9 @@ def test_scenario_edits_do_what_they_say():
     male = scenarios.build("male", patients)
     assert male.demographics.sex_at_birth == "male" and " woman " not in text(male)
     assert any(d.type == "genetic_report" for d in scenarios.build("molecular-report", patients).documents)
+
+
+def test_topic_table_covers_every_registered_excerpt():
+    registry, topics = load_source_registry(), load_source_topics()
+    assert {e.excerpt_id for s in registry.sources for e in s.excerpts} == set(topics["excerpts"])
+    assert {s.source_id for s in registry.sources} <= set(topics["conditions"])

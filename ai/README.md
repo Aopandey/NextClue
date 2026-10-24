@@ -63,7 +63,7 @@ source endpoints, and repeat-request cache reuse. See [next steps](next-steps.md
 - `backend/app/pipeline.py` calls `ai.pipeline.run_analysis` and passes the real
   evidence mode to the run. The public schema is unchanged.
 - An explicit `MODEL_NAME` in `backend/.env` overrides `GEMINI_MODEL`. The prompt
-  default is now `extract-v3+handoff-v3`; bump `PROMPT_VERSION` when prompts change.
+  default is now `extract-v3+handoff-v4`; bump `PROMPT_VERSION` when prompts change.
 - Mike uses `POST /analyses` then `GET /analyses/{run_id}`; citations resolve via
   `GET /sources/{source_id}`. Model and NCBI keys stay on the server.
 

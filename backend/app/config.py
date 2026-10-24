@@ -55,7 +55,7 @@ def get_settings() -> Settings:
         supabase_url=os.environ.get("SUPABASE_URL", "http://127.0.0.1:54321"),
         supabase_service_key=key,
         model=gemini.model,
-        prompt_version=os.environ.get("PROMPT_VERSION", "extract-v3+handoff-v3"),
+        prompt_version=os.environ.get("PROMPT_VERSION", "extract-v3+handoff-v4"),
         analysis_timeout_seconds=timeout,
         cors_origins=get_cors_origins(),
         retrieval_mode=mode,

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from functools import lru_cache
 
+from postgrest.exceptions import APIError
 from supabase import Client, create_client
 
 from .config import get_settings
@@ -122,11 +123,22 @@ def _run_from_row(row: dict) -> AnalysisRun:
     return AnalysisRun.model_validate(row)
 
 
-def insert_run(run: AnalysisRun, input_key: str) -> None:
+def insert_run(run: AnalysisRun, input_key: str) -> tuple[AnalysisRun, bool]:
+    """Returns (run, True) when inserted, or (existing_run, False) when an identical
+    run is already in flight (unique index on cache_key for queued/running live runs)."""
     if run.provenance == "fixture":
         raise ValueError("fixtures are never stored as analysis runs")
     row = run.model_dump(mode="json", exclude=_RUN_COMPUTED_FIELDS)
-    client().table("analysis_runs").insert({**row, "input_key": input_key}).execute()
+    try:
+        client().table("analysis_runs").insert({**row, "input_key": input_key}).execute()
+    except APIError as exc:
+        if exc.code != "23505":
+            raise
+        existing = find_reusable_run(run.cache_key)
+        if existing is None:
+            raise
+        return existing, False
+    return run, True
 
 
 def save_run(run: AnalysisRun) -> None:

@@ -48,6 +48,10 @@ and what the next clinician should review. Return JSON matching the supplied sch
 - Match evidence to the same finding, not just the same organ: an excerpt about
   one symptom (for example diarrhea) does not support a different one (for
   example heartburn). If no excerpt describes the patient's finding, cite none.
+- Before writing each source_ref, name the finding the claim is about and confirm
+  the excerpt text mentions that same finding or condition. The claim text or its
+  record quote must use the excerpt's own subject words. If no supplied excerpt
+  covers the finding, omit the claim.
 - When a record already attributes a finding to a documented cause (for example
   "Impression: ..." or "consistent with long-standing hypertension"), that is the
   documented explanation. Such a finding supports a different explanation only
@@ -106,10 +110,11 @@ that would need to be newly obtained. Describe new information neutrally as a
 gap, not as a requirement; do not say a test is needed or required. Questions
 ask whether something exists or is appropriate; the clinician decides.
 
-Possible outcomes stay conditional ("would support", "would make less likely",
-"would remain inconclusive"). An outcome may say a result establishes or excludes
-a diagnosis only if a cited excerpt says that kind of result does so. Include an
-uncertain or inconclusive outcome where one is possible.
+Possible outcomes stay conditional and hedged: use only "would support", "would
+make ... less likely", "would remain inconclusive", or "would prompt the clinician
+to consider". Never write that a result would establish, confirm, prove, diagnose,
+rule out or exclude a diagnosis; the clinician makes the diagnosis. Include an
+inconclusive outcome where one is possible.
 
 Hypothesis summaries are one or two sentences, name what is unknown, and state
 that the explanation is unconfirmed. A summary may only state a medical
@@ -128,3 +133,8 @@ generalization if one of its linked claims cites evidence for it.
 6. Every missing item with check_existing_first=true has existing_record_refs, and
    all such items have lower priority numbers than items with false.
 7. At least one hypothesis has is_rare_disease=false.
+8. Each source_ref's excerpt topic terms (for example "diarrhea", "proteinuria",
+   "enzyme") must appear in the claim text or its record quotes. No supporting
+   claim of an is_rare_disease=false hypothesis may cite only rare-disease sources.
+9. Possible outcomes (outcome and implication text) never say a result would
+   establish, confirm, prove, diagnose, rule out or exclude a diagnosis.
