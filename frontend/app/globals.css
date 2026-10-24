@@ -70,24 +70,24 @@
   --other:#8a8378;
 
   /* shadcn/ui variables */
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
+  --background: var(--bg);
+  --foreground: var(--ink);
+  --card: var(--bg);
+  --card-foreground: var(--ink);
+  --popover: var(--bg);
+  --popover-foreground: var(--ink);
   --primary: oklch(0.205 0 0);
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
+  --muted-foreground: var(--mut);
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
+  --border: var(--line);
   --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --ring: var(--faint);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -111,3 +111,20 @@
 }
 
 body{background:var(--bg);color:var(--ink);font-family:var(--font-ui)}
+
+/* Detail panel: disclosures, tables, links (reference.html .v-panel) */
+.detail-panel details{margin-top:4px;font-size:13px;color:var(--mut)}
+.detail-panel summary{cursor:pointer;min-height:32px;display:flex;align-items:center;width:max-content;font-size:12.5px;font-weight:600;color:var(--ink)}
+.detail-panel .hd{margin:9px 0 2px;font-family:var(--font-mono);font-size:10px;font-weight:400;letter-spacing:.07em;text-transform:uppercase;color:var(--mut)}
+.detail-panel mark{background:rgba(212,82,12,.17);color:inherit;padding:0 1px;border-bottom:1.5px solid var(--sig)}
+.detail-panel table{border-collapse:collapse;width:100%;font-size:12.5px;color:var(--ink);margin:2px 0 4px}
+.detail-panel th,.detail-panel td{border-top:1px solid var(--line);padding:4px 8px 4px 0;text-align:left;vertical-align:top;font-weight:400}
+.detail-panel th{border-top:0;font-family:var(--font-mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--mut)}
+.detail-panel ul{list-style:none;margin:0;padding:0}
+.detail-panel .jl{display:flex;flex-wrap:wrap;gap:0 14px;max-height:180px;overflow:auto}
+.detail-panel .jl button{min-height:40px;font-size:13px;color:var(--ink);text-align:left;text-decoration:underline dotted;text-underline-offset:3px}
+.detail-panel a{text-underline-offset:2px}
+
+@media (prefers-reduced-motion:reduce){
+  [data-slot="sheet-content"]{animation:none!important;transition:none!important}
+}
