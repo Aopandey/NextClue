@@ -33,7 +33,7 @@ Story for judges: seven findings from five specialties point at Fabry disease. A
    3. "Why it matters" (on hubs, "Something you might have missed"): at most 14 words, the first clause of the linking claim
    4. a source block: publisher, one title link (title › location), then the ID tag and unverified badge
 
-   Disclosures are full-width section rows with a count and a chevron. Finding, prior and missing panels keep all collapsed; on hubs the first two are open by default:
+   Disclosures other than Source quote are full-width section rows with a count and a chevron. Finding, prior and missing panels keep all collapsed; on hubs Supporting findings and Missing evidence are open by default:
    - **Source quote:** the full paraphrase.
    - **More about this record:** the full note text with the excerpt highlighted, its metadata, the observations table, and other findings from the same record.
    - **Hubs**, in order: **Supporting findings** (open; system dot, label, specialty), **Missing evidence** (open; priority tag, why-it-matters, possible outcomes as a list), **Summary**, **Supporting claims** and **Contradicting claims** (one-line short citations with links), **Questions for the clinician** (related to the missing evidence).
