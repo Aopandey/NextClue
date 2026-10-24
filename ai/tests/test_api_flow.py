@@ -256,3 +256,36 @@ def test_pubmed_deadline_stops_run_without_cache_fallback_or_handoff(monkeypatch
     run = client.get(f"/analyses/{created.json()['run_id']}").json()
     assert run["status"] == "failed" and run["error"]["code"] == "timeout"
     assert run["output"] is None and generate.call_count == 1
+
+
+ORIGIN = {"Origin": "http://localhost:3000"}
+
+
+def test_unhandled_error_is_json_and_has_cors(monkeypatch):
+    def boom(*a, **k):
+        raise RuntimeError("db exploded")
+
+    monkeypatch.setattr(db, "list_patients", boom)
+    r = TestClient(app, raise_server_exceptions=False).get("/patients", headers=ORIGIN)
+    assert r.status_code == 500
+    assert r.headers["access-control-allow-origin"] == "http://localhost:3000"
+    assert r.json() == {"detail": {"code": "internal", "message": "Unexpected server error.", "retryable": True}}
+    assert "db exploded" not in r.text
+
+
+def test_handled_errors_keep_cors(monkeypatch, api):
+    from ai.configuration import ConfigurationError
+
+    client, _ = api
+    missing = client.get("/sources/nope", headers=ORIGIN)
+    assert missing.status_code == 404
+    assert missing.headers["access-control-allow-origin"] == "http://localhost:3000"
+
+    def misconfigured(*a, **k):
+        raise ConfigurationError("missing key")
+
+    monkeypatch.setattr(db, "get_source", misconfigured)
+    r = client.get("/sources/any", headers=ORIGIN)
+    assert r.status_code == 503
+    assert r.json()["detail"]["code"] == "configuration_error"
+    assert r.headers["access-control-allow-origin"] == "http://localhost:3000"

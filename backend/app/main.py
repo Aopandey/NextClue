@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import datetime as dt
+import logging
 
 from fastapi import BackgroundTasks, FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
@@ -18,7 +19,24 @@ from .data_files import load_fixture_output
 from .validation import compute_cache_key, find_reference_errors
 from .views import build_graph, build_timeline
 
+log = logging.getLogger(__name__)
+
 app = FastAPI(title="NextClue API", version="0.1.0")
+
+
+# Registered before CORSMiddleware so it sits inside it; an Exception handler would run
+# in ServerErrorMiddleware, outside CORS, and the browser would see a CORS failure.
+@app.middleware("http")
+async def internal_error_with_cors(request: Request, call_next):
+    try:
+        return await call_next(request)
+    except Exception:  # noqa: BLE001
+        log.exception("Unhandled error on %s %s", request.method, request.url.path)
+        return JSONResponse(status_code=500, content={"detail": {
+            "code": "internal", "message": "Unexpected server error.", "retryable": True,
+        }})
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=get_cors_origins(),
