@@ -55,7 +55,7 @@ Story for judges: seven findings from five specialties point at Fabry disease. A
     - loading
     - `queued` / `running`, with elapsed time while polling
     - `completed`, labelled by `provenance`:
-      - fixture: "Sample data · not AI output"
+      - fixture: "Sample data"
       - live: "Live analysis · <model>"
       - replayed: a notice showing `fallback_reason` with a "Retry live" button
     - `failed`: `error.message` and `error.code`, plus Retry if `retryable`; no findings drawn

@@ -161,7 +161,7 @@ describe("HealthScreen completed", () => {
     state({ run: { ...run, evidence_mode: "live" } });
     show();
     expect(screen.getByText("Sarah · 40 · F · 10 records 2012–2024")).toBeInTheDocument();
-    expect(screen.getByText("Sample data · not AI output")).toBeInTheDocument();
+    expect(screen.getByText("Sample data")).toBeInTheDocument();
     expect(screen.queryByText("Evidence: cached")).toBeNull();
   });
 
