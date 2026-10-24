@@ -1,6 +1,6 @@
 """Connection point for the AI pipeline (Avinash).
 
-Replace the body of `run_pipeline`. The backend handles everything around it:
+`run_pipeline` delegates to ai.pipeline. The backend handles everything around it:
 caching, timeouts, schema + reference validation, persistence, and fallback.
 
 Contract:
@@ -35,4 +35,13 @@ class PipelineResult:
 
 
 def run_pipeline(patient: PatientRecord, sources: list[Source]) -> PipelineResult:
-    raise PipelineNotConnected("The AI pipeline is not connected yet (backend/app/pipeline.py).")
+    from ai.pipeline import EvidenceUnavailable, run_analysis
+
+    try:
+        output, selection = run_analysis(patient, sources)
+    except EvidenceUnavailable as exc:
+        raise RetrievalFailed(str(exc)) from None
+    # Evidence always comes from the registered, evidence-versioned `sources`.
+    # "live" only when a PubMed request ran for this run and chose among them
+    # (EVIDENCE_RETRIEVAL=pubmed); otherwise, or if PubMed failed, "cached".
+    return PipelineResult(output=output, evidence_mode=selection.mode)

@@ -3,35 +3,64 @@
 from __future__ import annotations
 
 import datetime as dt
+import logging
 
-from fastapi import BackgroundTasks, FastAPI, HTTPException, Response
+from fastapi import BackgroundTasks, FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+
+from ai.configuration import ConfigurationError
 
 from . import db
 from .analyses import InvalidRequest, PatientNotFound, execute_run, start_analysis
-from .config import get_settings
+from .config import get_cors_origins, get_settings
 from .contracts import ANALYSIS_SCHEMA_VERSION, AnalysisRequest, AnalysisRun, PatientRecord, RunVersions, Source
 from .data_files import load_fixture_output
 from .validation import compute_cache_key, find_reference_errors
 from .views import build_graph, build_timeline
 
+log = logging.getLogger(__name__)
+
 app = FastAPI(title="NextClue API", version="0.1.0")
+
+
+# Registered before CORSMiddleware so it sits inside it; an Exception handler would run
+# in ServerErrorMiddleware, outside CORS, and the browser would see a CORS failure.
+@app.middleware("http")
+async def internal_error_with_cors(request: Request, call_next):
+    try:
+        return await call_next(request)
+    except Exception:  # noqa: BLE001
+        log.exception("Unhandled error on %s %s", request.method, request.url.path)
+        return JSONResponse(status_code=500, content={"detail": {
+            "code": "internal", "message": "Unexpected server error.", "retryable": True,
+        }})
+
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=get_settings().cors_origins,
+    allow_origins=get_cors_origins(),
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
 
 
+@app.exception_handler(ConfigurationError)
+async def configuration_error(request: Request, exc: ConfigurationError) -> JSONResponse:
+    return JSONResponse(status_code=503, content={"detail": {
+        "code": "configuration_error", "message": str(exc), "retryable": False,
+    }})
+
+
 @app.get("/health")
 def health(response: Response) -> dict:
+    settings = get_settings()
     try:
         db.ping()
     except Exception as exc:  # noqa: BLE001
         response.status_code = 503
         return {"status": "degraded", "database": f"unreachable: {type(exc).__name__}"}
-    return {"status": "ok", "database": "ok", "model": get_settings().model}
+    return {"status": "ok", "database": "ok", "model": settings.model}
 
 
 @app.get("/patients")

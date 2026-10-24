@@ -183,7 +183,7 @@ This is the envelope Mike renders. Poll it until `status` is `completed` or `fai
   "timeline": [                     // built by the backend: one entry per document, sorted by date
     { "record_id": "rec-2012-pcp", "date": "2012-05-10", "specialty": "primary care", "title": "Primary care visit: limb pain", "finding_ids": ["fnd-limb-pain"] }
   ],
-  "graph": {                        // built by the backend: roughly 8–12 nodes; node_id equals the object's ID
+  "graph": {                        // built by the backend: typically 6–12 nodes; hypothesis-linked findings only (see Graph scope); node_id equals the object's ID
     "nodes": [{ "node_id": "fnd-limb-pain", "type": "finding", "label": "Burning pain in hands and feet" }],
     "edges": [{ "edge_id": "fnd-limb-pain--supports--hyp-fabry", "source": "fnd-limb-pain", "target": "hyp-fabry", "relation": "supports" }]
                                     // relation: supports | previously_tested | would_clarify
@@ -191,6 +191,8 @@ This is the envelope Mike renders. Poll it until `status` is `completed` or `fai
   "disclaimer": "Clinical decision support prototype using synthetic data. Not clinically validated."
 }
 ```
+
+**Graph scope.** `graph.nodes` of type `finding` include only findings that support at least one hypothesis; every hypothesis, prior result and missing-evidence item is always a node. Unlinked findings are intentionally omitted to keep the graph small and connected, so a run can have far fewer graph nodes than `output.findings` (e.g. 12 findings, 6 nodes). They remain complete in `output.findings` and `timeline[].finding_ids`; a client that shows them draws them itself, using the finding's `finding_id`, without edges.
 
 **Provenance labels:**
 
