@@ -42,16 +42,21 @@ const overlap = (a: string, b: string) => {
 };
 
 /**
- * The claim about a finding. Several findings can share one record, so a claim quoting the same excerpt wins;
- * only a present finding falls back to any claim on its record, because a negative is not what such a claim
- * is about. Claims an open question relies on are preferred at each step.
+ * The claim about a finding. Several findings can share one record, so a claim quoting the same excerpt wins.
+ * Only a present finding falls back to another claim on its record, and only to one that quotes no other
+ * finding's excerpt there: such a claim is about that finding, and a negative is not what any of them is about.
+ * Claims an open question relies on are preferred at each step. No match: no claim, never a borrowed one.
  */
-function claimForFinding(finding: Finding, claims: Claim[], openClaimIds: Set<string>): Claim | undefined {
-  const pick = (match: (r: RecordRef, cr: RecordRef) => boolean) => {
-    const hits = claims.filter((c) => c.record_refs.some((cr) => finding.record_refs.some((r) => r.record_id === cr.record_id && match(r, cr))));
+function claimForFinding(finding: Finding, findings: Finding[], claims: Claim[], openClaimIds: Set<string>): Claim | undefined {
+  const pick = (match: (r: RecordRef, cr: RecordRef) => boolean, pool = claims) => {
+    const hits = pool.filter((c) => c.record_refs.some((cr) => finding.record_refs.some((r) => r.record_id === cr.record_id && match(r, cr))));
     return hits.find((c) => openClaimIds.has(c.claim_id)) ?? hits[0];
   };
-  return pick((r, cr) => overlap(r.excerpt, cr.excerpt)) ?? (finding.assertion === "absent" ? undefined : pick(() => true));
+  const own = pick((r, cr) => overlap(r.excerpt, cr.excerpt));
+  if (own || finding.assertion === "absent") return own;
+  const others = findings.filter((f) => f.finding_id !== finding.finding_id).flatMap((f) => f.record_refs);
+  const unclaimed = claims.filter((c) => !c.record_refs.some((cr) => others.some((r) => r.record_id === cr.record_id && overlap(r.excerpt, cr.excerpt))));
+  return pick(() => true, unclaimed);
 }
 
 function resolve(run: AnalysisRun, patient: PatientRecord, nodeId: string): View | null {
@@ -74,7 +79,7 @@ function resolve(run: AnalysisRun, patient: PatientRecord, nodeId: string): View
       label: hyp.name,
       meta: null,
       count: `${plural(supporting.length, "supporting finding")} across ${plural(specialties.size, "specialty", "specialties")}`,
-      why: firstSentence(hyp.summary),
+      why: shortClaim(firstSentence(hyp.summary)),
       cite: first?.source_refs[0] ?? null,
       hypothesisId: hyp.hypothesis_id,
     };
@@ -84,12 +89,12 @@ function resolve(run: AnalysisRun, patient: PatientRecord, nodeId: string): View
   if (finding) {
     const quote = finding.record_refs[0] ?? null;
     const openClaimIds = new Set(out.hypotheses.filter((h) => h.status === "open").flatMap((h) => h.supporting_claim_ids));
-    const linked = claimForFinding(finding, out.claims, openClaimIds);
+    const linked = claimForFinding(finding, out.findings, out.claims, openClaimIds);
     return {
       ...base,
       label: finding.label,
       color: `var(--${systemFor(finding)})`,
-      meta: meta(finding.date, finding.specialty),
+      meta: [meta(finding.date, finding.specialty), finding.assertion === "uncertain" && "Uncertain"].filter(Boolean).join(" · ") || null,
       quote,
       why: linked ? shortClaim(linked.text) : null,
       cite: linked?.source_refs[0] ?? null,

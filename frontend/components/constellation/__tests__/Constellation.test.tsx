@@ -4,13 +4,18 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import fixtureJson from "@/fixtures/sarah-001.run.json";
+import jamesLiveJson from "@/fixtures/live/james-002.run.json";
+import sarahLiveJson from "@/fixtures/live/sarah-001.run.json";
 import type { AnalysisRun } from "@/lib/contracts";
 import { layoutConstellation, type Layout } from "@/lib/constellation/layout";
 import { Constellation, truncate } from "../Constellation";
 import { hubName } from "../Hub";
-import { ASCENT, DESCENT, textWidth } from "../Node";
+import { ASCENT, DESCENT, negativeLabel, textWidth } from "../Node";
 
 const fixtureRun = fixtureJson as AnalysisRun;
+const jamesLive = jamesLiveJson as AnalysisRun;
+const sarahLive = sarahLiveJson as AnalysisRun;
+const RUNS = { fixture: fixtureRun, "sarah live": sarahLive, "james live": jamesLive };
 
 function draw(opts: { narrow?: boolean; zoomScale?: number; run?: AnalysisRun; selectedId?: string | null } = {}) {
   const run = opts.run ?? fixtureRun;
@@ -95,10 +100,10 @@ function overlapping(rects: Rect[]): string[] {
 }
 
 describe("Constellation", () => {
-  it("renders 2 hubs, 12 graph nodes + 2 negatives, 13 edges for Sarah", () => {
+  it("renders 2 hubs, 12 graph nodes + 2 negatives + 1 unlinked finding, 13 edges for Sarah", () => {
     draw();
     expect(screen.getAllByTestId("hub")).toHaveLength(2);
-    expect(document.querySelectorAll("[data-node-id]")).toHaveLength(14);
+    expect(document.querySelectorAll("[data-node-id]")).toHaveLength(15);
     expect(document.querySelectorAll("[data-edge-id]")).toHaveLength(13);
   });
 
@@ -108,7 +113,7 @@ describe("Constellation", () => {
     expect(svg.getAttribute("viewBox")).toBe("0 0 1200 760");
     expect(svg).toHaveAccessibleName("Clue constellation");
     draw({ narrow: true });
-    expect(document.querySelectorAll("svg")[1].getAttribute("viewBox")).toBe("0 0 400 720");
+    expect(document.querySelectorAll("svg")[1].getAttribute("viewBox")).toBe("0 0 400 780");
   });
 
   it("every node and hub is a focusable button named by its full data label", () => {
@@ -184,8 +189,10 @@ describe("Constellation", () => {
     expect(screen.queryByText("CHECK FIRST")).toBeNull();
   });
 
-  it.each([false, true])("CHECK FIRST box clears every node and hub circle (narrow: %s)", (narrow) => {
-    const { layout } = draw({ narrow });
+  it.each([
+    [false, "fixture"], [true, "fixture"], [false, "sarah live"], [true, "sarah live"],
+  ] as const)("CHECK FIRST box clears every node and hub circle (narrow: %s, %s)", (narrow, name) => {
+    const { layout } = draw({ narrow, run: RUNS[name] });
     const rect = screen.getByTestId("check-first").querySelector("rect")!;
     const [x, y, w, h] = ["x", "y", "width", "height"].map((a) => Number(rect.getAttribute(a)));
     expect(x).toBeGreaterThanOrEqual(0);
@@ -208,12 +215,56 @@ describe("Constellation", () => {
     draw();
     for (const text of [
       "Burning pain in hands and…", "2012", "Rarely sweats", "Persistent proteinuria (UACR…",
-      "No celiac", "No diabetes",
-      "2016 test · normal", "not conclusive",
+      "Celiac serology negative", "No diabetes",
+      "2016 alpha-Gal A enzyme…",
       "GLA gene molecular", "Cause of father's", "open · 7 findings", "open · 2 findings",
     ])
       expect(screen.getAllByText(text).length, text).toBeGreaterThan(0);
     expect(node("fnd-celiac-negative").textContent).not.toMatch(/\d{4}/);
+    expect(node("pri-enzyme-2016").textContent).not.toMatch(/normal|conclusive/i);
+  });
+
+  it.each([false, true])("a prior is labelled from its data only, never with a hard-coded status (James, narrow: %s)", (narrow) => {
+    draw({ run: jamesLive, narrow });
+    const text = node("pri-001").textContent!;
+    expect(text).toContain("2018");
+    if (!narrow) expect(text).toContain("Vitamin B12 level");
+    expect(text).not.toMatch(/normal|conclusive/i);
+  });
+
+  it("negative labels keep the whole finding: James's 'Weight loss' and 'Foot ulcer'", () => {
+    expect(negativeLabel("Weight loss")).toBe("No weight loss");
+    expect(negativeLabel("Foot ulcer")).toBe("No foot ulcer");
+    expect(negativeLabel("Diarrhea")).toBe("No diarrhea");
+    expect(negativeLabel("GERD")).toBe("No GERD");
+    expect(negativeLabel("No diabetes (HbA1c 5.2%)")).toBe("No diabetes");
+    expect(negativeLabel("Celiac serology negative")).toBe("Celiac serology negative");
+    expect(negativeLabel("Absent ankle reflexes on both sides of the body")).toBe("Absent ankle reflexes on…");
+    draw({ run: jamesLive });
+    expect(node("fnd-012").textContent).toBe("No foot ulcer");
+    expect(node("fnd-008").textContent).toBe("No weight loss");
+  });
+
+  it("an uncertain finding is drawn with a dashed outline and a '?' label", () => {
+    const run = structuredClone(jamesLive);
+    run.output!.findings.find((f) => f.finding_id === "fnd-003")!.assertion = "uncertain";
+    draw({ run });
+    expect(node("fnd-003").querySelector("circle[stroke-dasharray]")).not.toBeNull();
+    expect(node("fnd-003").querySelector("[data-label] tspan")!.textContent).toBe("Type 2 diabetes?");
+  });
+
+  it("phone: a finding with no body system is named by its label, not 'Other'", () => {
+    draw({ run: jamesLive, narrow: true });
+    expect(node("fnd-003").textContent).toContain("Type 2 diabetes");
+    expect(node("fnd-003").textContent).not.toContain("Other");
+  });
+
+  it.each([
+    [false, "sarah live"], [true, "sarah live"], [false, "james live"], [true, "james live"],
+  ] as const)("live runs at rest: no label overlaps and ≤ 70 words (narrow: %s, %s)", (narrow, name) => {
+    const { container } = draw({ narrow, run: RUNS[name] });
+    expect(overlapping(labelRects(1))).toEqual([]);
+    expect(visibleWords(container)).toBeLessThanOrEqual(70);
   });
 
   it("hub names fit inside the hub at the largest size up to 20px", () => {
@@ -226,7 +277,7 @@ describe("Constellation", () => {
 
   it("narrow labels shorten to one word", () => {
     const { container } = draw({ narrow: true });
-    for (const text of ["Nerves", "Skin", "Gut", "Kidney", "Eye", "Family", "No celiac", "No diabetes", "Fabry?", "Separate?", "open · 7", "open · 2", "2016", "not conclusive", "GLA", "Cause"])
+    for (const text of ["Nerves", "Skin", "Gut", "Kidney", "Eye", "Family", "Celiac serology negative", "No diabetes", "Fabry?", "Separate?", "open · 7", "open · 2", "2016", "prior test", "GLA", "Cause"])
       expect(screen.getAllByText(text).length, text).toBeGreaterThan(0);
     expect(screen.getAllByText("missing?")).toHaveLength(2);
     expect(container.textContent).not.toContain("Burning");

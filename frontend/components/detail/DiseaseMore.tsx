@@ -31,7 +31,10 @@ export function DiseaseMore({
   const supporting = hypothesis.supporting_claim_ids.map(claim).filter((c): c is Claim => !!c);
   const contradicting = hypothesis.contradicting_claim_ids.map(claim).filter((c): c is Claim => !!c);
   const findings = hypothesis.supporting_finding_ids.flatMap((id) => output.findings.filter((f) => f.finding_id === id));
-  const missing = output.missing_evidence.filter((m) => m.hypothesis_ids.includes(hypothesis.hypothesis_id));
+  // Priority 1 first (CLAUDE.md), ties in array order (Array.prototype.sort is stable).
+  const missing = output.missing_evidence
+    .filter((m) => m.hypothesis_ids.includes(hypothesis.hypothesis_id))
+    .sort((a, b) => a.priority - b.priority);
   const missingIds = new Set(missing.map((m) => m.missing_id));
   const questions = output.clinician_questions.filter((q) => q.missing_ids.some((id) => missingIds.has(id)));
 
@@ -40,16 +43,20 @@ export function DiseaseMore({
       <summary>More about this disease</summary>
       <p className="text-[13px] text-[var(--ink)]">{hypothesis.summary}</p>
 
-      <h3 className="hd">Supporting findings</h3>
-      <ul className="jl">
-        {findings.map((f) => (
-          <li key={f.finding_id} data-testid="supporting-finding">
-            <button type="button" onClick={() => onSelect(f.finding_id)}>
-              {f.label}
-            </button>
-          </li>
-        ))}
-      </ul>
+      {findings.length > 0 && (
+        <>
+          <h3 className="hd">Supporting findings</h3>
+          <ul className="jl">
+            {findings.map((f) => (
+              <li key={f.finding_id} data-testid="supporting-finding">
+                <button type="button" onClick={() => onSelect(f.finding_id)}>
+                  {f.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
 
       {supporting.length > 0 && (
         <>
@@ -68,25 +75,30 @@ export function DiseaseMore({
         <>
           <h3 className="hd">Missing evidence</h3>
           {missing.map((m) => (
-            <div key={m.missing_id} className="py-1">
-              <p className="text-[13px] font-semibold text-[var(--ink)]">{m.description}</p>
+            <div key={m.missing_id} className="py-1" data-testid="missing-item">
+              <p className="text-[13px] font-semibold text-[var(--ink)]">
+                <span className="mr-1.5 font-mono text-[11px] font-normal text-[var(--mut)]">Priority {m.priority}</span>
+                {m.description}
+              </p>
               <p className="text-[13px]">{m.why_it_matters}</p>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Outcome</th>
-                    <th>What it would mean</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {m.possible_outcomes.map((o, i) => (
-                    <tr key={`${m.missing_id}-${i}`} data-testid="outcome-row">
-                      <td>{o.outcome}</td>
-                      <td>{o.implication}</td>
+              {m.possible_outcomes.length > 0 && (
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Outcome</th>
+                      <th>What it would mean</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {m.possible_outcomes.map((o, i) => (
+                      <tr key={`${m.missing_id}-${i}`} data-testid="outcome-row">
+                        <td>{o.outcome}</td>
+                        <td>{o.implication}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           ))}
         </>

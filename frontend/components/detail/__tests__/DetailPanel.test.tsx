@@ -4,12 +4,14 @@ import { describe, expect, it, vi } from "vitest";
 import patientJson from "@/fixtures/sarah-001.patient.json";
 import runJson from "@/fixtures/sarah-001.run.json";
 import sourcesJson from "@/fixtures/sources.json";
+import sarahLiveJson from "@/fixtures/live/sarah-001.run.json";
 import type { AnalysisRun, PatientRecord, Source } from "@/lib/contracts";
 import { DetailPanel } from "../DetailPanel";
 
 const run = runJson as AnalysisRun;
 const patient = patientJson as PatientRecord;
 const sources = sourcesJson as Record<string, Source>;
+const sarahLive = sarahLiveJson as AnalysisRun;
 
 function renderPanel(nodeId: string, narrow = false) {
   const onClose = vi.fn();
@@ -196,5 +198,58 @@ describe("DetailPanel content", () => {
   it("renders nothing for an unknown node", () => {
     renderPanel("nope");
     expect(screen.queryByRole("complementary")).toBeNull();
+  });
+
+  const show = (r: AnalysisRun, nodeId: string) =>
+    render(<DetailPanel run={r} patient={patient} sources={sources} nodeId={nodeId} onClose={vi.fn()} onSelect={vi.fn()} />);
+
+  it("a finding with no claim of its own never borrows another finding's claim on the same record (live fnd-06)", () => {
+    show(sarahLive, "fnd-06");
+    expect(why()).toBeNull();
+    expect(citation()).toBeNull();
+    document.body.innerHTML = "";
+    show(sarahLive, "fnd-05");
+    expect(why()).toMatch(/short PR interval/);
+  });
+
+  it("hub Why it matters is capped at 14 words", () => {
+    show(sarahLive, "hyp-01");
+    const text = why()!.replace("Why it matters:", "").trim();
+    expect(text.split(/\s+/).length).toBeLessThanOrEqual(14);
+    expect(text.endsWith("…")).toBe(true);
+  });
+
+  it("More about this disease lists missing evidence by priority, 1 first, with its number", () => {
+    const r = structuredClone(run);
+    const [a, b] = r.output!.missing_evidence;
+    a.priority = 2;
+    b.priority = 1;
+    b.hypothesis_ids = ["hyp-fabry"];
+    show(r, "hyp-fabry");
+    openDetails("More about this disease");
+    const items = [...document.querySelectorAll("[data-testid=missing-item]")].map((el) => el.textContent ?? "");
+    expect(items).toHaveLength(2);
+    expect(items[0]).toContain(b.description);
+    expect(items[0]).toContain("Priority 1");
+    expect(items[1]).toContain(a.description);
+    expect(items[1]).toContain("Priority 2");
+  });
+
+  it("empty lists render no heading or empty table", () => {
+    const r = structuredClone(run);
+    const fabry = r.output!.hypotheses.find((h) => h.hypothesis_id === "hyp-fabry")!;
+    fabry.supporting_finding_ids = [];
+    r.output!.missing_evidence.forEach((m) => { m.possible_outcomes = []; });
+    show(r, "hyp-fabry");
+    openDetails("More about this disease");
+    expect(screen.queryByText("Supporting findings")).toBeNull();
+    expect(screen.queryAllByRole("table")).toHaveLength(0);
+  });
+
+  it("an uncertain finding says so in its meta line", () => {
+    const r = structuredClone(run);
+    r.output!.findings.find((f) => f.finding_id === "fnd-proteinuria")!.assertion = "uncertain";
+    show(r, "fnd-proteinuria");
+    expect(screen.getByText("8 Nov 2021 · nephrology · Uncertain")).toBeInTheDocument();
   });
 });

@@ -262,3 +262,9 @@ export interface Source {
   verification_status: "verified" | "unverified";
   retrieved_on: string | null;
 }
+
+export interface SourceRegistry {
+  schema_version: "source.v1";
+  evidence_version: string;
+  sources: Source[];
+}

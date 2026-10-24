@@ -2,7 +2,7 @@
 
 import { useMemo, useState, type RefObject } from "react";
 import type { AnalysisRun, Finding } from "@/lib/contracts";
-import { VIEW_NARROW, type EdgePos, type HubPos, type Layout, type NodePos } from "@/lib/constellation/layout";
+import { VIEW_NARROW, type EdgePos, type HubPos, type Layout, type NodeKind, type NodePos } from "@/lib/constellation/layout";
 import { CheckFirst, checkFirstBox, checkFirstItem } from "./CheckFirst";
 import { Edge } from "./Edge";
 import { Hub, hubStatusBox } from "./Hub";
@@ -35,6 +35,7 @@ function connectedTo(id: string, edges: EdgePos[]): Set<string> {
   return ids;
 }
 
+const LABEL_RANK: Record<NodeKind, number> = { finding: 0, uncertain: 0, prior: 0, missing: 0, negative: 1, context: 2 };
 const SIDE_LABEL_REACH = 0.35; // desktop ring nodes this far out from the centre line prefer side labels
 const CLEARANCE = 1; // px kept free around every label box
 
@@ -110,11 +111,15 @@ export function placeLabels(
     [...boxes].every(([id, p]) => id === n.id || !overlaps(p, b));
 
   const plain = zoom === "detail" ? "labels" : zoom;
-  for (const n of layout.nodes) {
+  // Linked nodes first; a negative or unlinked finding whose label fits nowhere goes without one (its name stays
+  // in the node's accessible name and the panel), so crowded live runs never stack labels.
+  const ranked = [...layout.nodes].sort((a, b) => LABEL_RANK[a.kind] - LABEL_RANK[b.kind]);
+  for (const n of ranked) {
     const lines = labelLines(n, narrow, plain);
     if (!lines.length) continue;
     const options = sidePreference(n, layout.view, layout.hubs, narrow);
-    const side = options.find((s) => fits(n, boxAt(n, lines, s))) ?? options[0];
+    const side = options.find((s) => fits(n, boxAt(n, lines, s))) ?? (LABEL_RANK[n.kind] === 0 ? options[0] : null);
+    if (!side) continue;
     out.set(n.id, { side, lines });
     boxes.set(n.id, boxAt(n, lines, side));
   }

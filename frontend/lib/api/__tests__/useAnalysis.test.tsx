@@ -1,3 +1,4 @@
+import { StrictMode } from "react";
 import { act, cleanup, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import fixtureRunJson from "@/fixtures/sarah-001.run.json";
@@ -184,5 +185,69 @@ describe("useAnalysis", () => {
 
     expect(vi.getTimerCount()).toBe(0);
     expect(fetchMock.mock.calls.length).toBe(callsAtUnmount);
+  });
+
+  it("under StrictMode the double-run effect sends exactly one POST /analyses", async () => {
+    vi.stubEnv("NEXT_PUBLIC_DATA_MODE", "live");
+    backend({ "POST /analyses": () => reply(liveRun("completed")) });
+
+    const { result } = renderHook(() => useAnalysis("sarah-001"), { wrapper: StrictMode });
+
+    await waitFor(() => expect(result.current.phase).toBe("completed"));
+    const posts = fetchMock.mock.calls.filter(([, init]) => init?.method === "POST");
+    expect(posts).toHaveLength(1);
+  });
+
+  it("a cited source that fails to load leaves the run completed, without that source", async () => {
+    vi.stubEnv("NEXT_PUBLIC_DATA_MODE", "fixture");
+    backend({
+      "GET /fixtures/analyses/sarah-001": () => reply(fixtureRun),
+      "GET /sources/src-sfn-review": () => reply({ detail: "source 'src-sfn-review' not found" }, 404),
+    });
+
+    const { result } = renderHook(() => useAnalysis("sarah-001"));
+
+    await waitFor(() => expect(result.current.phase).toBe("completed"));
+    expect(Object.keys(result.current.sources)).toEqual(["src-genereviews-fabry"]);
+    expect(result.current.error).toBeNull();
+  });
+
+  it("a patient load error after the run keeps the run", async () => {
+    vi.stubEnv("NEXT_PUBLIC_DATA_MODE", "live");
+    backend({
+      "POST /analyses": () => reply(liveRun("completed")),
+      "GET /patients/sarah-001": () => reply({ detail: "database unavailable" }, 500),
+    });
+
+    const { result } = renderHook(() => useAnalysis("sarah-001"));
+
+    await waitFor(() => expect(result.current.phase).toBe("failed"));
+    expect(result.current.run?.run_id).toBe("run-1");
+    expect(result.current.error).toBe("Backend returned 500: database unavailable");
+  });
+
+  it("an HTTP 503 configuration_error is failed, not retryable, with its code; it is kept apart from run.error", async () => {
+    vi.stubEnv("NEXT_PUBLIC_DATA_MODE", "live");
+    backend({
+      "POST /analyses": () =>
+        reply({ detail: { code: "configuration_error", message: "Server is missing GEMINI_API_KEY.", retryable: false } }, 503),
+    });
+
+    const { result } = renderHook(() => useAnalysis("sarah-001"));
+
+    await waitFor(() => expect(result.current.phase).toBe("failed"));
+    expect(result.current.error).toBe("Server is missing GEMINI_API_KEY.");
+    expect(result.current.httpError).toEqual({ status: 503, code: "configuration_error", retryable: false });
+    expect(result.current.run).toBeNull();
+  });
+
+  it("a network error is unreachable with no httpError", async () => {
+    vi.stubEnv("NEXT_PUBLIC_DATA_MODE", "fixture");
+    fetchMock.mockRejectedValue(new TypeError("fetch failed"));
+
+    const { result } = renderHook(() => useAnalysis("sarah-001"));
+
+    await waitFor(() => expect(result.current.phase).toBe("unreachable"));
+    expect(result.current.httpError).toBeNull();
   });
 });

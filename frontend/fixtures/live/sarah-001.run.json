@@ -1,0 +1,637 @@
+{
+ "schema_version": "analysis.v1",
+ "run_id": "run-90d43f0609474b33",
+ "status": "completed",
+ "provenance": "live",
+ "replayed_from_run_id": null,
+ "fallback_reason": null,
+ "evidence_mode": "cached",
+ "patient_id": "sarah-001",
+ "record_version": 1,
+ "excluded_record_ids": [],
+ "cache_key": "sha256:8cfb3b202af6ff98185f64e14408324bcb8d744e59710275da0c7217ebf29c0c",
+ "versions": {
+  "schema_version": "analysis.v1",
+  "model": "gemini-3.5-flash-lite",
+  "prompt": "extract-v3+handoff-v3",
+  "evidence": "evidence-2026-10-24.1"
+ },
+ "created_at": "2026-10-24T16:55:24.974300Z",
+ "completed_at": "2026-10-24T16:55:48.266999Z",
+ "error": null,
+ "output": {
+  "findings": [
+   {
+    "finding_id": "fnd-01",
+    "label": "Burning pain in hands and feet",
+    "kind": "symptom",
+    "assertion": "present",
+    "date": "2012-05-10",
+    "specialty": "primary care",
+    "record_refs": [
+     {
+      "record_id": "rec-2012-pcp",
+      "excerpt": "burning pain in her hands and feet since adolescence"
+     }
+    ],
+    "hpo_id": null
+   },
+   {
+    "finding_id": "fnd-02",
+    "label": "Hypohidrosis",
+    "kind": "symptom",
+    "assertion": "present",
+    "date": "2012-05-10",
+    "specialty": "primary care",
+    "record_refs": [
+     {
+      "record_id": "rec-2012-pcp",
+      "excerpt": "she rarely sweats"
+     }
+    ],
+    "hpo_id": null
+   },
+   {
+    "finding_id": "fnd-03",
+    "label": "Small fiber neuropathy",
+    "kind": "diagnosis",
+    "assertion": "present",
+    "date": "2016-02-03",
+    "specialty": "neurology",
+    "record_refs": [
+     {
+      "record_id": "rec-2016-neuro",
+      "excerpt": "Skin biopsy shows reduced intraepidermal nerve fiber density, consistent with small fiber neuropathy."
+     }
+    ],
+    "hpo_id": null
+   },
+   {
+    "finding_id": "fnd-04",
+    "label": "Proteinuria",
+    "kind": "lab_result",
+    "assertion": "present",
+    "date": "2021-11-08",
+    "specialty": "nephrology",
+    "record_refs": [
+     {
+      "record_id": "rec-2021-nephro",
+      "excerpt": "Referred for persistent proteinuria. Urine albumin-to-creatinine ratio 410 mg/g."
+     }
+    ],
+    "hpo_id": null
+   },
+   {
+    "finding_id": "fnd-05",
+    "label": "Short PR interval",
+    "kind": "lab_result",
+    "assertion": "present",
+    "date": "2022-09-14",
+    "specialty": "cardiology",
+    "record_refs": [
+     {
+      "record_id": "rec-2022-cardio",
+      "excerpt": "ECG shows sinus rhythm with a short PR interval."
+     }
+    ],
+    "hpo_id": null
+   },
+   {
+    "finding_id": "fnd-06",
+    "label": "Mild left ventricular wall thickening",
+    "kind": "imaging",
+    "assertion": "present",
+    "date": "2022-09-14",
+    "specialty": "cardiology",
+    "record_refs": [
+     {
+      "record_id": "rec-2022-cardio",
+      "excerpt": "Echocardiogram shows mild left ventricular wall thickening."
+     }
+    ],
+    "hpo_id": null
+   },
+   {
+    "finding_id": "fnd-07",
+    "label": "Cornea verticillata",
+    "kind": "sign",
+    "assertion": "present",
+    "date": "2023-04-19",
+    "specialty": "ophthalmology",
+    "record_refs": [
+     {
+      "record_id": "rec-2023-eye",
+      "excerpt": "Slit lamp exam shows bilateral whorl-like corneal opacities (cornea verticillata)."
+     }
+    ],
+    "hpo_id": null
+   },
+   {
+    "finding_id": "fnd-08",
+    "label": "Family history of dialysis at age 48",
+    "kind": "family_history",
+    "assertion": "present",
+    "date": "2021-11-08",
+    "specialty": "nephrology",
+    "record_refs": [
+     {
+      "record_id": "rec-2021-nephro",
+      "excerpt": "Family history: father started dialysis at age 48, cause not documented."
+     }
+    ],
+    "hpo_id": null
+   }
+  ],
+  "claims": [
+   {
+    "claim_id": "clm-01",
+    "text": "The patient reports burning pain in her hands and feet since adolescence that worsens with heat, fever, and exercise alongside rarely sweating.",
+    "record_refs": [
+     {
+      "record_id": "rec-2012-pcp",
+      "excerpt": "burning pain in her hands and feet since adolescence. Pain is worse with heat, fever, and exercise. She also reports that she rarely sweats."
+     }
+    ],
+    "source_refs": [
+     {
+      "source_id": "src-genereviews-fabry",
+      "excerpt_id": "exc-fabry-features"
+     }
+    ]
+   },
+   {
+    "claim_id": "clm-02",
+    "text": "The skin biopsy showed reduced intraepidermal nerve fiber density consistent with small fiber neuropathy.",
+    "record_refs": [
+     {
+      "record_id": "rec-2016-neuro",
+      "excerpt": "Skin biopsy shows reduced intraepidermal nerve fiber density, consistent with small fiber neuropathy."
+     }
+    ],
+    "source_refs": [
+     {
+      "source_id": "src-genereviews-fabry",
+      "excerpt_id": "exc-fabry-sfn"
+     }
+    ]
+   },
+   {
+    "claim_id": "clm-03",
+    "text": "The slit lamp exam showed bilateral whorl-like corneal opacities known as cornea verticillata.",
+    "record_refs": [
+     {
+      "record_id": "rec-2023-eye",
+      "excerpt": "Slit lamp exam shows bilateral whorl-like corneal opacities (cornea verticillata)."
+     }
+    ],
+    "source_refs": [
+     {
+      "source_id": "src-genereviews-fabry",
+      "excerpt_id": "exc-fabry-female-features"
+     }
+    ]
+   },
+   {
+    "claim_id": "clm-04",
+    "text": "The patient was referred for persistent proteinuria with a urine albumin-to-creatinine ratio of 410 mg/g.",
+    "record_refs": [
+     {
+      "record_id": "rec-2021-nephro",
+      "excerpt": "Referred for persistent proteinuria. Urine albumin-to-creatinine ratio 410 mg/g."
+     }
+    ],
+    "source_refs": [
+     {
+      "source_id": "src-genereviews-fabry",
+      "excerpt_id": "exc-fabry-female-kidney"
+     }
+    ]
+   },
+   {
+    "claim_id": "clm-05",
+    "text": "The ECG showed sinus rhythm with a short PR interval.",
+    "record_refs": [
+     {
+      "record_id": "rec-2022-cardio",
+      "excerpt": "ECG shows sinus rhythm with a short PR interval."
+     }
+    ],
+    "source_refs": [
+     {
+      "source_id": "src-genereviews-fabry",
+      "excerpt_id": "exc-fabry-cardiac"
+     }
+    ]
+   },
+   {
+    "claim_id": "clm-06",
+    "text": "Leukocyte alpha-galactosidase A enzyme activity was within the laboratory reference range.",
+    "record_refs": [
+     {
+      "record_id": "rec-2016-enzyme",
+      "excerpt": "Leukocyte alpha-galactosidase A enzyme activity within the laboratory reference range. No molecular testing performed on this sample."
+     }
+    ],
+    "source_refs": [
+     {
+      "source_id": "src-genereviews-fabry",
+      "excerpt_id": "exc-fabry-female-enzyme"
+     }
+    ]
+   },
+   {
+    "claim_id": "clm-07",
+    "text": "No associated condition could be found in a large portion of patients with small fiber neuropathy.",
+    "record_refs": [
+     {
+      "record_id": "rec-2016-neuro-fu",
+      "excerpt": "Small fiber neuropathy of unknown cause."
+     }
+    ],
+    "source_refs": [
+     {
+      "source_id": "src-sfn-review",
+      "excerpt_id": "exc-sfn-causes"
+     }
+    ]
+   },
+   {
+    "claim_id": "clm-08",
+    "text": "Measurement of alpha-galactosidase A enzyme activity is unreliable for identifying heterozygous females, as some heterozygotes have activity in the normal range.",
+    "record_refs": [
+     {
+      "record_id": "rec-2016-enzyme",
+      "excerpt": "Leukocyte alpha-galactosidase A enzyme activity within the laboratory reference range."
+     }
+    ],
+    "source_refs": [
+     {
+      "source_id": "src-genereviews-fabry",
+      "excerpt_id": "exc-fabry-female-enzyme"
+     }
+    ]
+   }
+  ],
+  "prior_results": [
+   {
+    "prior_result_id": "pri-01",
+    "test_name": "Alpha-galactosidase A enzyme activity",
+    "record_refs": [
+     {
+      "record_id": "rec-2016-enzyme",
+      "excerpt": "Leukocyte alpha-galactosidase A enzyme activity within the laboratory reference range. No molecular testing performed on this sample."
+     }
+    ],
+    "result_summary": "Within reference range",
+    "interpretation_at_the_time": "Fabry enzyme screen normal. Fabry disease considered unlikely.",
+    "what_it_established": "Demonstrated normal leukocyte enzyme activity on the tested sample, but measurement of alpha-galactosidase A enzyme activity is unreliable for identification of heterozygous females.",
+    "limitation_claim_ids": [
+     "clm-06",
+     "clm-08"
+    ],
+    "hypothesis_ids": [
+     "hyp-01"
+    ]
+   }
+  ],
+  "hypotheses": [
+   {
+    "hypothesis_id": "hyp-01",
+    "name": "Fabry disease",
+    "is_rare_disease": true,
+    "status": "open",
+    "summary": "Multisystem findings including neuropathic pain, hypohidrosis, cornea verticillata, proteinuria, and cardiac findings raise consideration for Fabry disease, though leukocyte enzyme testing can be normal in heterozygous females and the diagnosis remains unconfirmed.",
+    "supporting_finding_ids": [
+     "fnd-01",
+     "fnd-02",
+     "fnd-04",
+     "fnd-05",
+     "fnd-06",
+     "fnd-07"
+    ],
+    "supporting_claim_ids": [
+     "clm-01",
+     "clm-03",
+     "clm-04",
+     "clm-05",
+     "clm-08"
+    ],
+    "contradicting_claim_ids": [
+     "clm-06"
+    ]
+   },
+   {
+    "hypothesis_id": "hyp-02",
+    "name": "Idiopathic small fiber neuropathy",
+    "is_rare_disease": false,
+    "status": "open",
+    "summary": "Small fiber neuropathy with associated autonomic features and pain can occur without an identified systemic cause, though systemic manifestations remain unconfirmed to share this single etiology.",
+    "supporting_finding_ids": [
+     "fnd-01",
+     "fnd-02",
+     "fnd-03"
+    ],
+    "supporting_claim_ids": [
+     "clm-02",
+     "clm-07"
+    ],
+    "contradicting_claim_ids": []
+   }
+  ],
+  "missing_evidence": [
+   {
+    "missing_id": "mis-01",
+    "priority": 1,
+    "description": "Outside genetics clinic visit report from 2019",
+    "why_it_matters": "Determines whether molecular or further genetic testing was previously completed.",
+    "check_existing_first": true,
+    "existing_record_refs": [
+     {
+      "record_id": "rec-2024-pcp",
+      "excerpt": "She recalls a visit to an outside genetics clinic in 2019, but no report from that visit is in our chart. Will request outside records."
+     }
+    ],
+    "claim_ids": [
+     "clm-06"
+    ],
+    "hypothesis_ids": [
+     "hyp-01"
+    ],
+    "possible_outcomes": [
+     {
+      "outcome": "If molecular testing was previously performed and identified a pathogenic variant",
+      "implication": "would support the diagnosis of Fabry disease."
+     },
+     {
+      "outcome": "If no pathogenic variant was identified",
+      "implication": "would make Fabry disease less likely."
+     }
+    ]
+   },
+   {
+    "missing_id": "mis-02",
+    "priority": 2,
+    "description": "GLA gene molecular genetic testing results",
+    "why_it_matters": "Identifies or rules out pathogenic variants in heterozygous females where enzyme activity can be normal.",
+    "check_existing_first": false,
+    "existing_record_refs": [],
+    "claim_ids": [
+     "clm-08"
+    ],
+    "hypothesis_ids": [
+     "hyp-01"
+    ],
+    "possible_outcomes": [
+     {
+      "outcome": "Identification of a pathogenic variant",
+      "implication": "would establish the diagnosis of Fabry disease in a female proband."
+     },
+     {
+      "outcome": "Identification of a variant of uncertain significance",
+      "implication": "would remain inconclusive regarding the diagnosis."
+     }
+    ]
+   }
+  ],
+  "clinician_questions": [
+   {
+    "question_id": "q-01",
+    "text": "Are records from the 2019 outside genetics visit available from external chart requests?",
+    "missing_ids": [
+     "mis-01"
+    ]
+   },
+   {
+    "question_id": "q-02",
+    "text": "Is molecular genetic testing for GLA appropriate to clarify the genetic status given normal leukocyte enzyme activity?",
+    "missing_ids": [
+     "mis-02"
+    ]
+   }
+  ]
+ },
+ "timeline": [
+  {
+   "record_id": "rec-2012-pcp",
+   "date": "2012-05-10",
+   "specialty": "primary care",
+   "title": "Primary care visit: limb pain",
+   "finding_ids": [
+    "fnd-01",
+    "fnd-02"
+   ]
+  },
+  {
+   "record_id": "rec-2014-gi",
+   "date": "2014-09-22",
+   "specialty": "gastroenterology",
+   "title": "Gastroenterology consult: abdominal pain",
+   "finding_ids": []
+  },
+  {
+   "record_id": "rec-2016-neuro",
+   "date": "2016-02-03",
+   "specialty": "neurology",
+   "title": "Neurology consult: small fiber neuropathy",
+   "finding_ids": [
+    "fnd-03"
+   ]
+  },
+  {
+   "record_id": "rec-2016-enzyme",
+   "date": "2016-03-01",
+   "specialty": "neurology",
+   "title": "Alpha-galactosidase A enzyme activity",
+   "finding_ids": []
+  },
+  {
+   "record_id": "rec-2016-neuro-fu",
+   "date": "2016-03-29",
+   "specialty": "neurology",
+   "title": "Neurology follow-up",
+   "finding_ids": []
+  },
+  {
+   "record_id": "rec-2018-derm",
+   "date": "2018-07-02",
+   "specialty": "dermatology",
+   "title": "Dermatology: skin spots",
+   "finding_ids": []
+  },
+  {
+   "record_id": "rec-2021-nephro",
+   "date": "2021-11-08",
+   "specialty": "nephrology",
+   "title": "Nephrology consult: proteinuria",
+   "finding_ids": [
+    "fnd-04",
+    "fnd-08"
+   ]
+  },
+  {
+   "record_id": "rec-2022-cardio",
+   "date": "2022-09-14",
+   "specialty": "cardiology",
+   "title": "Cardiology: palpitations",
+   "finding_ids": [
+    "fnd-05",
+    "fnd-06"
+   ]
+  },
+  {
+   "record_id": "rec-2023-eye",
+   "date": "2023-04-19",
+   "specialty": "ophthalmology",
+   "title": "Ophthalmology: routine exam",
+   "finding_ids": [
+    "fnd-07"
+   ]
+  },
+  {
+   "record_id": "rec-2024-pcp",
+   "date": "2024-01-12",
+   "specialty": "primary care",
+   "title": "Primary care follow-up",
+   "finding_ids": []
+  }
+ ],
+ "graph": {
+  "nodes": [
+   {
+    "node_id": "fnd-01",
+    "type": "finding",
+    "label": "Burning pain in hands and feet"
+   },
+   {
+    "node_id": "fnd-02",
+    "type": "finding",
+    "label": "Hypohidrosis"
+   },
+   {
+    "node_id": "fnd-03",
+    "type": "finding",
+    "label": "Small fiber neuropathy"
+   },
+   {
+    "node_id": "fnd-04",
+    "type": "finding",
+    "label": "Proteinuria"
+   },
+   {
+    "node_id": "fnd-05",
+    "type": "finding",
+    "label": "Short PR interval"
+   },
+   {
+    "node_id": "fnd-06",
+    "type": "finding",
+    "label": "Mild left ventricular wall thickening"
+   },
+   {
+    "node_id": "fnd-07",
+    "type": "finding",
+    "label": "Cornea verticillata"
+   },
+   {
+    "node_id": "hyp-01",
+    "type": "hypothesis",
+    "label": "Fabry disease"
+   },
+   {
+    "node_id": "hyp-02",
+    "type": "hypothesis",
+    "label": "Idiopathic small fiber neuropathy"
+   },
+   {
+    "node_id": "pri-01",
+    "type": "prior_result",
+    "label": "Alpha-galactosidase A enzyme activity"
+   },
+   {
+    "node_id": "mis-01",
+    "type": "missing_evidence",
+    "label": "Outside genetics clinic visit report from 2019"
+   },
+   {
+    "node_id": "mis-02",
+    "type": "missing_evidence",
+    "label": "GLA gene molecular genetic testing results"
+   }
+  ],
+  "edges": [
+   {
+    "edge_id": "fnd-01--supports--hyp-01",
+    "source": "fnd-01",
+    "target": "hyp-01",
+    "relation": "supports"
+   },
+   {
+    "edge_id": "fnd-02--supports--hyp-01",
+    "source": "fnd-02",
+    "target": "hyp-01",
+    "relation": "supports"
+   },
+   {
+    "edge_id": "fnd-04--supports--hyp-01",
+    "source": "fnd-04",
+    "target": "hyp-01",
+    "relation": "supports"
+   },
+   {
+    "edge_id": "fnd-05--supports--hyp-01",
+    "source": "fnd-05",
+    "target": "hyp-01",
+    "relation": "supports"
+   },
+   {
+    "edge_id": "fnd-06--supports--hyp-01",
+    "source": "fnd-06",
+    "target": "hyp-01",
+    "relation": "supports"
+   },
+   {
+    "edge_id": "fnd-07--supports--hyp-01",
+    "source": "fnd-07",
+    "target": "hyp-01",
+    "relation": "supports"
+   },
+   {
+    "edge_id": "fnd-01--supports--hyp-02",
+    "source": "fnd-01",
+    "target": "hyp-02",
+    "relation": "supports"
+   },
+   {
+    "edge_id": "fnd-02--supports--hyp-02",
+    "source": "fnd-02",
+    "target": "hyp-02",
+    "relation": "supports"
+   },
+   {
+    "edge_id": "fnd-03--supports--hyp-02",
+    "source": "fnd-03",
+    "target": "hyp-02",
+    "relation": "supports"
+   },
+   {
+    "edge_id": "pri-01--previously_tested--hyp-01",
+    "source": "pri-01",
+    "target": "hyp-01",
+    "relation": "previously_tested"
+   },
+   {
+    "edge_id": "mis-01--would_clarify--hyp-01",
+    "source": "mis-01",
+    "target": "hyp-01",
+    "relation": "would_clarify"
+   },
+   {
+    "edge_id": "mis-02--would_clarify--hyp-01",
+    "source": "mis-02",
+    "target": "hyp-01",
+    "relation": "would_clarify"
+   }
+  ]
+ },
+ "disclaimer": "Clinical decision support prototype using synthetic data. Not clinically validated. Findings are unconfirmed and require clinician review."
+}

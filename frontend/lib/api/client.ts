@@ -30,16 +30,28 @@ export class ApiUnreachable extends Error {
   }
 }
 
-/** The backend answered with a non-2xx status; `detail` is FastAPI's `detail` (string or object). */
+/**
+ * The backend answered with a non-2xx status; `detail` is FastAPI's `detail` (string or object).
+ * An object detail such as `{code: "configuration_error", message, retryable: false}` exposes its fields.
+ */
 export class ApiError extends Error {
   readonly status: number;
   readonly detail: unknown;
+  readonly code: string | null;
+  /** False only when the backend says so (`detail.retryable === false`). */
+  readonly retryable: boolean;
+  /** The object detail's own message; otherwise the full message with the status. */
+  readonly displayMessage: string;
 
   constructor(status: number, detail: unknown) {
     super(`Backend returned ${status}: ${describeDetail(detail)}`);
     this.name = "ApiError";
     this.status = status;
     this.detail = detail;
+    const fields = detail && typeof detail === "object" ? (detail as Record<string, unknown>) : {};
+    this.code = typeof fields.code === "string" ? fields.code : null;
+    this.retryable = fields.retryable !== false;
+    this.displayMessage = typeof fields.message === "string" ? fields.message : this.message;
   }
 }
 
@@ -100,7 +112,7 @@ export function getFixtureRun(id: string): Promise<AnalysisRun> {
 
 /** POST /analyses: 202 with a queued run, or 200 with a reused run (finished or still in progress). */
 export function startAnalysis(patientId: string): Promise<AnalysisRun> {
-  const body: AnalysisRequest = { patient_id: patientId };
+  const body: AnalysisRequest = { patient_id: patientId, excluded_record_ids: [], force_refresh: false };
   return request<AnalysisRun>("/analyses", { body });
 }
 

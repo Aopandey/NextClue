@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import fixtureJson from "@/fixtures/sarah-001.run.json";
 import type { AnalysisRun, Finding } from "@/lib/contracts";
-import { systemFor } from "../systems";
+import { systemFor, systemForText } from "../systems";
 
 const run = fixtureJson as AnalysisRun;
 
@@ -35,4 +35,16 @@ describe("systemFor", () => {
 
   it("matches specialty case-insensitively", () =>
     expect(systemFor({ ...base, finding_id: "fnd-w", label: "Fatigue", specialty: " Cardiology " })).toBe("heart"));
+
+  it("sweat-gland terms are sweat (live label 'Hypohidrosis')", () => {
+    for (const label of ["Hypohidrosis", "Anhidrosis", "Hyperhidrosis"])
+      expect(systemFor({ ...base, finding_id: "fnd-02", label }), label).toBe("sweat");
+  });
+
+  it("systemForText colours a prior by its test name and record specialty", () => {
+    expect(systemForText("2016 alpha-Gal A enzyme screen", "neurology")).toBe("blood");
+    expect(systemForText("Vitamin B12 level", "primary care")).toBe("blood");
+    expect(systemForText("Echocardiogram", "cardiology")).toBe("heart");
+    expect(systemForText("Something", null)).toBe("other");
+  });
 });

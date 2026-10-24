@@ -87,7 +87,30 @@ describe("api client", () => {
     const [url, init] = fetchMock.mock.calls[0];
     expect(String(url)).toBe("http://127.0.0.1:8000/analyses");
     expect(init?.method).toBe("POST");
-    expect(JSON.parse(String(init?.body))).toEqual({ patient_id: "sarah-001" });
+    expect(JSON.parse(String(init?.body))).toEqual({ patient_id: "sarah-001", excluded_record_ids: [], force_refresh: false });
+  });
+
+  it("an object detail exposes its code and retryable flag; its message is shown without the status prefix", async () => {
+    fetchMock.mockResolvedValue(
+      json({ detail: { code: "configuration_error", message: "Server is missing GEMINI_API_KEY.", retryable: false } }, 503),
+    );
+
+    await expect(startAnalysis("sarah-001")).rejects.toMatchObject({
+      status: 503,
+      code: "configuration_error",
+      retryable: false,
+      displayMessage: "Server is missing GEMINI_API_KEY.",
+    });
+  });
+
+  it("a string detail has no code, is retryable, and keeps the status in its message", async () => {
+    fetchMock.mockResolvedValue(json({ detail: "patient 'nobody' not found" }, 404));
+
+    await expect(getPatient("nobody")).rejects.toMatchObject({
+      code: null,
+      retryable: true,
+      displayMessage: "Backend returned 404: patient 'nobody' not found",
+    });
   });
 
   it("fixture JSON has 10 timeline events, 12 nodes, 13 edges, 2 open hypotheses", () => {

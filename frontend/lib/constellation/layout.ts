@@ -7,16 +7,21 @@ import type {
   PriorResultReview,
   TimelineEvent,
 } from "@/lib/contracts";
-import { SYSTEM_ORDER, systemFor, type BodySystem } from "./systems";
+import { SYSTEM_ORDER, systemFor, systemForText, type BodySystem } from "./systems";
 
 // Deterministic constellation layout for one analysis run (Sarah's 10-record view; no clustering, ruling R14).
 // Pure: no randomness, no clock, never mutates the run.
 
 export const VIEW = { w: 1200, h: 760 } as const; // desktop
-export const VIEW_NARROW = { w: 400, h: 720 } as const; // phone, ruling R10
+// Phone, ruling R10. The bottom 60 units are kept free for the CHECK FIRST marker, below the side row.
+export const VIEW_NARROW = { w: 400, h: 780 } as const;
 
 export type HubPos = { id: string; name: string; x: number; y: number; r: number; supportCount: number };
-export type NodeKind = "finding" | "negative" | "prior" | "missing";
+/**
+ * Ring kinds: `finding` (present, linked to a hypothesis), `context` (present, linked to none: drawn small, no
+ * edges), `uncertain` (assertion "uncertain") and `negative` (assertion "absent"). Then `prior` and `missing`.
+ */
+export type NodeKind = "finding" | "context" | "uncertain" | "negative" | "prior" | "missing";
 export type NodePos = { id: string; kind: NodeKind; system: BodySystem; x: number; y: number; r: number; label: string; year: string | null };
 export type EdgePos = { id: string; from: string; to: string; relation: EdgeRelation; width: number; d: string };
 export type Layout = { view: { w: number; h: number }; hubs: HubPos[]; nodes: NodePos[]; edges: EdgePos[]; emptyMessage: string | null };
@@ -33,6 +38,8 @@ interface Geometry {
   r: Record<NodeKind, number>;
   /** Positions for priors and for missing items that are not at a hub centroid (already ordered by priority). */
   side(priorCount: number, missingCount: number): { priors: Point[]; missing: Point[] };
+  /** View height once `sideCount` priors and side missing items are placed. */
+  height(sideCount: number): number;
 }
 
 /** `count` positions `step` apart, centred on `centre`. */
@@ -48,13 +55,16 @@ const DESKTOP: Geometry = {
   ],
   hubR: 50,
   ring: { cx: 600, cy: 380, rx: 400, ry: 285 },
-  r: { finding: 26, negative: 14, prior: 26, missing: 26 },
+  r: { finding: 26, context: 14, uncertain: 26, negative: 14, prior: 26, missing: 26 },
   // Priors in a left column, other missing items in a right column; both 90px apart, centred on y = 380.
   side: (priorCount, missingCount) => ({
     priors: spread(priorCount, 380, 90).map((y) => ({ x: 120, y })),
     missing: spread(missingCount, 380, 90).map((y) => ({ x: 1080, y })),
   }),
+  height: () => VIEW.h,
 };
+
+const ROW = { x: 70, y: 668, step: 90, perRow: 4 }; // phone side rows
 
 const NARROW: Geometry = {
   view: VIEW_NARROW,
@@ -65,12 +75,17 @@ const NARROW: Geometry = {
   ],
   hubR: 40,
   ring: { cx: 200, cy: 330, rx: 170, ry: 270 },
-  r: { finding: 20, negative: 11, prior: 20, missing: 20 },
-  // One bottom row: priors first, then the other missing items, 90px apart from x = 70.
+  r: { finding: 20, context: 11, uncertain: 20, negative: 11, prior: 20, missing: 20 },
+  // Bottom rows of 4: priors first, then the other missing items, 90 apart from x = 70; extra rows go below and
+  // grow the view, so the CHECK FIRST band stays under the last row.
   side: (priorCount, missingCount) => {
-    const row = Array.from({ length: priorCount + missingCount }, (_, i) => ({ x: 70 + i * 90, y: 668 }));
+    const row = Array.from({ length: priorCount + missingCount }, (_, i) => ({
+      x: ROW.x + (i % ROW.perRow) * ROW.step,
+      y: ROW.y + Math.floor(i / ROW.perRow) * ROW.step,
+    }));
     return { priors: row.slice(0, priorCount), missing: row.slice(priorCount) };
   },
+  height: (sideCount) => VIEW_NARROW.h + Math.max(0, Math.ceil(sideCount / ROW.perRow) - 1) * ROW.step,
 };
 
 const MAX_HUBS = 3;
@@ -90,26 +105,33 @@ const BOTTOM_ARC: [number, number] = [35, 145];
 
 export function layoutConstellation(run: AnalysisRun, opts?: { narrow?: boolean }): Layout {
   const geo = opts?.narrow ? NARROW : DESKTOP;
-  const view = { ...geo.view };
   const { output, graph } = run;
-  if (!output || !graph) return { view, hubs: [], nodes: [], edges: [], emptyMessage: null };
+  if (!output) return { view: { ...geo.view }, hubs: [], nodes: [], edges: [], emptyMessage: null };
 
   const hubs = placeHubs(output.hypotheses, geo);
 
-  const graphFindingIds = new Set(graph.nodes.filter((n) => n.type === "finding").map((n) => n.node_id));
-  const ringFindings = output.findings.filter((f) => graphFindingIds.has(f.finding_id) || f.assertion === "absent");
+  // Every finding is drawn; "linked" ones are those the backend's graph gives a node (findings supporting any
+  // hypothesis, views.build_graph), which is also the fallback when the graph is missing.
+  const linked = new Set(
+    graph
+      ? graph.nodes.filter((n) => n.type === "finding").map((n) => n.node_id)
+      : output.hypotheses.flatMap((h) => h.supporting_finding_ids),
+  );
+  const missing = placeMissing(output.missing_evidence, output.prior_results.length, geo, hubs);
   const nodes = [
-    ...placeRing(sortForRing(ringFindings), geo),
-    ...placePriors(output.prior_results, run.timeline, geo),
-    ...placeMissing(output.missing_evidence, output.prior_results.length, geo, hubs),
+    ...placeRing(sortForRing(output.findings), linked, geo),
+    ...placePriors(output.prior_results, run.timeline, output.findings, geo),
+    ...missing.nodes,
   ];
+  const view = { w: geo.view.w, h: geo.height(output.prior_results.length + missing.sideCount) };
 
   const circles = new Map<string, Circle>([...hubs, ...nodes].map((c) => [c.id, c]));
-  const edges: EdgePos[] = graph.edges.flatMap((e) => {
+  const edges: EdgePos[] = (graph?.edges ?? []).flatMap((e) => {
     const from = circles.get(e.source);
     const to = circles.get(e.target);
     if (!from || !to) return [];
-    return [{ id: e.edge_id, from: e.source, to: e.target, relation: e.relation, width: EDGE_WIDTH, d: edgePath(from, to) }];
+    const others = [...circles.values()].filter((c) => c !== from && c !== to);
+    return [{ id: e.edge_id, from: e.source, to: e.target, relation: e.relation, width: EDGE_WIDTH, d: routeEdge(from, to, others) }];
   });
 
   return { view, hubs, nodes, edges, emptyMessage: hubs.length === 0 ? "No open questions in this run" : null };
@@ -147,12 +169,13 @@ const compareDates = (a: string | null, b: string | null) => (a === b ? 0 : a ==
  * (215°→325°), the rest right → left along the bottom arc (35°→145°). Top-first starts the sweep at the
  * upper left, like the reference, and gives fewer edge crossings for Sarah than bottom-first.
  */
-function placeRing(findings: Finding[], geo: Geometry): NodePos[] {
+function placeRing(findings: Finding[], linked: Set<string>, geo: Geometry): NodePos[] {
   const topCount = Math.ceil(findings.length / 2);
   const angles = [...arcAngles(topCount, TOP_ARC), ...arcAngles(findings.length - topCount, BOTTOM_ARC)];
   const { cx, cy, rx, ry } = geo.ring;
   return findings.map((f, i) => {
-    const kind: NodeKind = f.assertion === "absent" ? "negative" : "finding";
+    const kind: NodeKind =
+      f.assertion === "absent" ? "negative" : f.assertion === "uncertain" ? "uncertain" : linked.has(f.finding_id) ? "finding" : "context";
     const rad = (angles[i] * Math.PI) / 180;
     return {
       id: f.finding_id,
@@ -173,19 +196,25 @@ function arcAngles(count: number, [from, to]: [number, number]): number[] {
   return Array.from({ length: count }, (_, i) => from + step * (i + 0.5));
 }
 
-/** Priors in the geometry's side slots; year from the timeline entry of their first record. */
-function placePriors(priors: PriorResultReview[], timeline: TimelineEvent[] | null, geo: Geometry): NodePos[] {
+/**
+ * Priors in the geometry's side slots. Year: the timeline entry of their first record, else a dated finding on
+ * that record. System: from the test name and the record's specialty.
+ */
+function placePriors(priors: PriorResultReview[], timeline: TimelineEvent[] | null, findings: Finding[], geo: Geometry): NodePos[] {
   const slots = geo.side(priors.length, 0).priors;
   return priors.map((p, i) => {
-    const event = timeline?.find((t) => t.record_id === p.record_refs[0]?.record_id);
+    const recordId = p.record_refs[0]?.record_id;
+    const event = timeline?.find((t) => t.record_id === recordId);
+    const sameRecord = findings.find((f) => f.date && f.record_refs.some((r) => r.record_id === recordId));
+    const date = event?.date ?? sameRecord?.date ?? null;
     return {
       id: p.prior_result_id,
       kind: "prior",
-      system: "blood",
+      system: systemForText(p.test_name, event?.specialty ?? sameRecord?.specialty),
       ...slots[i],
       r: geo.r.prior,
       label: p.test_name,
-      year: event ? event.date.slice(0, 4) : null,
+      year: date ? date.slice(0, 4) : null,
     };
   });
 }
@@ -195,7 +224,7 @@ function placePriors(priors: PriorResultReview[], timeline: TimelineEvent[] | nu
  * items sharing a centroid stack vertically through it with NODE_GAP between them (ruling R5).
  * Every other item takes the geometry's side slots, after the priors.
  */
-function placeMissing(items: MissingEvidence[], priorCount: number, geo: Geometry, hubs: HubPos[]): NodePos[] {
+function placeMissing(items: MissingEvidence[], priorCount: number, geo: Geometry, hubs: HubPos[]): { nodes: NodePos[]; sideCount: number } {
   const hubById = new Map(hubs.map((h) => [h.id, h]));
   const missing = items
     .map((m, index) => ({ m, index }))
@@ -227,7 +256,7 @@ function placeMissing(items: MissingEvidence[], priorCount: number, geo: Geometr
     positions[i] = slots[k];
   });
 
-  return missing.map((m, i) => ({
+  const nodes = missing.map((m, i): NodePos => ({
     id: m.missing_id,
     kind: "missing",
     system: "other",
@@ -236,6 +265,7 @@ function placeMissing(items: MissingEvidence[], priorCount: number, geo: Geometr
     label: m.description,
     year: null,
   }));
+  return { nodes, sideCount: elsewhere.length };
 }
 
 /**
@@ -249,7 +279,35 @@ function placeMissing(items: MissingEvidence[], priorCount: number, geo: Geometr
  *    label sits above it in the reference), and on the phone they miss the finding above the bottom row.
  * Same inputs, same string: coordinates are rounded to 0.1px.
  */
-function edgePath(from: Circle, to: Circle): string {
+/**
+ * The default bend (left), unless it cuts through a node it does not join: crowded live runs put ring nodes or a
+ * second hub across a side item's edge. Then the first of a right bend, or a shallower bend either way, that
+ * clears every node; if none does, the one that clears most. Sarah's fixture keeps the default everywhere.
+ */
+const BENDS = [1, -1, 0.5, -0.5, 0.15, -0.15];
+function routeEdge(from: Circle, to: Circle, others: Circle[]): string {
+  const paths = BENDS.map((bend) => edgePath(from, to, bend));
+  const clear = paths.map((d) => clearance(d, others));
+  const first = clear.findIndex((c) => c > 0);
+  return paths[first >= 0 ? first : clear.indexOf(Math.max(...clear))];
+}
+
+/** Smallest distance from the sampled curve to the edge of any of `circles`. */
+function clearance(d: string, circles: Circle[]): number {
+  const [x0, y0, x1, y1, x2, y2, x3, y3] = d.match(/-?\d+(\.\d+)?/g)!.map(Number);
+  let min = Infinity;
+  for (let i = 0; i <= 50; i++) {
+    const t = i / 50;
+    const u = 1 - t;
+    const x = u ** 3 * x0 + 3 * u * u * t * x1 + 3 * u * t * t * x2 + t ** 3 * x3;
+    const y = u ** 3 * y0 + 3 * u * u * t * y1 + 3 * u * t * t * y2 + t ** 3 * y3;
+    for (const c of circles) min = Math.min(min, Math.hypot(x - c.x, y - c.y) - c.r);
+  }
+  return min;
+}
+
+/** `bend` scales EDGE_BEND: 1 is the default left bend, negative bends right. */
+function edgePath(from: Circle, to: Circle, bend: number): string {
   const dist = Math.hypot(to.x - from.x, to.y - from.y) || 1;
   const ux = (to.x - from.x) / dist;
   const uy = (to.y - from.y) / dist;
@@ -262,9 +320,9 @@ function edgePath(from: Circle, to: Circle): string {
 
   const vx = end.x - start.x;
   const vy = end.y - start.y;
-  const bend = { x: vy * EDGE_BEND, y: -vx * EDGE_BEND };
-  const c1 = { x: start.x + vx * EDGE_PULL + bend.x, y: start.y + vy * EDGE_PULL + bend.y };
-  const c2 = { x: end.x - vx * EDGE_PULL + bend.x, y: end.y - vy * EDGE_PULL + bend.y };
+  const push = { x: bend * vy * EDGE_BEND, y: -bend * vx * EDGE_BEND };
+  const c1 = { x: start.x + vx * EDGE_PULL + push.x, y: start.y + vy * EDGE_PULL + push.y };
+  const c2 = { x: end.x - vx * EDGE_PULL + push.x, y: end.y - vy * EDGE_PULL + push.y };
   const pt = (p: Point) => `${round(p.x)} ${round(p.y)}`;
   return `M ${pt(start)} C ${pt(c1)}, ${pt(c2)}, ${pt(end)}`;
 }

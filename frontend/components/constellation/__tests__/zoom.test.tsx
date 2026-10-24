@@ -69,7 +69,7 @@ describe("ConstellationView zoom", () => {
 
   it("the zoom layer holds all drawn nodes, edges and hubs", async () => {
     setup();
-    expect(layer().querySelectorAll("[data-node-id]")).toHaveLength(14);
+    expect(layer().querySelectorAll("[data-node-id]")).toHaveLength(15);
     expect(layer().querySelectorAll("[data-edge-id]")).toHaveLength(13);
     expect(layer().querySelectorAll("[data-testid=hub]")).toHaveLength(2);
   });
@@ -112,7 +112,7 @@ describe("ConstellationView zoom", () => {
 
   it("uses the narrow layout when asked", () => {
     const { container } = setup({ narrow: true });
-    expect(container.querySelector("svg")!.getAttribute("viewBox")).toBe("0 0 400 720");
+    expect(container.querySelector("svg")!.getAttribute("viewBox")).toBe("0 0 400 780");
   });
 });
 

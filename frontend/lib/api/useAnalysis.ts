@@ -4,6 +4,7 @@ import bundledPatient from "@/fixtures/sarah-001.patient.json";
 import bundledSources from "@/fixtures/sources.json";
 import type { AnalysisRun, PatientRecord, Source } from "@/lib/contracts";
 import {
+  ApiError,
   ApiUnreachable,
   type DataMode,
   dataMode,
@@ -17,6 +18,15 @@ import {
 
 export type AnalysisPhase = "loading" | "queued" | "running" | "completed" | "failed" | "unreachable";
 
+/** An HTTP error from the backend, kept apart from `run.error` (CLAUDE.md: handle them separately). */
+export interface HttpError {
+  status: number;
+  /** `detail.code`, e.g. "configuration_error"; null for a plain string detail. */
+  code: string | null;
+  /** False when the backend marks the error as not retryable. */
+  retryable: boolean;
+}
+
 export interface AnalysisState {
   phase: AnalysisPhase;
   run: AnalysisRun | null;
@@ -24,6 +34,7 @@ export interface AnalysisState {
   sources: Record<string, Source>;
   elapsedMs: number;
   error: string | null;
+  httpError: HttpError | null;
 }
 
 export interface UseAnalysis extends AnalysisState {
@@ -38,6 +49,7 @@ const INITIAL: AnalysisState = {
   sources: {},
   elapsedMs: 0,
   error: null,
+  httpError: null,
 };
 const TICK_MS = 250;
 
@@ -61,6 +73,19 @@ function citedSourceIds(run: AnalysisRun): string[] {
   return [...new Set(ids)];
 }
 
+// Each POST /analyses may start a Gemini run, and the backend's reuse check is not atomic. A second mount for the
+// same patient while a POST is in flight (StrictMode runs effects twice in dev) awaits that POST instead.
+const startsInFlight = new Map<string, Promise<AnalysisRun>>();
+
+function startOnce(patientId: string): Promise<AnalysisRun> {
+  let started = startsInFlight.get(patientId);
+  if (!started) {
+    started = startAnalysis(patientId).finally(() => startsInFlight.delete(patientId));
+    startsInFlight.set(patientId, started);
+  }
+  return started;
+}
+
 async function loadRun(
   mode: DataMode,
   patientId: string,
@@ -70,7 +95,7 @@ async function loadRun(
   if (mode === "offline") return offlineFor(patientId).run;
   if (mode === "fixture") return getFixtureRun(patientId);
   // live: 202 is a new queued run; 200 is a reused run, which may itself still be in progress.
-  const started = await startAnalysis(patientId);
+  const started = await startOnce(patientId);
   if (!isPending(started)) return started;
   onPending(started);
   return pollRun(started.run_id, {
@@ -85,8 +110,9 @@ async function loadPatient(mode: DataMode, patientId: string): Promise<PatientRe
   return mode === "offline" ? offlineFor(patientId).patient : getPatient(patientId);
 }
 
+/** Sources that fail to load are left out; their citations then read "Source unavailable". */
 async function loadSources(mode: DataMode, patientId: string, ids: string[]): Promise<Record<string, Source>> {
-  const loaded = await Promise.all(
+  const loaded = await Promise.allSettled(
     ids.map(async (id) => {
       if (mode !== "offline") return getSource(id);
       const source = offlineFor(patientId).sources[id];
@@ -94,18 +120,26 @@ async function loadSources(mode: DataMode, patientId: string, ids: string[]): Pr
       return source;
     }),
   );
-  return Object.fromEntries(ids.map((id, i) => [id, loaded[i]]));
+  return Object.fromEntries(ids.flatMap((id, i) => {
+    const result = loaded[i];
+    return result.status === "fulfilled" ? [[id, result.value]] : [];
+  }));
 }
 
-function settled(run: AnalysisRun): Pick<AnalysisState, "phase" | "error"> {
+type Outcome = Pick<AnalysisState, "phase" | "error" | "httpError">;
+
+function settled(run: AnalysisRun): Outcome {
   return run.status === "failed"
-    ? { phase: "failed", error: run.error?.message ?? null }
-    : { phase: "completed", error: null };
+    ? { phase: "failed", error: run.error?.message ?? null, httpError: null }
+    : { phase: "completed", error: null, httpError: null };
 }
 
-function failure(error: unknown): Pick<AnalysisState, "phase" | "error"> {
-  if (error instanceof ApiUnreachable) return { phase: "unreachable", error: error.message };
-  return { phase: "failed", error: error instanceof Error ? error.message : String(error) };
+function failure(error: unknown): Outcome {
+  if (error instanceof ApiUnreachable) return { phase: "unreachable", error: error.message, httpError: null };
+  if (error instanceof ApiError) {
+    return { phase: "failed", error: error.displayMessage, httpError: { status: error.status, code: error.code, retryable: error.retryable } };
+  }
+  return { phase: "failed", error: error instanceof Error ? error.message : String(error), httpError: null };
 }
 
 /**
@@ -139,15 +173,17 @@ export function useAnalysis(patientId: string): UseAnalysis {
 
     void (async () => {
       const mode = dataMode();
+      let run: AnalysisRun | null = null;
       try {
-        const run = await loadRun(mode, patientId, onPending, controller.signal);
+        run = await loadRun(mode, patientId, onPending, controller.signal);
         stopTicker();
         const patient = await loadPatient(mode, patientId);
         const sources = await loadSources(mode, patientId, citedSourceIds(run));
         update({ run, patient, sources, ...settled(run) });
       } catch (error) {
         stopTicker();
-        update(failure(error));
+        // A run that did load is kept, so a later patient error does not throw it away.
+        update({ ...(run && { run }), ...failure(error) });
       }
     })();
 
@@ -166,6 +202,7 @@ export function useAnalysis(patientId: string): UseAnalysis {
     sources: current.sources,
     elapsedMs: current.elapsedMs,
     error: current.error,
+    httpError: current.httpError,
     retry,
   };
 }

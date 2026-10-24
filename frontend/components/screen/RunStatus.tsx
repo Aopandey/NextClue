@@ -8,10 +8,12 @@ const mmss = (ms: number) => {
   return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
 };
 
-type Props = Pick<UseAnalysis, "phase" | "run" | "error" | "elapsedMs" | "retry"> & { patientId: string };
+type Props = Pick<UseAnalysis, "phase" | "run" | "error" | "httpError" | "elapsedMs" | "retry"> & { patientId: string };
 
-/** Everything that is not a finished, drawable run: loading, progress, failure, unreachable. */
-export function RunStatus({ phase, run, error, elapsedMs, retry, patientId }: Props) {
+const MONO = "font-mono text-[12px] text-[var(--mut)]";
+
+/** Everything that is not a finished, drawable run: loading, progress, failure, unreachable, replay, no output. */
+export function RunStatus({ phase, run, error, httpError, elapsedMs, retry, patientId }: Props) {
   if (phase === "loading") return <p className="text-[14px] text-[var(--mut)]">Loading analysis…</p>;
 
   if (phase === "queued" || phase === "running") {
@@ -36,25 +38,50 @@ export function RunStatus({ phase, run, error, elapsedMs, retry, patientId }: Pr
   }
 
   if (phase === "failed") {
-    const runError = run?.error;
+    // run.error belongs to a failed run; an HTTP error (httpError) can also follow a run that did load.
+    const runError = run?.status === "failed" ? run.error : null;
+    if (runError) {
+      return (
+        <div className="space-y-2" role="alert">
+          <p className="text-[14px] font-bold">{runError.message}</p>
+          <p className={MONO}>{runError.code}</p>
+          {runError.retryable && <button type="button" className={BUTTON} onClick={retry}>Retry</button>}
+        </div>
+      );
+    }
     return (
       <div className="space-y-2" role="alert">
-        <p className="text-[14px] font-bold">{runError?.message ?? error ?? "The analysis failed."}</p>
-        {runError && <p className="font-mono text-[12px] text-[var(--mut)]">{runError.code}</p>}
-        {(runError ? runError.retryable : true) && (
-          <button type="button" className={BUTTON} onClick={retry}>Retry</button>
+        <p className="text-[14px] font-bold">{error ?? "The analysis failed."}</p>
+        {httpError && <p className={MONO}>{[httpError.code, `HTTP ${httpError.status}`].filter(Boolean).join(" · ")}</p>}
+        {httpError?.code === "configuration_error" && (
+          <p className="text-[13.5px] text-[var(--mut)]">A server configuration problem: retrying will not help until the backend settings are fixed.</p>
         )}
+        {httpError?.retryable !== false && <button type="button" className={BUTTON} onClick={retry}>Retry</button>}
       </div>
     );
   }
 
-  if (run?.provenance === "replayed") {
-    return (
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-l-[3px] border-[var(--sig)] pl-3">
+  if (phase !== "completed" || !run) return null;
+  const retryable = run.error?.retryable !== false;
+  const replayed = run.provenance === "replayed" && (
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-l-[3px] border-[var(--sig)] pl-3">
+      <div className="space-y-0.5">
         <p className="text-[13.5px]">{run.fallback_reason ?? "Showing a replayed run."}</p>
-        <button type="button" className={BUTTON} onClick={retry}>Retry live</button>
+        {run.error && (
+          <p className="text-[13px] text-[var(--mut)]">
+            <span>{run.error.message}</span> <span className={MONO}>{run.error.code}</span>
+          </p>
+        )}
       </div>
-    );
-  }
-  return null;
+      {retryable && <button type="button" className={BUTTON} onClick={retry}>Retry live</button>}
+    </div>
+  );
+  if (run.output) return replayed || null;
+  return (
+    <div className="space-y-2">
+      {replayed}
+      <p className="text-[14px] font-bold">The analysis completed without output.</p>
+      {!replayed && retryable && <button type="button" className={BUTTON} onClick={retry}>Retry</button>}
+    </div>
+  );
 }

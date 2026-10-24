@@ -1,9 +1,13 @@
 import { describe, expect, it } from "vitest";
 import fixtureJson from "@/fixtures/sarah-001.run.json";
+import jamesLiveJson from "@/fixtures/live/james-002.run.json";
+import sarahLiveJson from "@/fixtures/live/sarah-001.run.json";
 import type { AnalysisRun, Hypothesis } from "@/lib/contracts";
 import { layoutConstellation, type Layout } from "../layout";
 
 const fixtureRun = fixtureJson as AnalysisRun;
+const jamesLive = jamesLiveJson as AnalysisRun;
+const sarahLive = sarahLiveJson as AnalysisRun;
 
 // ---------------------------------------------------------------- helpers (test-only runs never reach the UI)
 
@@ -96,7 +100,7 @@ const node = (L: Layout, id: string) => L.nodes.find((n) => n.id === id)!;
 describe("layoutConstellation (Sarah, desktop)", () => {
   it("Sarah: 2 hubs side by side, Fabry first", () => { expect(sarah.hubs.map(h=>[h.id,h.x,h.y])).toEqual([["hyp-fabry",480,380],["hyp-separate-conditions",720,380]]); });
   it("Sarah: GLA report sits between the two hubs it would clarify; father's diagnosis in the right column", () => { const m = (id:string)=>sarah.nodes.find(n=>n.id===id)!; expect([m("mis-gla-report").x, m("mis-gla-report").y]).toEqual([600,380]); expect(m("mis-father-diagnosis").x).toBe(1080); });
-  it("Sarah: 7 findings, 2 negatives, 1 prior, 2 missing", () => { const k = (t:string)=>sarah.nodes.filter(n=>n.kind===t).length; expect([k("finding"),k("negative"),k("prior"),k("missing")]).toEqual([7,2,1,2]); });
+  it("Sarah: 7 findings, 1 unlinked finding, 2 negatives, 1 prior, 2 missing", () => { const k = (t:string)=>sarah.nodes.filter(n=>n.kind===t).length; expect([k("finding"),k("context"),k("negative"),k("prior"),k("missing")]).toEqual([7,1,2,1,2]); });
   it("Sarah: 13 graph edges kept with their relations", () => expect(sarah.edges.map(e=>e.relation).sort()).toEqual([...Array(9).fill("supports"),"previously_tested",...Array(3).fill("would_clarify")].sort()));
   it("no two nodes overlap (gap ≥ 8px) for Sarah", () => expect(minGap(sarah)).toBeGreaterThanOrEqual(8));
   it("no open hypotheses → empty message", () => expect(layoutConstellation(withAllExcluded(fixtureRun)).emptyMessage).toBe("No open questions in this run"));
@@ -115,7 +119,7 @@ describe("layoutConstellation details", () => {
   });
 
   it("orders ring nodes by body system then date, with systems, labels, years and radii from data", () => {
-    const ring = sarah.nodes.filter((n) => n.kind === "finding" || n.kind === "negative");
+    const ring = sarah.nodes.filter((n) => n.kind === "finding" || n.kind === "negative" || n.kind === "context");
     expect(ring.map((n) => [n.id, n.kind, n.system, n.year, n.r])).toEqual([
       ["fnd-limb-pain", "finding", "nerve", "2012", 26],
       ["fnd-small-fiber-neuropathy", "finding", "nerve", "2016", 26],
@@ -126,13 +130,13 @@ describe("layoutConstellation details", () => {
       ["fnd-cornea-verticillata", "finding", "eye", "2023", 26],
       ["fnd-father-dialysis", "finding", "family", "2021", 26],
       ["fnd-diabetes-absent", "negative", "blood", "2016", 14],
+      ["fnd-enzyme-normal", "context", "blood", "2016", 14],
     ]);
     expect(node(sarah, "fnd-limb-pain").label).toBe("Burning pain in hands and feet since adolescence");
-    expect(sarah.nodes.some((n) => n.id === "fnd-enzyme-normal")).toBe(false);
   });
 
   it("places ring nodes on the ellipse within the 35°→145° and 215°→325° arcs, never on the endpoints", () => {
-    for (const n of sarah.nodes.filter((n) => n.kind === "finding" || n.kind === "negative")) {
+    for (const n of sarah.nodes.filter((n) => n.kind === "finding" || n.kind === "negative" || n.kind === "context")) {
       const [cx, cy] = [(n.x - 600) / 400, (n.y - 380) / 285];
       expect(Math.hypot(cx, cy)).toBeCloseTo(1, 2);
       const deg = ((Math.atan2(cy, cx) * 180) / Math.PI + 360) % 360;
@@ -167,14 +171,21 @@ describe("layoutConstellation details", () => {
     const L = layoutConstellation(withAllExcluded(fixtureRun));
     expect(L.hubs).toEqual([]);
     expect(L.edges).toEqual([]);
-    expect(L.nodes).toHaveLength(12);
+    expect(L.nodes).toHaveLength(13);
     expect(minGap(L)).toBeGreaterThanOrEqual(8);
   });
 
   it("failed run also yields no hubs, no edges and no empty message", () => {
     const L = layoutConstellation({ ...fixtureRun, status: "failed", output: null });
     expect([L.hubs, L.edges, L.emptyMessage]).toEqual([[], [], null]);
-    expect(layoutConstellation({ ...fixtureRun, graph: null }).nodes).toEqual([]);
+  });
+
+  it("a run with output but no graph still draws its hubs and nodes, without edges", () => {
+    const L = layoutConstellation({ ...fixtureRun, graph: null });
+    expect(L.hubs).toHaveLength(2);
+    expect(L.nodes).toHaveLength(13);
+    expect(L.edges).toEqual([]);
+    expect(minGap(L)).toBeGreaterThanOrEqual(8);
   });
 
   it("does not mutate the run", () => {
@@ -238,7 +249,7 @@ describe("layoutConstellation (narrow)", () => {
   const narrow = layoutConstellation(fixtureRun, { narrow: true });
 
   it("uses the phone view; hubs share a y with Fabry on the left; GLA report at their centroid", () => {
-    expect(narrow.view).toEqual({ w: 400, h: 720 });
+    expect(narrow.view).toEqual({ w: 400, h: 780 });
     const [fabry, separate] = narrow.hubs;
     expect([fabry.id, separate.id]).toEqual(["hyp-fabry", "hyp-separate-conditions"]);
     expect(fabry.y).toBe(separate.y);
@@ -272,5 +283,60 @@ describe("layoutConstellation (narrow)", () => {
       expect(minMargin(L)).toBeGreaterThanOrEqual(8);
       expect(minGap(L)).toBeGreaterThanOrEqual(8);
     }
+  });
+});
+
+// ---------------------------------------------------------------- recorded live runs (fixtures/live, test-only)
+
+/** Desktop: no edge touches a node it does not join. Phone: the 12-finding ring is crowded; an edge may graze a circle's rim (< 1 unit), never cut through it. */
+const expectEdgesClear = (L: Layout, narrow: boolean) => expect(minEdgeClearance(L)).toBeGreaterThan(narrow ? -1 : 0);
+
+describe("layoutConstellation (live runs)", () => {
+  it.each([false, true])("James: every output finding is drawn, linked or not; edges only where the graph has them (narrow: %s)", (narrow) => {
+    const L = layoutConstellation(jamesLive, { narrow });
+    const ids = L.nodes.map((n) => n.id);
+    for (const f of jamesLive.output!.findings) expect(ids, f.label).toContain(f.finding_id);
+    const kind = (id: string) => node(L, id).kind;
+    expect(["fnd-003", "fnd-005", "fnd-011"].map(kind)).toEqual(["finding", "finding", "finding"]);
+    expect(["fnd-001", "fnd-009", "fnd-010"].map(kind)).toEqual(["context", "context", "context"]);
+    expect(["fnd-007", "fnd-008", "fnd-012"].map(kind)).toEqual(["negative", "negative", "negative"]);
+    expect(L.edges.map((e) => e.id)).toEqual(jamesLive.graph!.edges.map((e) => e.edge_id));
+    expect(minGap(L)).toBeGreaterThanOrEqual(8);
+    expect(minMargin(L)).toBeGreaterThanOrEqual(8);
+    expectEdgesClear(L, narrow);
+  });
+
+  it.each([false, true])("Sarah live: the family-history finding without a graph node is drawn (narrow: %s)", (narrow) => {
+    const L = layoutConstellation(sarahLive, { narrow });
+    expect(node(L, "fnd-08")).toMatchObject({ kind: "context", system: "family" });
+    expect(minGap(L)).toBeGreaterThanOrEqual(8);
+    expect(minMargin(L)).toBeGreaterThanOrEqual(8);
+    expectEdgesClear(L, narrow);
+  });
+
+  it("a prior's system and year come from its data (James: B12 is blood; year from the timeline)", () => {
+    expect(node(layoutConstellation(jamesLive), "pri-001")).toMatchObject({ kind: "prior", system: "blood", year: "2018", label: "Vitamin B12 level" });
+  });
+
+  it("without a timeline, a prior's year falls back to a finding dated on the same record", () => {
+    expect(node(layoutConstellation({ ...jamesLive, timeline: null }), "pri-001").year).toBe("2018");
+  });
+
+  it("an uncertain finding is its own kind, so the uncertainty stays visible", () => {
+    const r = clone(jamesLive);
+    r.output!.findings.find((f) => f.finding_id === "fnd-005")!.assertion = "uncertain";
+    expect(node(layoutConstellation(r), "fnd-005")).toMatchObject({ kind: "uncertain", r: 26 });
+    expect(node(layoutConstellation(r, { narrow: true }), "fnd-005")).toMatchObject({ kind: "uncertain", r: 20 });
+  });
+
+  it("phone: more than 4 priors and side missing items wrap into extra rows inside a taller view", () => {
+    const r = clone(jamesLive);
+    const m = r.output!.missing_evidence[0];
+    r.output!.missing_evidence = [1, 2, 3, 4, 5].map((i) => ({ ...m, missing_id: `mis-x${i}`, priority: i }));
+    const L = layoutConstellation(r, { narrow: true });
+    expect(L.view.w).toBe(400);
+    expect(L.view.h).toBeGreaterThan(780);
+    expect(minMargin(L)).toBeGreaterThanOrEqual(8);
+    expect(minGap(L)).toBeGreaterThanOrEqual(8);
   });
 });

@@ -16,7 +16,7 @@ const patient = patientJson as PatientRecord;
 const sources = sourcesJson as Record<string, Source>;
 const retry = vi.fn();
 
-const base: UseAnalysis = { phase: "completed", run, patient, sources, elapsedMs: 0, error: null, retry };
+const base: UseAnalysis = { phase: "completed", run, patient, sources, elapsedMs: 0, error: null, httpError: null, retry };
 const state = (patch: Partial<UseAnalysis>) => mockUseAnalysis.mockReturnValue({ ...base, ...patch });
 const pending = { ...run, status: "running" as const, output: null, graph: null, timeline: null };
 const show = () => render(<HealthScreen patientId="sarah-001" />);
@@ -83,10 +83,49 @@ describe("HealthScreen run states", () => {
     expect(nodes()).toHaveLength(0);
   });
 
-  it("completed run with no output draws nothing", () => {
-    state({ run: { ...run, output: null, graph: null } });
+  it("completed run with no output draws nothing and says so, with the disclaimer and Retry", async () => {
+    state({ run: { ...run, provenance: "live", output: null, graph: null, timeline: null } });
     show();
     expect(nodes()).toHaveLength(0);
+    expect(screen.getByText("The analysis completed without output.")).toBeInTheDocument();
+    expect(screen.getByText(run.disclaimer)).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Retry" }));
+    expect(retry).toHaveBeenCalledOnce();
+  });
+
+  it("HTTP 503 configuration_error: message and code, labelled a server configuration problem, no Retry", () => {
+    state({
+      phase: "failed",
+      run: null,
+      patient: null,
+      error: "Server is missing GEMINI_API_KEY.",
+      httpError: { status: 503, code: "configuration_error", retryable: false },
+    });
+    show();
+    expect(screen.getByText("Server is missing GEMINI_API_KEY.")).toBeInTheDocument();
+    expect(screen.getByText("configuration_error · HTTP 503")).toBeInTheDocument();
+    expect(screen.getByText(/server configuration problem/i)).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Retry/ })).toBeNull();
+  });
+
+  it("a retryable HTTP error keeps Retry", () => {
+    state({ phase: "failed", run: null, patient: null, error: "Backend returned 500: boom", httpError: { status: 500, code: null, retryable: true } });
+    show();
+    expect(screen.getByText("HTTP 500")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Retry" })).toBeInTheDocument();
+  });
+
+  it("the disclaimer is visible while loading, on failure and when unreachable", () => {
+    for (const patch of [
+      { phase: "loading" as const, run: null, patient: null },
+      { phase: "unreachable" as const, run: null, patient: null, error: "Can't reach the backend at x" },
+      { phase: "failed" as const, run: { ...pending, status: "failed" as const, error: { code: "timeout" as const, message: "Model timed out", retryable: true } }, error: "Model timed out" },
+    ]) {
+      state(patch);
+      const { unmount } = show();
+      expect(screen.getByText(run.disclaimer)).toBeInTheDocument();
+      unmount();
+    }
   });
 
   it("replayed: shows the fallback reason and Retry live", async () => {
@@ -96,6 +135,23 @@ describe("HealthScreen run states", () => {
     expect(screen.getByText("Replayed run")).toBeInTheDocument();
     await userEvent.click(screen.getByRole("button", { name: "Retry live" }));
     expect(retry).toHaveBeenCalledOnce();
+    expect(nodes().length).toBeGreaterThan(0);
+  });
+
+  it("replayed: also shows run.error's message and code; no Retry live when it is not retryable", () => {
+    state({
+      run: {
+        ...run,
+        provenance: "replayed",
+        fallback_reason: "Live attempt failed; showing an earlier validated run.",
+        error: { code: "model_error", message: "Provider returned 503 after retries", retryable: false },
+      },
+    });
+    show();
+    expect(screen.getByText(/showing an earlier validated run/)).toBeInTheDocument();
+    expect(screen.getByText("Provider returned 503 after retries")).toBeInTheDocument();
+    expect(screen.getByText("model_error")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Retry live" })).toBeNull();
     expect(nodes().length).toBeGreaterThan(0);
   });
 });
@@ -114,6 +170,19 @@ describe("HealthScreen completed", () => {
     show();
     expect(screen.getByText(`Live analysis · ${run.versions.model}`)).toBeInTheDocument();
     expect(screen.getByText("Evidence: cached")).toBeInTheDocument();
+  });
+
+  it("live evidence (PubMed-selected) is labelled too, distinct from cached", () => {
+    state({ run: { ...run, provenance: "live", evidence_mode: "live" } });
+    show();
+    expect(screen.getByText("Evidence: live (PubMed)")).toBeInTheDocument();
+    expect(screen.queryByText("Evidence: cached")).toBeNull();
+  });
+
+  it("age comes from the run's year, not a fixed year", () => {
+    state({ run: { ...run, created_at: "2031-03-01T00:00:00Z" } });
+    show();
+    expect(screen.getByText("Sarah · 45 · F · 10 records 2012–2024")).toBeInTheDocument();
   });
 
   it("footer shows the disclaimer and the clinician line", () => {
@@ -166,7 +235,7 @@ describe("HealthScreen narrow", () => {
     narrowMatch(true);
     state({});
     const { container } = show();
-    expect(container.querySelector("svg.cn")!.getAttribute("viewBox")).toBe("0 0 400 720");
+    expect(container.querySelector("svg.cn")!.getAttribute("viewBox")).toBe("0 0 400 780");
     fireEvent.click(nodes()[nodes().length - 1]);
     expect(screen.getByRole("dialog")).toBeInTheDocument();
     expect(screen.getByTestId("screen-body")).toHaveStyle({ paddingBottom: "45vh" });
@@ -177,9 +246,9 @@ describe("HealthScreen narrow", () => {
     const change = narrowMatch(false);
     state({});
     const { container } = show();
-    expect(container.querySelector("svg.cn")!.getAttribute("viewBox")).not.toBe("0 0 400 720");
+    expect(container.querySelector("svg.cn")!.getAttribute("viewBox")).not.toBe("0 0 400 780");
     act(() => change(true));
-    expect(container.querySelector("svg.cn")!.getAttribute("viewBox")).toBe("0 0 400 720");
+    expect(container.querySelector("svg.cn")!.getAttribute("viewBox")).toBe("0 0 400 780");
     vi.unstubAllGlobals();
   });
 });

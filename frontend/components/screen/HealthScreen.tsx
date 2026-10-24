@@ -8,9 +8,13 @@ import { PatientHeader } from "./PatientHeader";
 import { RunStatus } from "./RunStatus";
 import { useNarrow } from "./useNarrow";
 
+// backend/app/contracts.py DISCLAIMER, shown until a run brings its own (spec Decision 10: always visible).
+const FALLBACK_DISCLAIMER =
+  "Clinical decision support prototype using synthetic data. Not clinically validated. Findings are unconfirmed and require clinician review.";
+
 /** The patient health screen: header, run state, constellation, and the detail panel for the selected node. */
 export function HealthScreen({ patientId }: { patientId: string }) {
-  const { phase, run, patient, sources, elapsedMs, error, retry } = useAnalysis(patientId);
+  const { phase, run, patient, sources, elapsedMs, error, httpError, retry } = useAnalysis(patientId);
   const narrow = useNarrow();
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -26,19 +30,17 @@ export function HealthScreen({ patientId }: { patientId: string }) {
       >
         <div className="space-y-3">
           {drawable && <PatientHeader patient={drawable.patient} run={drawable.run} />}
-          <RunStatus phase={phase} run={run} error={error} elapsedMs={elapsedMs} retry={retry} patientId={patientId} />
+          <RunStatus phase={phase} run={run} error={error} httpError={httpError} elapsedMs={elapsedMs} retry={retry} patientId={patientId} />
         </div>
         {drawable && (
           <main className="mt-3 sm:min-h-[240px] sm:flex-1">
             <ConstellationView run={drawable.run} selectedId={selectedId} onSelect={setSelectedId} narrow={narrow} />
           </main>
         )}
-        {drawable && (
-          <footer className="mt-4 space-y-1 text-[12.5px] text-[var(--mut)]">
-            <p>{drawable.run.disclaimer}</p>
-            <p>The clinician decides; nothing here is confirmed.</p>
-          </footer>
-        )}
+        <footer className="mt-4 space-y-1 text-[12.5px] text-[var(--mut)]">
+          <p>{run?.disclaimer || FALLBACK_DISCLAIMER}</p>
+          <p>The clinician decides; nothing here is confirmed.</p>
+        </footer>
       </div>
       {drawable && selectedId && (
         <DetailPanel

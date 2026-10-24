@@ -1,0 +1,485 @@
+{
+ "schema_version": "analysis.v1",
+ "run_id": "run-f654cb56008f43ef",
+ "status": "completed",
+ "provenance": "live",
+ "replayed_from_run_id": null,
+ "fallback_reason": null,
+ "evidence_mode": "cached",
+ "patient_id": "james-002",
+ "record_version": 1,
+ "excluded_record_ids": [],
+ "cache_key": "sha256:041077cdd2b79ec942c03a5035ac6d5605a33b7029ff7540c3e45153bb6687bf",
+ "versions": {
+  "schema_version": "analysis.v1",
+  "model": "gemini-3.5-flash-lite",
+  "prompt": "extract-v3+handoff-v3",
+  "evidence": "evidence-2026-10-24.1"
+ },
+ "created_at": "2026-10-24T16:55:51.614878Z",
+ "completed_at": "2026-10-24T16:56:11.756298Z",
+ "error": null,
+ "output": {
+  "findings": [
+   {
+    "finding_id": "fnd-001",
+    "label": "Fatigue",
+    "kind": "symptom",
+    "assertion": "present",
+    "date": "2015-03-04",
+    "specialty": "primary care",
+    "record_refs": [
+     {
+      "record_id": "rec-2015-pcp",
+      "excerpt": "fatigue and increased thirst"
+     }
+    ],
+    "hpo_id": null
+   },
+   {
+    "finding_id": "fnd-002",
+    "label": "Increased thirst",
+    "kind": "symptom",
+    "assertion": "present",
+    "date": "2015-03-04",
+    "specialty": "primary care",
+    "record_refs": [
+     {
+      "record_id": "rec-2015-pcp",
+      "excerpt": "fatigue and increased thirst"
+     }
+    ],
+    "hpo_id": null
+   },
+   {
+    "finding_id": "fnd-003",
+    "label": "Type 2 diabetes",
+    "kind": "diagnosis",
+    "assertion": "present",
+    "date": "2015-03-04",
+    "specialty": "primary care",
+    "record_refs": [
+     {
+      "record_id": "rec-2015-pcp",
+      "excerpt": "Diagnosis: type 2 diabetes"
+     }
+    ],
+    "hpo_id": null
+   },
+   {
+    "finding_id": "fnd-004",
+    "label": "Mother with type 2 diabetes",
+    "kind": "family_history",
+    "assertion": "present",
+    "date": "2015-03-04",
+    "specialty": "primary care",
+    "record_refs": [
+     {
+      "record_id": "rec-2015-pcp",
+      "excerpt": "mother with type 2 diabetes"
+     }
+    ],
+    "hpo_id": null
+   },
+   {
+    "finding_id": "fnd-005",
+    "label": "Diabetic peripheral neuropathy",
+    "kind": "diagnosis",
+    "assertion": "present",
+    "date": "2018-10-16",
+    "specialty": "primary care",
+    "record_refs": [
+     {
+      "record_id": "rec-2018-pcp",
+      "excerpt": "Impression: diabetic peripheral neuropathy."
+     }
+    ],
+    "hpo_id": null
+   },
+   {
+    "finding_id": "fnd-006",
+    "label": "Gastroesophageal reflux disease",
+    "kind": "diagnosis",
+    "assertion": "present",
+    "date": "2019-06-11",
+    "specialty": "gastroenterology",
+    "record_refs": [
+     {
+      "record_id": "rec-2019-gi",
+      "excerpt": "Impression: gastroesophageal reflux disease."
+     }
+    ],
+    "hpo_id": null
+   },
+   {
+    "finding_id": "fnd-007",
+    "label": "Diarrhea",
+    "kind": "symptom",
+    "assertion": "absent",
+    "date": "2019-06-11",
+    "specialty": "gastroenterology",
+    "record_refs": [
+     {
+      "record_id": "rec-2019-gi",
+      "excerpt": "No diarrhea or weight loss."
+     }
+    ],
+    "hpo_id": null
+   },
+   {
+    "finding_id": "fnd-008",
+    "label": "Weight loss",
+    "kind": "symptom",
+    "assertion": "absent",
+    "date": "2019-06-11",
+    "specialty": "gastroenterology",
+    "record_refs": [
+     {
+      "record_id": "rec-2019-gi",
+      "excerpt": "No diarrhea or weight loss."
+     }
+    ],
+    "hpo_id": null
+   },
+   {
+    "finding_id": "fnd-009",
+    "label": "Mild left ventricular hypertrophy",
+    "kind": "imaging",
+    "assertion": "present",
+    "date": "2020-08-05",
+    "specialty": "cardiology",
+    "record_refs": [
+     {
+      "record_id": "rec-2020-cardio",
+      "excerpt": "Echocardiogram shows mild left ventricular hypertrophy consistent with long-standing hypertension."
+     }
+    ],
+    "hpo_id": null
+   },
+   {
+    "finding_id": "fnd-010",
+    "label": "Moderate nonproliferative diabetic retinopathy",
+    "kind": "diagnosis",
+    "assertion": "present",
+    "date": "2021-12-07",
+    "specialty": "ophthalmology",
+    "record_refs": [
+     {
+      "record_id": "rec-2021-eye",
+      "excerpt": "Dilated exam shows moderate nonproliferative diabetic retinopathy in both eyes."
+     }
+    ],
+    "hpo_id": null
+   },
+   {
+    "finding_id": "fnd-011",
+    "label": "Diabetic kidney disease",
+    "kind": "diagnosis",
+    "assertion": "present",
+    "date": "2022-02-23",
+    "specialty": "nephrology",
+    "record_refs": [
+     {
+      "record_id": "rec-2022-nephro",
+      "excerpt": "Impression: diabetic kidney disease."
+     }
+    ],
+    "hpo_id": null
+   },
+   {
+    "finding_id": "fnd-012",
+    "label": "Foot ulcer",
+    "kind": "sign",
+    "assertion": "absent",
+    "date": "2024-02-14",
+    "specialty": "podiatry",
+    "record_refs": [
+     {
+      "record_id": "rec-2024-podiatry",
+      "excerpt": "No ulcer."
+     }
+    ],
+    "hpo_id": null
+   }
+  ],
+  "claims": [
+   {
+    "claim_id": "clm-001",
+    "text": "The patient has a documented diagnosis of type 2 diabetes.",
+    "record_refs": [
+     {
+      "record_id": "rec-2015-pcp",
+      "excerpt": "Diagnosis: type 2 diabetes."
+     }
+    ],
+    "source_refs": [
+     {
+      "source_id": "src-sfn-review",
+      "excerpt_id": "exc-sfn-causes"
+     }
+    ]
+   },
+   {
+    "claim_id": "clm-002",
+    "text": "The patient experienced numbness and tingling in both feet and was diagnosed with diabetic peripheral neuropathy.",
+    "record_refs": [
+     {
+      "record_id": "rec-2018-pcp",
+      "excerpt": "Impression: diabetic peripheral neuropathy."
+     }
+    ],
+    "source_refs": [
+     {
+      "source_id": "src-ada-diabetic-neuropathy",
+      "excerpt_id": "exc-dn-prevalent"
+     }
+    ]
+   },
+   {
+    "claim_id": "clm-003",
+    "text": "The patient had heartburn and mild erosive esophagitis with a documented impression of gastroesophageal reflux disease.",
+    "record_refs": [
+     {
+      "record_id": "rec-2019-gi",
+      "excerpt": "Impression: gastroesophageal reflux disease."
+     }
+    ],
+    "source_refs": [
+     {
+      "source_id": "src-genereviews-fabry",
+      "excerpt_id": "exc-fabry-gi"
+     }
+    ]
+   }
+  ],
+  "prior_results": [
+   {
+    "prior_result_id": "pri-001",
+    "test_name": "Vitamin B12 level",
+    "record_refs": [
+     {
+      "record_id": "rec-2018-pcp",
+      "excerpt": "Vitamin B12 normal."
+     }
+    ],
+    "result_summary": "Vitamin B12 normal",
+    "interpretation_at_the_time": "Normal vitamin B12 level",
+    "what_it_established": "Ruled out vitamin B12 deficiency as a contributor to neuropathy symptoms.",
+    "limitation_claim_ids": [
+     "clm-002"
+    ],
+    "hypothesis_ids": [
+     "hyp-001"
+    ]
+   }
+  ],
+  "hypotheses": [
+   {
+    "hypothesis_id": "hyp-001",
+    "name": "Diabetic complications",
+    "is_rare_disease": false,
+    "status": "open",
+    "summary": "Findings such as peripheral neuropathy and nephropathy are unconfirmed as solely diabetic in origin while other metabolic causes remain possible.",
+    "supporting_finding_ids": [
+     "fnd-003",
+     "fnd-005",
+     "fnd-011"
+    ],
+    "supporting_claim_ids": [
+     "clm-001",
+     "clm-002"
+    ],
+    "contradicting_claim_ids": []
+   }
+  ],
+  "missing_evidence": [
+   {
+    "missing_id": "mis-001",
+    "priority": 1,
+    "description": "Comprehensive metabolic and neurologic evaluation records.",
+    "why_it_matters": "Clarifies whether additional metabolic or non-diabetic contributing factors are present.",
+    "check_existing_first": false,
+    "existing_record_refs": [],
+    "claim_ids": [
+     "clm-002"
+    ],
+    "hypothesis_ids": [
+     "hyp-001"
+    ],
+    "possible_outcomes": [
+     {
+      "outcome": "If additional metabolic abnormalities are identified",
+      "implication": "would support an alternative or contributory etiology for neuropathy."
+     }
+    ]
+   }
+  ],
+  "clinician_questions": [
+   {
+    "question_id": "q-001",
+    "text": "Are there records of any prior specialist evaluations or additional diagnostic testing not currently in the chart?",
+    "missing_ids": [
+     "mis-001"
+    ]
+   }
+  ]
+ },
+ "timeline": [
+  {
+   "record_id": "rec-2015-pcp",
+   "date": "2015-03-04",
+   "specialty": "primary care",
+   "title": "Primary care: new diagnosis of type 2 diabetes",
+   "finding_ids": [
+    "fnd-001",
+    "fnd-002",
+    "fnd-003",
+    "fnd-004"
+   ]
+  },
+  {
+   "record_id": "rec-2016-lab",
+   "date": "2016-04-12",
+   "specialty": "primary care",
+   "title": "Lipid panel and HbA1c",
+   "finding_ids": []
+  },
+  {
+   "record_id": "rec-2017-pcp",
+   "date": "2017-09-20",
+   "specialty": "primary care",
+   "title": "Primary care: diabetes follow-up",
+   "finding_ids": []
+  },
+  {
+   "record_id": "rec-2018-pcp",
+   "date": "2018-10-16",
+   "specialty": "primary care",
+   "title": "Primary care: foot numbness",
+   "finding_ids": [
+    "fnd-005"
+   ]
+  },
+  {
+   "record_id": "rec-2019-gi",
+   "date": "2019-06-11",
+   "specialty": "gastroenterology",
+   "title": "Gastroenterology: heartburn",
+   "finding_ids": [
+    "fnd-006",
+    "fnd-007",
+    "fnd-008"
+   ]
+  },
+  {
+   "record_id": "rec-2020-cardio",
+   "date": "2020-08-05",
+   "specialty": "cardiology",
+   "title": "Cardiology: exertional chest tightness",
+   "finding_ids": [
+    "fnd-009"
+   ]
+  },
+  {
+   "record_id": "rec-2021-eye",
+   "date": "2021-12-07",
+   "specialty": "ophthalmology",
+   "title": "Ophthalmology: diabetic eye exam",
+   "finding_ids": [
+    "fnd-010"
+   ]
+  },
+  {
+   "record_id": "rec-2022-nephro",
+   "date": "2022-02-23",
+   "specialty": "nephrology",
+   "title": "Nephrology consult: albuminuria",
+   "finding_ids": [
+    "fnd-011"
+   ]
+  },
+  {
+   "record_id": "rec-2023-pcp",
+   "date": "2023-05-30",
+   "specialty": "primary care",
+   "title": "Primary care: annual visit",
+   "finding_ids": []
+  },
+  {
+   "record_id": "rec-2024-podiatry",
+   "date": "2024-02-14",
+   "specialty": "podiatry",
+   "title": "Podiatry: foot care",
+   "finding_ids": [
+    "fnd-012"
+   ]
+  }
+ ],
+ "graph": {
+  "nodes": [
+   {
+    "node_id": "fnd-003",
+    "type": "finding",
+    "label": "Type 2 diabetes"
+   },
+   {
+    "node_id": "fnd-005",
+    "type": "finding",
+    "label": "Diabetic peripheral neuropathy"
+   },
+   {
+    "node_id": "fnd-011",
+    "type": "finding",
+    "label": "Diabetic kidney disease"
+   },
+   {
+    "node_id": "hyp-001",
+    "type": "hypothesis",
+    "label": "Diabetic complications"
+   },
+   {
+    "node_id": "pri-001",
+    "type": "prior_result",
+    "label": "Vitamin B12 level"
+   },
+   {
+    "node_id": "mis-001",
+    "type": "missing_evidence",
+    "label": "Comprehensive metabolic and neurologic evaluation records."
+   }
+  ],
+  "edges": [
+   {
+    "edge_id": "fnd-003--supports--hyp-001",
+    "source": "fnd-003",
+    "target": "hyp-001",
+    "relation": "supports"
+   },
+   {
+    "edge_id": "fnd-005--supports--hyp-001",
+    "source": "fnd-005",
+    "target": "hyp-001",
+    "relation": "supports"
+   },
+   {
+    "edge_id": "fnd-011--supports--hyp-001",
+    "source": "fnd-011",
+    "target": "hyp-001",
+    "relation": "supports"
+   },
+   {
+    "edge_id": "pri-001--previously_tested--hyp-001",
+    "source": "pri-001",
+    "target": "hyp-001",
+    "relation": "previously_tested"
+   },
+   {
+    "edge_id": "mis-001--would_clarify--hyp-001",
+    "source": "mis-001",
+    "target": "hyp-001",
+    "relation": "would_clarify"
+   }
+  ]
+ },
+ "disclaimer": "Clinical decision support prototype using synthetic data. Not clinically validated. Findings are unconfirmed and require clinician review."
+}

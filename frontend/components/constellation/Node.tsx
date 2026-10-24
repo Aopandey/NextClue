@@ -28,11 +28,20 @@ export function truncate(label: string, max = 28): string {
 const words = (text: string) => text.trim().split(/\s+/).filter(Boolean);
 export const bareWord = (word: string) => word.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "");
 
-/** Ruling R3: "No diabetes (HbA1c 5.2%)" → "No diabetes"; "Celiac serology negative" → "No celiac". */
+// A label that already says the thing is absent or negative is shown as it is, never with "No " in front.
+const NEGATED = /\b(no|not|negative|absent|normal|without|denies|denied)\b/i;
+const lowerFirst = (text: string) => (/^\p{Lu}\p{Ll}/u.test(text) ? text[0].toLowerCase() + text.slice(1) : text);
+
+/**
+ * An absent finding's canvas label, from the whole label: "Foot ulcer" → "No foot ulcer"; a label already
+ * negated stays as it is ("Celiac serology negative"). Ruling R3 is kept for labels starting with "No ":
+ * "No diabetes (HbA1c 5.2%)" → "No diabetes".
+ */
 export function negativeLabel(label: string): string {
   const w = words(label);
   if (/^no$/i.test(w[0] ?? "") && w[1]) return `No ${bareWord(w[1])}`;
-  return `No ${bareWord(w[0] ?? "").toLowerCase()}`;
+  if (NEGATED.test(label)) return truncate(label.trim());
+  return truncate(`No ${lowerFirst(label.trim())}`);
 }
 
 type Tone = "label" | "year" | "signal" | "negative" | "detail";
@@ -86,21 +95,31 @@ function detailLine(f: Finding | undefined): Line | null {
   return { text: f.specialty && quote ? `${f.specialty} · ` : (f.specialty ?? ""), tone: "detail", quote };
 }
 
+/** Phone one-word label (ruling R15): the body system, or the label itself when it has none. */
+const phoneName = (node: NodePos) => (node.system === "other" ? truncate(node.label, 16) : SYSTEM_LABEL[node.system]);
+
 /** Canvas text for a node, derived from its data; empty when zoomed out past 0.8×. */
 export function labelLines(node: NodePos, narrow: boolean, zoom: ZoomLevel, finding?: Finding): Line[] {
   if (zoom === "icons") return [];
   const year: Line[] = node.year ? [{ text: node.year, tone: "year" }] : [];
   switch (node.kind) {
-    case "finding": {
+    case "finding":
+    case "uncertain": {
       const detail = zoom === "detail" ? detailLine(finding) : null;
-      const text = narrow ? SYSTEM_LABEL[node.system] : truncate(node.label);
+      const name = narrow ? phoneName(node) : truncate(node.label);
+      const text = node.kind === "uncertain" ? `${name}?` : name;
       return [{ text, tone: "label" }, ...year, ...(detail ? [detail] : [])];
     }
+    // Linked to no hypothesis: name only, so the extra nodes stay quiet.
+    case "context":
+      return [{ text: narrow ? phoneName(node) : truncate(node.label), tone: "label" }];
     case "negative":
       return [{ text: negativeLabel(node.label), tone: "negative" }];
+    // The test name and its year only: whether a result was normal or settled anything is for the panel to say.
     case "prior": {
-      const text = narrow ? (node.year ?? "Test") : node.year ? `${node.year} test · normal` : "Test · normal";
-      return [{ text, tone: "label" }, { text: "not conclusive", tone: "signal" }];
+      if (narrow) return [{ text: node.year ?? "Test", tone: "label" }, { text: "prior test", tone: "signal" }];
+      const showYear = node.year && !node.label.includes(node.year);
+      return [{ text: truncate(node.label), tone: "label" }, ...(showYear ? year : [])];
     }
     case "missing": {
       const text = narrow ? bareWord(words(node.label)[0] ?? "") : truncate(words(node.label).slice(0, 3).join(" "));
@@ -213,9 +232,9 @@ export function NodeButton({ id, x, y, r, name, narrow, selected, dim, order, te
       <g className="cn-reveal" style={{ "--i": order } as CSSProperties}>
         {children}
         <circle className="cn-ring" r={r + 6} />
-        {/* Phone tap target (≥ 40 CSS px at a 358px-wide SVG). */}
-        {narrow && <circle data-hit r={Math.max(r, 24)} fill="transparent" pointerEvents="all" />}
       </g>
+      {/* Phone tap target (≥ 40 CSS px at a 358px-wide SVG); outside the reveal, so it is full size from the start. */}
+      {narrow && <circle data-hit r={Math.max(r, 24)} fill="transparent" pointerEvents="all" />}
     </g>
   );
 }
@@ -228,10 +247,18 @@ function Shape({ node, missing }: { node: NodePos; missing?: MissingEvidence }) 
   const icon = SYSTEM_ICON[node.system];
   switch (node.kind) {
     case "finding":
+    case "context":
       return (
         <>
           <circle r={r} fill={sys(node.system)} />
           {icon && <Icon name={icon} size={r * 1.2} color="#fff" />}
+        </>
+      );
+    case "uncertain":
+      return (
+        <>
+          <circle r={r} fill="var(--bg)" stroke={sys(node.system)} strokeWidth={2.2} strokeDasharray="5 4" />
+          {icon && <Icon name={icon} size={r * 1.2} color={sys(node.system)} />}
         </>
       );
     case "negative":
@@ -242,7 +269,7 @@ function Shape({ node, missing }: { node: NodePos; missing?: MissingEvidence }) 
         </>
       );
     case "prior":
-      // Half filled: the result looked normal but did not settle the question.
+      // Half filled: the generic glyph for a test already done (what it showed is in the panel, not the shape).
       return (
         <>
           <clipPath id={clipId(node.id, "l")}>
@@ -251,13 +278,13 @@ function Shape({ node, missing }: { node: NodePos; missing?: MissingEvidence }) 
           <clipPath id={clipId(node.id, "r")}>
             <rect x={0} y={-r - 2} width={r + 2} height={2 * r + 4} />
           </clipPath>
-          <circle r={r} fill="var(--bg)" stroke="var(--blood)" strokeWidth={2.2} />
-          <path d={`M0 ${-r}A${r} ${r} 0 0 0 0 ${r}Z`} fill="var(--blood)" />
+          <circle r={r} fill="var(--bg)" stroke={sys(node.system)} strokeWidth={2.2} />
+          <path d={`M0 ${-r}A${r} ${r} 0 0 0 0 ${r}Z`} fill={sys(node.system)} />
           <g clipPath={`url(#${clipId(node.id, "l")})`}>
             <Icon name="vial" size={r * 1.15} color="#fff" />
           </g>
           <g clipPath={`url(#${clipId(node.id, "r")})`}>
-            <Icon name="vial" size={r * 1.15} color="var(--blood)" />
+            <Icon name="vial" size={r * 1.15} color={sys(node.system)} />
           </g>
         </>
       );
