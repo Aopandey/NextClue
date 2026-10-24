@@ -99,7 +99,7 @@ export function layoutConstellation(run: AnalysisRun, opts?: { narrow?: boolean 
   const graphFindingIds = new Set(graph.nodes.filter((n) => n.type === "finding").map((n) => n.node_id));
   const ringFindings = output.findings.filter((f) => graphFindingIds.has(f.finding_id) || f.assertion === "absent");
   const nodes = [
-    ...placeRing(sortForRing(ringFindings), geo, graphFindingIds),
+    ...placeRing(sortForRing(ringFindings), geo),
     ...placePriors(output.prior_results, run.timeline, geo),
     ...placeMissing(output.missing_evidence, output.prior_results.length, geo, hubs),
   ];
@@ -147,12 +147,12 @@ const compareDates = (a: string | null, b: string | null) => (a === b ? 0 : a ==
  * (215°→325°), the rest right → left along the bottom arc (35°→145°). Top-first starts the sweep at the
  * upper left, like the reference, and gives fewer edge crossings for Sarah than bottom-first.
  */
-function placeRing(findings: Finding[], geo: Geometry, graphFindingIds: Set<string>): NodePos[] {
+function placeRing(findings: Finding[], geo: Geometry): NodePos[] {
   const topCount = Math.ceil(findings.length / 2);
   const angles = [...arcAngles(topCount, TOP_ARC), ...arcAngles(findings.length - topCount, BOTTOM_ARC)];
   const { cx, cy, rx, ry } = geo.ring;
   return findings.map((f, i) => {
-    const kind: NodeKind = graphFindingIds.has(f.finding_id) ? "finding" : "negative";
+    const kind: NodeKind = f.assertion === "absent" ? "negative" : "finding";
     const rad = (angles[i] * Math.PI) / 180;
     return {
       id: f.finding_id,

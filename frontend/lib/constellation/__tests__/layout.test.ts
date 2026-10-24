@@ -72,6 +72,15 @@ function withThirdHypothesis(run: AnalysisRun): AnalysisRun {
   return r;
 }
 
+/** Sarah, but the absent diabetes finding is linked to the Separate hub like a positive finding would be. */
+function withLinkedAbsentFinding(run: AnalysisRun): AnalysisRun {
+  const r = clone(run);
+  r.output!.hypotheses.find((h) => h.hypothesis_id === "hyp-separate-conditions")!.supporting_finding_ids.push("fnd-diabetes-absent");
+  r.graph!.nodes.push({ node_id: "fnd-diabetes-absent", type: "finding", label: "No diabetes" });
+  r.graph!.edges.push({ edge_id: "fnd-diabetes-absent--supports--hyp-separate-conditions", source: "fnd-diabetes-absent", target: "hyp-separate-conditions", relation: "supports" });
+  return r;
+}
+
 /** Perpendicular distance of point p from the line through a and b. */
 function offChord(p: number[], a: number[], b: number[]): number {
   const [dx, dy] = [b[0] - a[0], b[1] - a[1]];
@@ -210,6 +219,16 @@ describe("layoutConstellation details", () => {
     expect(stack.map((n) => n.x)).toEqual([600, 600]);
     expect((stack[0].y + stack[1].y) / 2).toBe(380);
     expect(minGap(L)).toBeGreaterThanOrEqual(8);
+  });
+
+  it("an absent finding is a hollow negative even when linked to a hypothesis, and keeps its edge", () => {
+    const linked = withLinkedAbsentFinding(fixtureRun);
+    const desktop = layoutConstellation(linked);
+    expect(node(desktop, "fnd-diabetes-absent")).toMatchObject({ kind: "negative", r: 14 });
+    expect(desktop.edges.map((e) => e.id)).toContain("fnd-diabetes-absent--supports--hyp-separate-conditions");
+    const phone = layoutConstellation(linked, { narrow: true });
+    expect(node(phone, "fnd-diabetes-absent")).toMatchObject({ kind: "negative", r: 11 });
+    expect(phone.edges.map((e) => e.id)).toContain("fnd-diabetes-absent--supports--hyp-separate-conditions");
   });
 });
 
