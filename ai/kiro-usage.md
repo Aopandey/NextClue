@@ -15,9 +15,9 @@ were not used.
 | Agent tests | New `ai/tests/test_evidence.py`, `ai/tests/test_api_flow.py`, `ai/tests/conftest.py`; updated `test_pipeline.py`, `test_gemini_client.py` | Each real-run failure became a regression test | `pytest -c backend/pytest.ini backend/tests ai/tests` |
 | Agent evaluation loop | Ran Sarah, James, exclusion, 5 scenarios, live PubMed; fixed prompt/schema/reference failures found | e.g. quotes from observations, evidence-less rare hypothesis for James, invented source ID | Results and open issues in `ai/evaluation.md` |
 
-Not done in Kiro, needs teammates: Supabase re-seed and the real-database API flow
-(no Docker or `backend/.env` on this machine), and Mike's UI check of `evidence_mode`
-and the new excerpt IDs.
+At the end of this initial Kiro session, Supabase re-seeding, the real-database
+API flow, and Mike's UI checks were still open. Codex subsequently completed
+the database and API checks documented below; frontend integration remains open.
 
 ## Subsequent implementation with Codex — October 24
 
@@ -71,6 +71,35 @@ Validation: 120 tests and 7 subtests passed, including real SDK/HTTP tests again
 loopback servers, with deliberately invalid parent model/retrieval/timeout values.
 The backend-only isolation checks also passed. Dependency and tracked-diff checks
 passed. No paid Gemini calls or database writes were made for these fixes.
+
+## Document exports implemented in Kiro — October 24
+
+Kiro (Autopilot, Vibe session) designed and implemented the handoff brief and
+referral draft features: a code-built brief and a specialty-specific Gemini
+letter, both exportable as Markdown or print-ready HTML, with clinician editing
+and reference checks for the referral.
+
+The implementation files remain local and uncommitted. This publication updates
+only `ai/kiro-usage.md`; it does not publish the new code, specs, schemas, or
+integration guide. The verification results below are Kiro's recorded results.
+No Gemini, PubMed, or hosted-database requests were made during this feature
+implementation; every model response in the tests was mocked. Hooks and MCP
+servers were not used.
+
+| Kiro feature | Task completed / files changed | How it helped | Check run |
+| --- | --- | --- | --- |
+| Steering (`.kiro/steering/nextclue.md`) | Applied ownership and wording rules: Daniel's contracts stay the source of truth, no diagnosis, probability, treatment, or urgency wording, unknown ≠ absent, check existing records first | New contracts are additive (section 6 of `contracts.py`); `AnalysisRun`, `AnalysisOutput`, and the pipeline are unchanged | The 5 existing schemas regenerate unchanged |
+| Spec (`.kiro/specs/document-exports/design.md`) | Design written before code: shared run context, both features, error codes, tasks | Settled version checks, review-hash binding, and in-memory draft limits before implementation | Tasks ticked; remaining items listed |
+| Agent code edits | New `backend/app/documents/` (context, errors, model, render, handoff, referral, store, service), `backend/app/fixtures.py`, `ai/referral.py`, `ai/prompts/referral.md`, 6 JSON schemas. Changed `backend/app/contracts.py`, `backend/app/main.py` (6 routes, error handler, exposed CORS headers), `ai/gemini_client.py` (prompt name), `backend/scripts/export_schemas.py` | The handoff is built by code with zero model calls. The referral is validated against the run, with one correction at most | See tests |
+| Agent tests | New `ai/tests/document_fakes.py`, `ai/tests/test_handoff.py`, `ai/tests/test_referral.py`, `backend/tests/test_schemas.py` (100 new tests) | Found a bug: the correction attempt reused the first request's payload dict. Fixed by building a new payload per attempt | 220 passed + 7 subtests, outbound network blocked; backend-only 23 passed |
+| Agent terminal: headless Edge | Rendered mocked Sarah handoff and referral exports on screen and printed them to PDF; rendered PDF pages to images with the Windows PDF API | Found the closing notes splitting across pages; fixed with print CSS. Escaped hostile text, long URLs, and Unicode rendered correctly | Page images inspected; scratch files deleted |
+| Agent review of the validator against the data | Checked wording-guard terms against all synthetic records | Emergency-medicine visits (Priya, Kevin) and "immediate family" would have been flagged as urgency. Narrowed the rule and added tests | Included in the 220 |
+| Agent docs | `docs/document-exports-integration.md` (for Mike/Claude), `backend/README.md`, `CLAUDE.md`, `ai/README.md`, `ai/evaluation.md` | The frontend is not in this checkout, so the guide is the integration contract | — |
+
+Not verified: no real Gemini referral draft (prompt `referral-v1` has not been
+run against the model), no hosted Supabase run, no frontend, and no print check
+outside headless Edge. Valid citations do not prove each sentence is supported,
+and the wording guard is lexical.
 
 ## Claude fixes after frontend integration — October 24
 
