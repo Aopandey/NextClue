@@ -51,6 +51,15 @@ export interface PatientRecord {
   documents: PatientDocument[];
 }
 
+/** One row of GET /patients. The route has no response model; this mirrors db.list_patients' columns. */
+export interface PatientSummary {
+  patient_id: string;
+  display_name: string;
+  sex_at_birth: Demographics["sex_at_birth"];
+  birth_year: number;
+  current_version: number;
+}
+
 // ---------------------------------------------------------------- 2. Analysis request (POST /analyses body)
 
 export interface AnalysisRequest {

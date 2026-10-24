@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import fixtureJson from "@/fixtures/sarah-001.run.json";
 import type { AnalysisRun } from "@/lib/contracts";
-import { ApiUnreachable, getFixtureRun, getPatient, pollRun, startAnalysis } from "../client";
+import { ApiUnreachable, getFixtureRun, getHealth, getPatient, listPatients, pollRun, startAnalysis } from "../client";
 
 const run = fixtureJson as AnalysisRun;
 const fetchMock = vi.fn<typeof fetch>();
@@ -118,5 +118,38 @@ describe("api client", () => {
     expect(run.graph!.nodes).toHaveLength(12);
     expect(run.graph!.edges).toHaveLength(13);
     expect(run.output!.hypotheses.filter((h) => h.status === "open")).toHaveLength(2);
+  });
+});
+
+describe("patient list and health", () => {
+  it("listPatients requests /patients and returns the array", async () => {
+    const rows = [
+      { patient_id: "james-002", display_name: "James", sex_at_birth: "male", birth_year: 1980, current_version: 1 },
+      { patient_id: "sarah-001", display_name: "Sarah", sex_at_birth: "female", birth_year: 1990, current_version: 2 },
+    ];
+    fetchMock.mockResolvedValue(json(rows));
+
+    await expect(listPatients()).resolves.toEqual(rows);
+
+    expect(String(fetchMock.mock.calls[0][0])).toBe("http://127.0.0.1:8000/patients");
+  });
+
+  it("getHealth returns the body on 200", async () => {
+    fetchMock.mockResolvedValue(json({ status: "ok", database: "ok", model: "gemini-3.5-flash-lite" }));
+
+    await expect(getHealth()).resolves.toMatchObject({ status: "ok" });
+    expect(String(fetchMock.mock.calls[0][0])).toBe("http://127.0.0.1:8000/health");
+  });
+
+  it("getHealth resolves with the degraded body on 503 instead of throwing", async () => {
+    fetchMock.mockResolvedValue(json({ status: "degraded", database: "unreachable: timeout" }, 503));
+
+    await expect(getHealth()).resolves.toMatchObject({ status: "degraded" });
+  });
+
+  it("getHealth rejects with ApiUnreachable when fetch throws a TypeError", async () => {
+    fetchMock.mockRejectedValue(new TypeError("fetch failed"));
+
+    await expect(getHealth()).rejects.toBeInstanceOf(ApiUnreachable);
   });
 });

@@ -1,4 +1,4 @@
-import type { AnalysisRequest, AnalysisRun, PatientRecord, Source } from "@/lib/contracts";
+import type { AnalysisRequest, AnalysisRun, PatientRecord, PatientSummary, Source } from "@/lib/contracts";
 
 export type DataMode = "fixture" | "live" | "offline";
 
@@ -73,7 +73,10 @@ async function readDetail(response: Response): Promise<unknown> {
   }
 }
 
-async function request<T>(path: string, options: { body?: unknown; signal?: AbortSignal } = {}): Promise<T> {
+async function request<T>(
+  path: string,
+  options: { body?: unknown; signal?: AbortSignal; acceptStatus?: number } = {},
+): Promise<T> {
   const base = apiBase();
   const init: RequestInit =
     options.body === undefined
@@ -91,11 +94,26 @@ async function request<T>(path: string, options: { body?: unknown; signal?: Abor
     if (error instanceof TypeError) throw new ApiUnreachable(base, { cause: error });
     throw error;
   }
-  if (!response.ok) throw new ApiError(response.status, await readDetail(response));
+  if (!response.ok && response.status !== options.acceptStatus) throw new ApiError(response.status, await readDetail(response));
   return (await response.json()) as T;
 }
 
 const segment = encodeURIComponent;
+
+export function listPatients(signal?: AbortSignal): Promise<PatientSummary[]> {
+  return request<PatientSummary[]>("/patients", { signal });
+}
+
+export interface Health {
+  status: string;
+  database: string;
+  model?: string;
+}
+
+/** GET /health. A 503 means degraded, so it resolves with the body instead of throwing. */
+export async function getHealth(signal?: AbortSignal): Promise<Health> {
+  return request<Health>("/health", { signal, acceptStatus: 503 });
+}
 
 export function getPatient(id: string): Promise<PatientRecord> {
   return request<PatientRecord>(`/patients/${segment(id)}`);
