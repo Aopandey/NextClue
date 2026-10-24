@@ -71,3 +71,16 @@ Validation: 120 tests and 7 subtests passed, including real SDK/HTTP tests again
 loopback servers, with deliberately invalid parent model/retrieval/timeout values.
 The backend-only isolation checks also passed. Dependency and tracked-diff checks
 passed. No paid Gemini calls or database writes were made for these fixes.
+
+## Claude fixes after frontend integration — October 24
+
+This entry records Claude work, not Kiro or Codex development. Fixes from the
+frontend integration: CORS headers on 500 responses; a unique index on in-flight
+live runs plus atomic reuse of an existing run; expiry of stale in-flight runs;
+the Sarah fixture claim now cites the 2016 biopsy record; a source-topic guard
+(`backend/data/source_topics.json`) so claims cite only excerpts about their own
+finding; outcome wording that may not claim to settle a diagnosis; graph docs
+limited to hypothesis-linked findings; and `PROMPT_VERSION` extract-v3+handoff-v4.
+
+The in-flight unique-index migration still has to be applied on hosted by Daniel.
+Validation: 149 tests and 7 subtests passed offline; no Gemini calls were made.
