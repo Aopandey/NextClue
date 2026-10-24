@@ -22,6 +22,7 @@
 
 **Spec:** `docs/superpowers/specs/2026-10-24-health-screen-constellation-design.md`
 **Visual reference:** `docs/design/constellation/reference.html` (open it in a browser; it runs offline) and `docs/design/constellation/*.png`.
+- **Which source governs what.** The reference governs the *look*: node shapes, icons, palette, type, the panel's structure, the zoom controls, and the 10 / 60 / 250 switch (a dev-only `?stress=` param in the app). This plan governs *positions and behaviour*: Task 5 geometry, thresholds and copy. Where they differ, follow the plan. The faint per-hub guide circles in the reference are optional decoration.
 **Data contract:** `contracts/README.md`, `contracts/schema/*.json`, `backend/app/contracts.py` (on `main`).
 
 ## Global Constraints
@@ -270,7 +271,7 @@ export function layoutConstellation(run: AnalysisRun, opts?: { expandCluster?: B
   - Ring: ellipse centred at (600,380) with rx 400, ry 285.
   - Findings, negatives and clusters go on the ring at angles evenly spaced across the arcs 35°→145° and 215°→325°, measured clockwise from 3 o'clock. Order them by `SYSTEM_ORDER`, then date.
   - Prior results: x = 120, with y values evenly spaced around 380 at 90px apart.
-  - Missing items: x = 1080, ordered by priority, at 90px apart. If there are more than 3, show the first 2 plus one `missingMore` node whose `count` is the rest.
+  - Missing items: an item whose `hypothesis_ids` include **2 or more hubs** sits at the centroid of those hubs. For Sarah, `mis-gla-report` sits at (600,380), between Fabry and Separate common conditions, as in the reference. Every other missing item goes in a right column at x = 1080, ordered by priority, 90px apart. If there are more than 3 missing items in total, show the first 2 by priority plus one `missingMore` node whose `count` is the rest.
   - Node r: finding 26, negative 14, prior 26, missing 26, cluster `22 + 4*sqrt(count)`.
   - Edge `d`: a cubic Bézier whose control points are pulled 35% toward the hub.
   - Edge width: 1.5. For a bundled cluster→hub edge, use `1.5 + 0.6*supportingCount`, capped at 10.
@@ -287,6 +288,7 @@ export function layoutConstellation(run: AnalysisRun, opts?: { expandCluster?: B
 ```ts
 const sarah = layoutConstellation(fixtureRun);
 it("Sarah: 2 hubs side by side, Fabry first", () => { expect(sarah.hubs.map(h=>[h.id,h.x,h.y])).toEqual([["hyp-fabry",480,380],["hyp-separate-conditions",720,380]]); });
+it("Sarah: GLA report sits between the two hubs it would clarify; father's diagnosis in the right column", () => { const m = (id:string)=>sarah.nodes.find(n=>n.id===id)!; expect([m("mis-gla-report").x, m("mis-gla-report").y]).toEqual([600,380]); expect(m("mis-father-diagnosis").x).toBe(1080); });
 it("Sarah: 7 findings, 2 negatives, 1 prior, 2 missing, not clustered", () => { const k = (t:string)=>sarah.nodes.filter(n=>n.kind===t).length; expect([k("finding"),k("negative"),k("prior"),k("missing"),sarah.clustered]).toEqual([7,2,1,2,false]); });
 it("Sarah: 13 graph edges kept with their relations", () => expect(sarah.edges.map(e=>e.relation).sort()).toEqual([...Array(9).fill("supports"),"previously_tested",...Array(3).fill("would_clarify")].sort()));
 it("no two nodes overlap (gap ≥ 8px) for Sarah, 60 expanded and 250", () => { for (const L of [sarah, layoutConstellation(s60, { expandCluster: "nerve" }), layoutConstellation(s250)]) expect(minGap(L)).toBeGreaterThanOrEqual(8); });

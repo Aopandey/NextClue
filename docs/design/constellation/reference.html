@@ -1,0 +1,1202 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>NextClue · Constellation reference</title>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;500;600;700&family=Atkinson+Hyperlegible+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<style>*,*::before,*::after{box-sizing:border-box}html,body{margin:0;background:#f8fafc;color:#0f172a;font-family:"Atkinson Hyperlegible Next",system-ui,sans-serif;font-size:16px;line-height:1.45}.wrap{max-width:1240px;margin:0 auto;padding:24px 16px 64px}</style>
+<script>
+/* NextClue mock backend: real fixture data from origin/main (89c3f0a), real endpoint shapes.
+   Scenario switch mimics what the FastAPI backend can return. */
+(function(){
+const DATA = {"patients":[{"patient_id":"david-004","display_name":"David (synthetic)","sex_at_birth":"male","birth_year":1971,"current_version":1},{"patient_id":"emma-009","display_name":"Emma (synthetic, negative control)","sex_at_birth":"female","birth_year":1990,"current_version":1},{"patient_id":"james-002","display_name":"James (synthetic, negative control)","sex_at_birth":"male","birth_year":1968,"current_version":1},{"patient_id":"kevin-008","display_name":"Kevin (synthetic)","sex_at_birth":"male","birth_year":1996,"current_version":1},{"patient_id":"linda-007","display_name":"Linda (synthetic, negative control)","sex_at_birth":"female","birth_year":1975,"current_version":1},{"patient_id":"maria-003","display_name":"Maria (synthetic)","sex_at_birth":"female","birth_year":1999,"current_version":1},{"patient_id":"priya-005","display_name":"Priya (synthetic)","sex_at_birth":"female","birth_year":1993,"current_version":1},{"patient_id":"robert-010","display_name":"Robert (synthetic)","sex_at_birth":"male","birth_year":1962,"current_version":1},{"patient_id":"sarah-001","display_name":"Sarah (synthetic)","sex_at_birth":"female","birth_year":1986,"current_version":1},{"patient_id":"tom-006","display_name":"Tom (synthetic)","sex_at_birth":"male","birth_year":1980,"current_version":1}],"records":{"david-004":{"schema_version":"patient.v1","patient_id":"david-004","record_version":1,"synthetic":true,"demographics":{"display_name":"David (synthetic)","sex_at_birth":"male","birth_year":1971},"documents":[{"record_id":"rec-2014-pcp","date":"2014-02-11","type":"clinic_note","specialty":"primary care","title":"Primary care: fatigue","author_role":"Primary care physician","text":"43-year-old with fatigue for a year. Drinks two beers on weekends. Exam unremarkable. TSH normal. Advised sleep hygiene.","observations":[{"name":"TSH","value":"2.1","unit":"mIU/L","reference_range":"0.4-4.0","interpretation":"normal"}]},{"record_id":"rec-2015-rheum","date":"2015-09-29","type":"clinic_note","specialty":"rheumatology","title":"Rheumatology: hand pain","author_role":"Rheumatologist","text":"Pain and swelling of the second and third knuckles of both hands. Rheumatoid factor and anti-CCP negative. X-ray shows hook-like osteophytes at the second and third metacarpophalangeal joints. Impression: osteoarthritis.","observations":[]},{"record_id":"rec-2016-lab","date":"2016-05-17","type":"lab_result","specialty":"primary care","title":"Liver panel and ferritin","author_role":"Laboratory","text":"ALT 68 U/L. Ferritin 1,150 ng/mL. Transferrin saturation not performed.","observations":[{"name":"ALT","value":"68","unit":"U/L","reference_range":"7-55","interpretation":"abnormal"},{"name":"Ferritin","value":"1150","unit":"ng/mL","reference_range":"24-336","interpretation":"abnormal"}]},{"record_id":"rec-2016-pcp","date":"2016-06-02","type":"clinic_note","specialty":"primary care","title":"Primary care: lab review","author_role":"Primary care physician","text":"Raised ferritin and ALT attributed to alcohol use and possible fatty liver. Advised to stop drinking. Recheck in one year.","observations":[]},{"record_id":"rec-2018-endo","date":"2018-03-13","type":"clinic_note","specialty":"endocrinology","title":"Endocrinology: new diabetes","author_role":"Endocrinologist","text":"New diabetes, HbA1c 7.8%, with BMI 24. Low testosterone with reduced libido. Started metformin and testosterone replacement.","observations":[{"name":"HbA1c","value":"7.8","unit":"%","reference_range":"<5.7","interpretation":"abnormal"},{"name":"Total testosterone","value":"190","unit":"ng/dL","reference_range":"300-1000","interpretation":"abnormal"}]},{"record_id":"rec-2019-derm","date":"2019-07-08","type":"clinic_note","specialty":"dermatology","title":"Dermatology: skin darkening","author_role":"Dermatologist","text":"Generalized bronze-gray skin darkening without sun exposure change. No rash. Assessed as post-inflammatory hyperpigmentation.","observations":[]},{"record_id":"rec-2020-lab","date":"2020-10-21","type":"lab_result","specialty":"primary care","title":"Repeat ferritin","author_role":"Laboratory","text":"Ferritin 1,420 ng/mL. Patient reports no alcohol for three years. Transferrin saturation not performed.","observations":[{"name":"Ferritin","value":"1420","unit":"ng/mL","reference_range":"24-336","interpretation":"abnormal"}]},{"record_id":"rec-2021-card","date":"2021-04-06","type":"clinic_note","specialty":"cardiology","title":"Cardiology: shortness of breath","author_role":"Cardiologist","text":"Exertional breathlessness. Echocardiogram shows mildly reduced ejection fraction of 48% with normal coronary CT. Cause of cardiomyopathy not determined.","observations":[{"name":"Left ventricular ejection fraction","value":"48","unit":"%","reference_range":"55-70","interpretation":"abnormal"}]},{"record_id":"rec-2022-us","date":"2022-01-19","type":"imaging","specialty":"radiology","title":"Abdominal ultrasound","author_role":"Radiologist","text":"Liver mildly enlarged with coarse echotexture. No focal lesion. Spleen normal.","observations":[]},{"record_id":"rec-2023-pcp","date":"2023-11-14","type":"clinic_note","specialty":"primary care","title":"Primary care: follow-up","author_role":"Primary care physician","text":"Ongoing fatigue, joint pain, diabetes, and heart failure symptoms. Ferritin remains high despite abstinence. Family history: a cousin had liver cirrhosis without alcohol use. Genetic testing has not been discussed.","observations":[]}]},"emma-009":{"schema_version":"patient.v1","patient_id":"emma-009","record_version":1,"synthetic":true,"demographics":{"display_name":"Emma (synthetic, negative control)","sex_at_birth":"female","birth_year":1990},"documents":[{"record_id":"rec-2019-pcp","date":"2019-02-04","type":"clinic_note","specialty":"primary care","title":"Primary care: tiredness","author_role":"Primary care physician","text":"Tiredness, hair shedding, and shortness of breath on stairs. Heavy menstrual periods for two years. Pale conjunctivae.","observations":[]},{"record_id":"rec-2019-lab","date":"2019-02-06","type":"lab_result","specialty":"primary care","title":"Blood count and iron studies","author_role":"Laboratory","text":"Hemoglobin 9.8 g/dL, MCV 72 fL, ferritin 6 ng/mL.","observations":[{"name":"Hemoglobin","value":"9.8","unit":"g/dL","reference_range":"12-15.5","interpretation":"abnormal"},{"name":"MCV","value":"72","unit":"fL","reference_range":"80-100","interpretation":"abnormal"},{"name":"Ferritin","value":"6","unit":"ng/mL","reference_range":"15-150","interpretation":"abnormal"}]},{"record_id":"rec-2019-pcp-fu","date":"2019-02-11","type":"clinic_note","specialty":"primary care","title":"Primary care: iron deficiency","author_role":"Primary care physician","text":"Iron deficiency anemia, likely from heavy menstrual bleeding. Celiac serology ordered. Oral iron started. Gynecology referral.","observations":[]},{"record_id":"rec-2019-celiac","date":"2019-02-20","type":"lab_result","specialty":"primary care","title":"Celiac serology","author_role":"Laboratory","text":"Tissue transglutaminase IgA negative with normal total IgA.","observations":[{"name":"Tissue transglutaminase IgA","value":"negative","unit":null,"reference_range":"negative","interpretation":"normal"}]},{"record_id":"rec-2019-gyn","date":"2019-04-03","type":"clinic_note","specialty":"obstetrics","title":"Gynecology: heavy periods","author_role":"Gynecologist","text":"Pelvic ultrasound shows a 3 cm intramural fibroid. Hormonal IUD placed.","observations":[]},{"record_id":"rec-2019-lab-2","date":"2019-06-10","type":"lab_result","specialty":"primary care","title":"Follow-up blood count","author_role":"Laboratory","text":"Hemoglobin 12.6 g/dL, ferritin 38 ng/mL.","observations":[{"name":"Hemoglobin","value":"12.6","unit":"g/dL","reference_range":"12-15.5","interpretation":"normal"},{"name":"Ferritin","value":"38","unit":"ng/mL","reference_range":"15-150","interpretation":"normal"}]},{"record_id":"rec-2020-gi","date":"2020-11-16","type":"clinic_note","specialty":"gastroenterology","title":"Gastroenterology: bloating","author_role":"Gastroenterologist","text":"Intermittent bloating and alternating bowel habits related to stress. No weight loss or bleeding. Impression: irritable bowel syndrome.","observations":[]},{"record_id":"rec-2021-derm","date":"2021-05-24","type":"clinic_note","specialty":"dermatology","title":"Dermatology: hair","author_role":"Dermatologist","text":"Hair shedding resolved after iron repletion. No scarring alopecia.","observations":[]},{"record_id":"rec-2022-lab","date":"2022-08-08","type":"lab_result","specialty":"primary care","title":"Annual labs","author_role":"Laboratory","text":"Hemoglobin 13.1 g/dL, ferritin 52 ng/mL, TSH normal.","observations":[{"name":"Hemoglobin","value":"13.1","unit":"g/dL","reference_range":"12-15.5","interpretation":"normal"}]},{"record_id":"rec-2024-pcp","date":"2024-01-29","type":"clinic_note","specialty":"primary care","title":"Primary care: annual visit","author_role":"Primary care physician","text":"Feels well. Periods light with IUD. Energy normal. No further work-up needed.","observations":[]}]},"james-002":{"schema_version":"patient.v1","patient_id":"james-002","record_version":1,"synthetic":true,"demographics":{"display_name":"James (synthetic, negative control)","sex_at_birth":"male","birth_year":1968},"documents":[{"record_id":"rec-2015-pcp","date":"2015-03-04","type":"clinic_note","specialty":"primary care","title":"Primary care: new diagnosis of type 2 diabetes","author_role":"Primary care physician","text":"47-year-old man with fatigue and increased thirst. HbA1c 9.1%. Diagnosis: type 2 diabetes. Blood pressure 148/92, started on lisinopril. Family history: mother with type 2 diabetes. Started metformin.","observations":[{"name":"HbA1c","value":"9.1","unit":"%","reference_range":"<5.7","interpretation":"abnormal"}]},{"record_id":"rec-2016-lab","date":"2016-04-12","type":"lab_result","specialty":"primary care","title":"Lipid panel and HbA1c","author_role":"Laboratory","text":"LDL cholesterol 142 mg/dL. HbA1c 8.0%. Statin started.","observations":[{"name":"LDL cholesterol","value":"142","unit":"mg/dL","reference_range":"<100","interpretation":"abnormal"},{"name":"HbA1c","value":"8.0","unit":"%","reference_range":"<5.7","interpretation":"abnormal"}]},{"record_id":"rec-2017-pcp","date":"2017-09-20","type":"clinic_note","specialty":"primary care","title":"Primary care: diabetes follow-up","author_role":"Primary care physician","text":"Adherence to metformin inconsistent. Diet counseling provided. Weight 104 kg. Foot exam normal at this visit.","observations":[]},{"record_id":"rec-2018-pcp","date":"2018-10-16","type":"clinic_note","specialty":"primary care","title":"Primary care: foot numbness","author_role":"Primary care physician","text":"Numbness and tingling in both feet for one year, in a stocking distribution. Reduced ankle reflexes and reduced monofilament sensation bilaterally. HbA1c 8.4%. Vitamin B12 normal. Impression: diabetic peripheral neuropathy.","observations":[{"name":"HbA1c","value":"8.4","unit":"%","reference_range":"<5.7","interpretation":"abnormal"}]},{"record_id":"rec-2019-gi","date":"2019-06-11","type":"clinic_note","specialty":"gastroenterology","title":"Gastroenterology: heartburn","author_role":"Gastroenterologist","text":"Heartburn after meals and when lying down for two years. Upper endoscopy shows mild erosive esophagitis. No diarrhea or weight loss. Impression: gastroesophageal reflux disease. Started proton pump inhibitor.","observations":[]},{"record_id":"rec-2020-cardio","date":"2020-08-05","type":"clinic_note","specialty":"cardiology","title":"Cardiology: exertional chest tightness","author_role":"Cardiologist","text":"Chest tightness climbing stairs. Stress test shows no ischemia. Echocardiogram shows mild left ventricular hypertrophy consistent with long-standing hypertension. Continue current medications.","observations":[]},{"record_id":"rec-2021-eye","date":"2021-12-07","type":"clinic_note","specialty":"ophthalmology","title":"Ophthalmology: diabetic eye exam","author_role":"Ophthalmologist","text":"Dilated exam shows moderate nonproliferative diabetic retinopathy in both eyes. Corneas clear. No macular edema. Repeat exam in six months.","observations":[]},{"record_id":"rec-2022-nephro","date":"2022-02-23","type":"referral","specialty":"nephrology","title":"Nephrology consult: albuminuria","author_role":"Nephrologist","text":"Referred for albuminuria. Urine albumin-to-creatinine ratio 180 mg/g. eGFR 64. Long-standing type 2 diabetes and hypertension, with diabetic retinopathy on recent eye exam. Impression: diabetic kidney disease. Biopsy not indicated.","observations":[{"name":"Urine albumin-to-creatinine ratio","value":"180","unit":"mg/g","reference_range":"<30","interpretation":"abnormal"},{"name":"eGFR","value":"64","unit":"mL/min/1.73m2","reference_range":">=90","interpretation":"abnormal"}]},{"record_id":"rec-2023-pcp","date":"2023-05-30","type":"clinic_note","specialty":"primary care","title":"Primary care: annual visit","author_role":"Primary care physician","text":"HbA1c 7.6%. Neuropathy symptoms stable. Reflux controlled on proton pump inhibitor. Blood pressure 134/84. Started SGLT2 inhibitor for kidney protection.","observations":[{"name":"HbA1c","value":"7.6","unit":"%","reference_range":"<5.7","interpretation":"abnormal"}]},{"record_id":"rec-2024-podiatry","date":"2024-02-14","type":"clinic_note","specialty":"podiatry","title":"Podiatry: foot care","author_role":"Podiatrist","text":"Loss of protective sensation in both feet on monofilament testing. Callus on right first metatarsal head, debrided. No ulcer. Diabetic footwear recommended.","observations":[]}]},"kevin-008":{"schema_version":"patient.v1","patient_id":"kevin-008","record_version":1,"synthetic":true,"demographics":{"display_name":"Kevin (synthetic)","sex_at_birth":"male","birth_year":1996},"documents":[{"record_id":"rec-2004-peds","date":"2004-04-12","type":"clinic_note","specialty":"pediatrics","title":"Pediatrics: recurrent fevers","author_role":"Pediatrician","text":"8-year-old with fevers to 39.5 C every few weeks lasting one to three days, with abdominal pain. Normal between episodes. Attributed to viral infections.","observations":[]},{"record_id":"rec-2009-surg","date":"2009-09-03","type":"clinic_note","specialty":"general surgery","title":"Surgery: abdominal pain","author_role":"Surgeon","text":"Fever and right lower abdominal pain. Appendectomy performed. Pathology: normal appendix.","observations":[]},{"record_id":"rec-2012-er","date":"2012-02-17","type":"clinic_note","specialty":"emergency medicine","title":"Emergency: chest pain","author_role":"Emergency physician","text":"Pleuritic chest pain with fever. Small left pleural effusion. Resolved in two days. Diagnosed as viral pleurisy.","observations":[]},{"record_id":"rec-2014-lab","date":"2014-06-05","type":"lab_result","specialty":"primary care","title":"Inflammatory markers during attack","author_role":"Laboratory","text":"CRP 142 mg/L and white cell count 15.2 during a fever episode.","observations":[{"name":"CRP","value":"142","unit":"mg/L","reference_range":"<5","interpretation":"abnormal"},{"name":"White blood cells","value":"15.2","unit":"x10^9/L","reference_range":"4-11","interpretation":"abnormal"}]},{"record_id":"rec-2014-lab-2","date":"2014-06-24","type":"lab_result","specialty":"primary care","title":"Inflammatory markers between attacks","author_role":"Laboratory","text":"CRP 3 mg/L and white cell count normal two weeks after the episode.","observations":[{"name":"CRP","value":"3","unit":"mg/L","reference_range":"<5","interpretation":"normal"}]},{"record_id":"rec-2016-rheum","date":"2016-10-11","type":"clinic_note","specialty":"rheumatology","title":"Rheumatology: ankle swelling","author_role":"Rheumatologist","text":"Episodic swelling of the left ankle lasting two days with fever. Joint fluid sterile. Impression: reactive arthritis.","observations":[]},{"record_id":"rec-2018-id","date":"2018-05-22","type":"clinic_note","specialty":"infectious disease","title":"Infectious disease: periodic fever","author_role":"Infectious disease physician","text":"Extensive infection work-up negative. Periodic fever syndrome possible but not pursued. Family of Armenian descent.","observations":[]},{"record_id":"rec-2020-pcp","date":"2020-03-09","type":"clinic_note","specialty":"primary care","title":"Primary care: follow-up","author_role":"Primary care physician","text":"Episodes continue about monthly. Uncle reportedly had kidney failure in his forties.","observations":[]},{"record_id":"rec-2023-neph","date":"2023-07-18","type":"referral","specialty":"nephrology","title":"Nephrology: proteinuria","author_role":"Nephrologist","text":"Urine protein-to-creatinine ratio 1.8 g/g. eGFR 88. Kidney biopsy recommended to evaluate cause.","observations":[{"name":"Urine protein-to-creatinine ratio","value":"1.8","unit":"g/g","reference_range":"<0.2","interpretation":"abnormal"}]},{"record_id":"rec-2023-pcp","date":"2023-09-01","type":"clinic_note","specialty":"primary care","title":"Primary care: review","author_role":"Primary care physician","text":"Patient asks whether the fevers and new kidney findings are related. MEFV genetic testing has not been performed. Kidney biopsy result pending.","observations":[]}]},"linda-007":{"schema_version":"patient.v1","patient_id":"linda-007","record_version":1,"synthetic":true,"demographics":{"display_name":"Linda (synthetic, negative control)","sex_at_birth":"female","birth_year":1975},"documents":[{"record_id":"rec-2017-pcp","date":"2017-01-23","type":"clinic_note","specialty":"primary care","title":"Primary care: fatigue and weight gain","author_role":"Primary care physician","text":"Fatigue, cold intolerance, constipation, and 5 kg weight gain over a year. Dry skin. Thyroid tests ordered.","observations":[]},{"record_id":"rec-2017-lab","date":"2017-01-30","type":"lab_result","specialty":"primary care","title":"Thyroid panel","author_role":"Laboratory","text":"TSH 14.2 mIU/L, free T4 low. Thyroid peroxidase antibodies positive.","observations":[{"name":"TSH","value":"14.2","unit":"mIU/L","reference_range":"0.4-4.0","interpretation":"abnormal"},{"name":"Free T4","value":"0.6","unit":"ng/dL","reference_range":"0.9-1.7","interpretation":"abnormal"}]},{"record_id":"rec-2017-pcp-fu","date":"2017-02-06","type":"clinic_note","specialty":"primary care","title":"Primary care: hypothyroidism","author_role":"Primary care physician","text":"Diagnosis: Hashimoto hypothyroidism. Started levothyroxine 50 mcg.","observations":[]},{"record_id":"rec-2017-lab-2","date":"2017-05-08","type":"lab_result","specialty":"primary care","title":"Thyroid follow-up","author_role":"Laboratory","text":"TSH 3.1 mIU/L on levothyroxine.","observations":[{"name":"TSH","value":"3.1","unit":"mIU/L","reference_range":"0.4-4.0","interpretation":"normal"}]},{"record_id":"rec-2018-rheum","date":"2018-03-19","type":"clinic_note","specialty":"rheumatology","title":"Rheumatology: widespread pain","author_role":"Rheumatologist","text":"Widespread muscle pain and poor sleep. Inflammatory markers and CK normal. Tender points present. Impression: fibromyalgia. Exercise program recommended.","observations":[]},{"record_id":"rec-2019-gi","date":"2019-07-22","type":"clinic_note","specialty":"gastroenterology","title":"Gastroenterology: constipation","author_role":"Gastroenterologist","text":"Constipation improved since thyroid treatment. Colonoscopy for screening normal.","observations":[]},{"record_id":"rec-2020-sleep","date":"2020-10-05","type":"clinic_note","specialty":"sleep medicine","title":"Sleep study","author_role":"Sleep physician","text":"Mild obstructive sleep apnea, AHI 9. Positional therapy advised.","observations":[]},{"record_id":"rec-2021-lab","date":"2021-06-14","type":"lab_result","specialty":"primary care","title":"Annual labs","author_role":"Laboratory","text":"TSH 2.4 mIU/L. Hemoglobin normal. Vitamin D normal.","observations":[{"name":"TSH","value":"2.4","unit":"mIU/L","reference_range":"0.4-4.0","interpretation":"normal"}]},{"record_id":"rec-2022-psych","date":"2022-02-28","type":"clinic_note","specialty":"psychiatry","title":"Psychology: stress","author_role":"Psychologist","text":"Work stress and low mood. Cognitive behavioral therapy started with good response.","observations":[]},{"record_id":"rec-2024-pcp","date":"2024-03-11","type":"clinic_note","specialty":"primary care","title":"Primary care: annual visit","author_role":"Primary care physician","text":"Energy improved. Pain manageable with exercise. Thyroid stable on levothyroxine. No new concerns.","observations":[]}]},"maria-003":{"schema_version":"patient.v1","patient_id":"maria-003","record_version":1,"synthetic":true,"demographics":{"display_name":"Maria (synthetic)","sex_at_birth":"female","birth_year":1999},"documents":[{"record_id":"rec-2016-pcp","date":"2016-10-03","type":"clinic_note","specialty":"primary care","title":"Primary care: abnormal liver tests","author_role":"Primary care physician","text":"17-year-old with ALT 96 U/L found on sports physical. No alcohol use. Hepatitis B and C serologies negative. Repeat in three months.","observations":[{"name":"ALT","value":"96","unit":"U/L","reference_range":"7-35","interpretation":"abnormal"}]},{"record_id":"rec-2017-lab","date":"2017-01-16","type":"lab_result","specialty":"primary care","title":"Repeat liver panel","author_role":"Laboratory","text":"ALT 88 U/L, AST 71 U/L. Bilirubin normal. Albumin normal.","observations":[{"name":"ALT","value":"88","unit":"U/L","reference_range":"7-35","interpretation":"abnormal"},{"name":"AST","value":"71","unit":"U/L","reference_range":"8-33","interpretation":"abnormal"}]},{"record_id":"rec-2017-us","date":"2017-02-08","type":"imaging","specialty":"radiology","title":"Liver ultrasound","author_role":"Radiologist","text":"Mildly echogenic liver suggestive of fatty infiltration. Spleen upper normal size. No focal lesion.","observations":[]},{"record_id":"rec-2017-gi","date":"2017-04-11","type":"clinic_note","specialty":"gastroenterology","title":"Hepatology: elevated transaminases","author_role":"Hepatologist","text":"Persistent transaminase elevation with fatty-appearing liver. BMI 22. Ceruloplasmin 22 mg/dL, within reference range, so Wilson disease considered unlikely. Working diagnosis: nonalcoholic fatty liver disease.","observations":[{"name":"Ceruloplasmin","value":"22","unit":"mg/dL","reference_range":"20-35","interpretation":"normal"}]},{"record_id":"rec-2019-psych","date":"2019-03-21","type":"clinic_note","specialty":"psychiatry","title":"Psychiatry: mood changes","author_role":"Psychiatrist","text":"New irritability, low mood, and declining university grades over six months. Diagnosis: depressive episode. Started sertraline.","observations":[]},{"record_id":"rec-2020-pcp","date":"2020-06-09","type":"clinic_note","specialty":"primary care","title":"Primary care: hand tremor","author_role":"Primary care physician","text":"Fine tremor in both hands, worse when writing. Attributed to sertraline. Dose reduced.","observations":[]},{"record_id":"rec-2021-neuro","date":"2021-02-17","type":"clinic_note","specialty":"neurology","title":"Neurology: tremor and speech","author_role":"Neurologist","text":"Tremor persists after stopping sertraline. Mild slurring of speech noted by family. Brain MRI ordered. Bedside eye exam without slit lamp shows no obvious corneal ring.","observations":[]},{"record_id":"rec-2021-mri","date":"2021-03-04","type":"imaging","specialty":"radiology","title":"Brain MRI","author_role":"Radiologist","text":"Symmetric T2 hyperintensity in the bilateral putamen and thalami. Differential includes metabolic and toxic causes. Clinical correlation recommended.","observations":[]},{"record_id":"rec-2022-lab","date":"2022-01-25","type":"lab_result","specialty":"primary care","title":"Liver panel and blood count","author_role":"Laboratory","text":"ALT 74 U/L. Platelets 128 x10^9/L. Hemoglobin 11.4 g/dL with elevated reticulocyte count.","observations":[{"name":"Platelets","value":"128","unit":"x10^9/L","reference_range":"150-400","interpretation":"abnormal"},{"name":"Hemoglobin","value":"11.4","unit":"g/dL","reference_range":"12-15.5","interpretation":"abnormal"}]},{"record_id":"rec-2023-pcp","date":"2023-08-30","type":"clinic_note","specialty":"primary care","title":"Primary care: follow-up","author_role":"Primary care physician","text":"Patient asks whether the brain MRI findings were ever explained. No 24-hour urine copper or slit lamp exam is documented. Brother had unexplained liver disease as a teenager per patient.","observations":[]}]},"priya-005":{"schema_version":"patient.v1","patient_id":"priya-005","record_version":1,"synthetic":true,"demographics":{"display_name":"Priya (synthetic)","sex_at_birth":"female","birth_year":1993},"documents":[{"record_id":"rec-2010-er","date":"2010-08-14","type":"clinic_note","specialty":"emergency medicine","title":"Emergency: abdominal pain","author_role":"Emergency physician","text":"17-year-old with severe cramping abdominal pain and vomiting. CT shows bowel wall thickening and free fluid. Resolved over two days without treatment. No diagnosis made.","observations":[]},{"record_id":"rec-2012-surg","date":"2012-03-02","type":"clinic_note","specialty":"general surgery","title":"Surgery: suspected appendicitis","author_role":"Surgeon","text":"Severe abdominal pain. Appendectomy performed. Pathology: normal appendix.","observations":[]},{"record_id":"rec-2014-er","date":"2014-11-20","type":"clinic_note","specialty":"emergency medicine","title":"Emergency: hand swelling","author_role":"Emergency physician","text":"Swelling of the right hand after carrying groceries. No hives or itching. Treated with antihistamine and steroids without clear benefit. Resolved in three days.","observations":[]},{"record_id":"rec-2015-gi","date":"2015-06-30","type":"clinic_note","specialty":"gastroenterology","title":"Gastroenterology: recurrent attacks","author_role":"Gastroenterologist","text":"Recurrent attacks of abdominal pain every few months, each lasting two to three days. Endoscopy and colonoscopy normal. Impression: functional abdominal pain.","observations":[]},{"record_id":"rec-2016-allergy","date":"2016-09-12","type":"clinic_note","specialty":"allergy","title":"Allergy: swelling episodes","author_role":"Allergist","text":"Episodes of facial and limb swelling without hives. Not on ACE inhibitor. C4 measured between attacks within reference range; hereditary angioedema considered less likely. Advised to carry antihistamines.","observations":[{"name":"Complement C4","value":"16","unit":"mg/dL","reference_range":"14-40","interpretation":"normal"}]},{"record_id":"rec-2018-obgyn","date":"2018-04-25","type":"clinic_note","specialty":"obstetrics","title":"Gynecology: contraception","author_role":"Gynecologist","text":"Started combined estrogen-containing oral contraceptive.","observations":[]},{"record_id":"rec-2018-er","date":"2018-07-03","type":"clinic_note","specialty":"emergency medicine","title":"Emergency: facial swelling","author_role":"Emergency physician","text":"Lip and tongue swelling with hoarse voice. No hives. Epinephrine, antihistamine, and steroids given with slow improvement over 24 hours. Observed overnight.","observations":[]},{"record_id":"rec-2019-pcp","date":"2019-01-15","type":"clinic_note","specialty":"primary care","title":"Primary care: attack frequency","author_role":"Primary care physician","text":"Swelling and abdominal attacks more frequent since starting oral contraceptive. Family history: mother had episodes of throat swelling, never diagnosed.","observations":[]},{"record_id":"rec-2021-er","date":"2021-12-08","type":"clinic_note","specialty":"emergency medicine","title":"Emergency: abdominal attack","author_role":"Emergency physician","text":"Severe abdominal pain with ascites on ultrasound. Resolved in 48 hours. Discharged with diagnosis of nonspecific abdominal pain.","observations":[]},{"record_id":"rec-2023-pcp","date":"2023-06-19","type":"clinic_note","specialty":"primary care","title":"Primary care: review","author_role":"Primary care physician","text":"Patient asks why antihistamines never help. No C1 inhibitor level or function test is documented in the record.","observations":[]}]},"robert-010":{"schema_version":"patient.v1","patient_id":"robert-010","record_version":1,"synthetic":true,"demographics":{"display_name":"Robert (synthetic)","sex_at_birth":"male","birth_year":1962},"documents":[{"record_id":"rec-2012-hand","date":"2012-03-27","type":"clinic_note","specialty":"hand surgery","title":"Hand surgery: carpal tunnel","author_role":"Hand surgeon","text":"Bilateral carpal tunnel syndrome confirmed on nerve conduction. Right release performed.","observations":[]},{"record_id":"rec-2013-hand","date":"2013-02-19","type":"clinic_note","specialty":"hand surgery","title":"Hand surgery: left release","author_role":"Hand surgeon","text":"Left carpal tunnel release performed. No tissue sent for staining.","observations":[]},{"record_id":"rec-2016-ortho","date":"2016-08-30","type":"clinic_note","specialty":"orthopedics","title":"Spine: back and leg pain","author_role":"Spine surgeon","text":"Lumbar spinal stenosis on MRI. Decompression surgery performed.","observations":[]},{"record_id":"rec-2018-neuro","date":"2018-05-15","type":"clinic_note","specialty":"neurology","title":"Neurology: numb feet","author_role":"Neurologist","text":"Numbness and burning in both feet with reduced vibration sense. HbA1c 5.6%, B12 normal. Impression: idiopathic axonal neuropathy.","observations":[{"name":"HbA1c","value":"5.6","unit":"%","reference_range":"<5.7","interpretation":"normal"}]},{"record_id":"rec-2019-gi","date":"2019-10-08","type":"clinic_note","specialty":"gastroenterology","title":"Gastroenterology: bowel changes","author_role":"Gastroenterologist","text":"Alternating diarrhea and constipation with early satiety and 6 kg weight loss. Colonoscopy normal.","observations":[]},{"record_id":"rec-2020-card","date":"2020-06-23","type":"clinic_note","specialty":"cardiology","title":"Cardiology: breathlessness","author_role":"Cardiologist","text":"Exertional breathlessness and ankle swelling. Echocardiogram shows concentric left ventricular wall thickening of 15 mm with preserved ejection fraction. Attributed to hypertensive heart disease.","observations":[{"name":"Interventricular septum thickness","value":"15","unit":"mm","reference_range":"6-10","interpretation":"abnormal"}]},{"record_id":"rec-2020-ecg","date":"2020-06-23","type":"other","specialty":"cardiology","title":"ECG","author_role":"Cardiologist","text":"Sinus rhythm with low QRS voltage in limb leads.","observations":[]},{"record_id":"rec-2021-heme","date":"2021-02-09","type":"lab_result","specialty":"hematology","title":"Light chain studies","author_role":"Laboratory","text":"Serum protein electrophoresis shows no monoclonal protein. Serum free light chain ratio normal. AL amyloidosis considered unlikely.","observations":[{"name":"Free light chain ratio","value":"1.1","unit":null,"reference_range":"0.26-1.65","interpretation":"normal"}]},{"record_id":"rec-2022-pcp","date":"2022-11-01","type":"clinic_note","specialty":"primary care","title":"Primary care: dizziness","author_role":"Primary care physician","text":"Lightheaded on standing. Blood pressure 138/82 lying and 104/70 standing. Antihypertensive stopped. Family history: father died of heart failure at 66.","observations":[]},{"record_id":"rec-2024-card","date":"2024-01-16","type":"clinic_note","specialty":"cardiology","title":"Cardiology: follow-up","author_role":"Cardiologist","text":"Worsening heart failure despite blood pressure now low. Wall thickening is out of proportion to blood pressure history. No technetium pyrophosphate scan or TTR genetic testing on record.","observations":[]}]},"sarah-001":{"schema_version":"patient.v1","patient_id":"sarah-001","record_version":1,"synthetic":true,"demographics":{"display_name":"Sarah (synthetic)","sex_at_birth":"female","birth_year":1986},"documents":[{"record_id":"rec-2012-pcp","date":"2012-05-10","type":"clinic_note","specialty":"primary care","title":"Primary care visit: limb pain","author_role":"Primary care physician","text":"26-year-old woman reports burning pain in her hands and feet since adolescence. Pain is worse with heat, fever, and exercise. She also reports that she rarely sweats. Neurological exam is unremarkable. Plan: trial of gabapentin and follow-up in three months.","observations":[]},{"record_id":"rec-2014-gi","date":"2014-09-22","type":"clinic_note","specialty":"gastroenterology","title":"Gastroenterology consult: abdominal pain","author_role":"Gastroenterologist","text":"Several years of recurrent abdominal pain after meals, bloating, and episodes of diarrhea. Colonoscopy with biopsies was normal. Celiac serology negative. Impression: symptoms most consistent with irritable bowel syndrome. Dietary changes advised.","observations":[{"name":"Tissue transglutaminase IgA","value":"negative","unit":null,"reference_range":"negative","interpretation":"normal"}]},{"record_id":"rec-2016-neuro","date":"2016-02-03","type":"clinic_note","specialty":"neurology","title":"Neurology consult: small fiber neuropathy","author_role":"Neurologist","text":"Skin biopsy shows reduced intraepidermal nerve fiber density, consistent with small fiber neuropathy. HbA1c 5.2%, vitamin B12 normal, thyroid function normal. Etiology unclear. Will screen for Fabry disease with alpha-galactosidase A enzyme activity.","observations":[{"name":"HbA1c","value":"5.2","unit":"%","reference_range":"<5.7","interpretation":"normal"}]},{"record_id":"rec-2016-enzyme","date":"2016-03-01","type":"lab_result","specialty":"neurology","title":"Alpha-galactosidase A enzyme activity","author_role":"Reference laboratory","text":"Leukocyte alpha-galactosidase A enzyme activity within the laboratory reference range. No molecular testing performed on this sample.","observations":[{"name":"Alpha-galactosidase A activity (leukocytes)","value":"within reference range","unit":null,"reference_range":"laboratory-specific","interpretation":"normal"}]},{"record_id":"rec-2016-neuro-fu","date":"2016-03-29","type":"clinic_note","specialty":"neurology","title":"Neurology follow-up","author_role":"Neurologist","text":"Fabry enzyme screen normal. Fabry disease considered unlikely. Small fiber neuropathy of unknown cause. Continue symptomatic management.","observations":[]},{"record_id":"rec-2018-derm","date":"2018-07-02","type":"clinic_note","specialty":"dermatology","title":"Dermatology: skin spots","author_role":"Dermatologist","text":"Several small dark red papules on the lower trunk and upper thighs, present for years. Assessed as cherry angiomas. Biopsy not performed. Reassurance given.","observations":[]},{"record_id":"rec-2021-nephro","date":"2021-11-08","type":"referral","specialty":"nephrology","title":"Nephrology consult: proteinuria","author_role":"Nephrologist","text":"Referred for persistent proteinuria. Urine albumin-to-creatinine ratio 410 mg/g. eGFR 78. Blood pressure normal. Family history: father started dialysis at age 48, cause not documented. Kidney biopsy deferred.","observations":[{"name":"Urine albumin-to-creatinine ratio","value":"410","unit":"mg/g","reference_range":"<30","interpretation":"abnormal"},{"name":"eGFR","value":"78","unit":"mL/min/1.73m2","reference_range":">=90","interpretation":"borderline"}]},{"record_id":"rec-2022-cardio","date":"2022-09-14","type":"clinic_note","specialty":"cardiology","title":"Cardiology: palpitations","author_role":"Cardiologist","text":"Intermittent palpitations. ECG shows sinus rhythm with a short PR interval. Echocardiogram shows mild left ventricular wall thickening. Blood pressure normal. Cause of wall thickening not determined; repeat echo in one year.","observations":[{"name":"Interventricular septum thickness","value":"12","unit":"mm","reference_range":"6-10","interpretation":"abnormal"}]},{"record_id":"rec-2023-eye","date":"2023-04-19","type":"clinic_note","specialty":"ophthalmology","title":"Ophthalmology: routine exam","author_role":"Ophthalmologist","text":"Slit lamp exam shows bilateral whorl-like corneal opacities (cornea verticillata). Visual acuity unaffected. Patient takes no amiodarone or chloroquine. No treatment needed.","observations":[]},{"record_id":"rec-2024-pcp","date":"2024-01-12","type":"clinic_note","specialty":"primary care","title":"Primary care follow-up","author_role":"Primary care physician","text":"Patient asks whether earlier tests ruled out a genetic cause of her symptoms. She recalls a visit to an outside genetics clinic in 2019, but no report from that visit is in our chart. Will request outside records.","observations":[]}]},"tom-006":{"schema_version":"patient.v1","patient_id":"tom-006","record_version":1,"synthetic":true,"demographics":{"display_name":"Tom (synthetic)","sex_at_birth":"male","birth_year":1980},"documents":[{"record_id":"rec-1986-dent","date":"1986-05-20","type":"clinic_note","specialty":"dentistry","title":"Dentistry: early tooth loss","author_role":"Dentist","text":"6-year-old lost several baby teeth early with roots intact. No trauma. Parents reassured.","observations":[]},{"record_id":"rec-2008-lab","date":"2008-02-14","type":"lab_result","specialty":"primary care","title":"Metabolic panel","author_role":"Laboratory","text":"Alkaline phosphatase 28 U/L, flagged low. Calcium and phosphate normal.","observations":[{"name":"Alkaline phosphatase","value":"28","unit":"U/L","reference_range":"40-129","interpretation":"abnormal"}]},{"record_id":"rec-2008-pcp","date":"2008-03-01","type":"clinic_note","specialty":"primary care","title":"Primary care: routine check","author_role":"Primary care physician","text":"Routine labs unremarkable. No action needed.","observations":[]},{"record_id":"rec-2013-ortho","date":"2013-09-10","type":"clinic_note","specialty":"orthopedics","title":"Orthopedics: foot pain","author_role":"Orthopedic surgeon","text":"Metatarsal stress fracture without unusual activity. Treated with boot.","observations":[]},{"record_id":"rec-2015-lab","date":"2015-06-18","type":"lab_result","specialty":"primary care","title":"Metabolic panel","author_role":"Laboratory","text":"Alkaline phosphatase 25 U/L, flagged low.","observations":[{"name":"Alkaline phosphatase","value":"25","unit":"U/L","reference_range":"40-129","interpretation":"abnormal"}]},{"record_id":"rec-2016-ortho","date":"2016-11-02","type":"clinic_note","specialty":"orthopedics","title":"Orthopedics: thigh pain","author_role":"Orthopedic surgeon","text":"Thigh pain for months. X-ray shows lateral femoral cortex stress fracture. Not taking bisphosphonates. Vitamin D normal.","observations":[]},{"record_id":"rec-2017-dexa","date":"2017-01-24","type":"imaging","specialty":"radiology","title":"Bone density scan","author_role":"Radiologist","text":"Lumbar spine T-score -2.1. Femoral neck T-score -1.8.","observations":[]},{"record_id":"rec-2017-endo","date":"2017-03-15","type":"clinic_note","specialty":"endocrinology","title":"Endocrinology: low bone density","author_role":"Endocrinologist","text":"Low bone mass with fractures. Plan: consider bisphosphonate therapy. Alkaline phosphatase level not commented on.","observations":[]},{"record_id":"rec-2020-rheum","date":"2020-08-27","type":"clinic_note","specialty":"rheumatology","title":"Rheumatology: joint and muscle pain","author_role":"Rheumatologist","text":"Chronic muscle aches and joint pain. Chondrocalcinosis on knee X-ray. Inflammatory markers normal.","observations":[]},{"record_id":"rec-2023-pcp","date":"2023-04-11","type":"clinic_note","specialty":"primary care","title":"Primary care: review","author_role":"Primary care physician","text":"Reviewing repeated low alkaline phosphatase results, which have never been addressed. Patient's daughter also lost baby teeth early. Vitamin B6 (PLP) level and genetic testing not done.","observations":[]}]}},"fixtureRun":{"schema_version":"analysis.v1","run_id":"fixture-sarah-001","status":"completed","provenance":"fixture","replayed_from_run_id":null,"fallback_reason":null,"evidence_mode":"cached","patient_id":"sarah-001","record_version":1,"excluded_record_ids":[],"versions":{"schema_version":"analysis.v1","model":"hand-authored-fixture","prompt":"none","evidence":"evidence-draft-1"},"created_at":"2026-10-24T00:00:00Z","completed_at":"2026-10-24T00:00:00Z","error":null,"output":{"findings":[{"finding_id":"fnd-limb-pain","label":"Burning pain in hands and feet since adolescence","kind":"symptom","assertion":"present","date":"2012-05-10","specialty":"primary care","record_refs":[{"record_id":"rec-2012-pcp","excerpt":"burning pain in her hands and feet since adolescence"}],"hpo_id":null},{"finding_id":"fnd-reduced-sweating","label":"Rarely sweats","kind":"symptom","assertion":"present","date":"2012-05-10","specialty":"primary care","record_refs":[{"record_id":"rec-2012-pcp","excerpt":"she rarely sweats"}],"hpo_id":null},{"finding_id":"fnd-gi-symptoms","label":"Recurrent post-meal abdominal pain and diarrhea","kind":"symptom","assertion":"present","date":"2014-09-22","specialty":"gastroenterology","record_refs":[{"record_id":"rec-2014-gi","excerpt":"recurrent abdominal pain after meals, bloating, and episodes of diarrhea"}],"hpo_id":null},{"finding_id":"fnd-celiac-negative","label":"Celiac serology negative","kind":"lab_result","assertion":"absent","date":"2014-09-22","specialty":"gastroenterology","record_refs":[{"record_id":"rec-2014-gi","excerpt":"Celiac serology negative"}],"hpo_id":null},{"finding_id":"fnd-small-fiber-neuropathy","label":"Small fiber neuropathy on skin biopsy","kind":"pathology","assertion":"present","date":"2016-02-03","specialty":"neurology","record_refs":[{"record_id":"rec-2016-neuro","excerpt":"reduced intraepidermal nerve fiber density, consistent with small fiber neuropathy"}],"hpo_id":null},{"finding_id":"fnd-diabetes-absent","label":"No diabetes (HbA1c 5.2%)","kind":"lab_result","assertion":"absent","date":"2016-02-03","specialty":"neurology","record_refs":[{"record_id":"rec-2016-neuro","excerpt":"HbA1c 5.2%"}],"hpo_id":null},{"finding_id":"fnd-enzyme-normal","label":"Alpha-Gal A enzyme activity in normal range","kind":"lab_result","assertion":"present","date":"2016-03-01","specialty":"neurology","record_refs":[{"record_id":"rec-2016-enzyme","excerpt":"within the laboratory reference range"}],"hpo_id":null},{"finding_id":"fnd-proteinuria","label":"Persistent proteinuria (UACR 410 mg/g)","kind":"lab_result","assertion":"present","date":"2021-11-08","specialty":"nephrology","record_refs":[{"record_id":"rec-2021-nephro","excerpt":"Urine albumin-to-creatinine ratio 410 mg/g"}],"hpo_id":null},{"finding_id":"fnd-father-dialysis","label":"Father on dialysis from age 48, cause unknown","kind":"family_history","assertion":"present","date":"2021-11-08","specialty":"nephrology","record_refs":[{"record_id":"rec-2021-nephro","excerpt":"father started dialysis at age 48, cause not documented"}],"hpo_id":null},{"finding_id":"fnd-cornea-verticillata","label":"Cornea verticillata, no causative medication","kind":"sign","assertion":"present","date":"2023-04-19","specialty":"ophthalmology","record_refs":[{"record_id":"rec-2023-eye","excerpt":"bilateral whorl-like corneal opacities (cornea verticillata)"},{"record_id":"rec-2023-eye","excerpt":"Patient takes no amiodarone or chloroquine"}],"hpo_id":null}],"claims":[{"claim_id":"clm-enzyme-limit","text":"A normal enzyme result does not exclude Fabry disease in a woman, because heterozygous females can have enzyme activity in the normal range.","record_refs":[{"record_id":"rec-2016-enzyme","excerpt":"within the laboratory reference range"},{"record_id":"rec-2016-neuro-fu","excerpt":"Fabry disease considered unlikely"}],"source_refs":[{"source_id":"src-genereviews-fabry","excerpt_id":"exc-fabry-female-enzyme"}]},{"claim_id":"clm-no-molecular-test","text":"No GLA molecular test is on record, and molecular testing is how heterozygous females are identified.","record_refs":[{"record_id":"rec-2016-enzyme","excerpt":"No molecular testing performed on this sample."}],"source_refs":[{"source_id":"src-genereviews-fabry","excerpt_id":"exc-fabry-female-enzyme"}]},{"claim_id":"clm-features-match","text":"Limb pain, reduced sweating, GI symptoms, and corneal opacities, recorded by four different specialties, are each described features of Fabry disease.","record_refs":[{"record_id":"rec-2012-pcp","excerpt":"burning pain in her hands and feet since adolescence"},{"record_id":"rec-2012-pcp","excerpt":"she rarely sweats"},{"record_id":"rec-2014-gi","excerpt":"recurrent abdominal pain after meals"},{"record_id":"rec-2023-eye","excerpt":"cornea verticillata"}],"source_refs":[{"source_id":"src-genereviews-fabry","excerpt_id":"exc-fabry-features"}]},{"claim_id":"clm-kidney-involvement","text":"Persistent proteinuria with normal blood pressure is consistent with the kidney involvement described in Fabry disease.","record_refs":[{"record_id":"rec-2021-nephro","excerpt":"persistent proteinuria"},{"record_id":"rec-2021-nephro","excerpt":"Blood pressure normal"}],"source_refs":[{"source_id":"src-genereviews-fabry","excerpt_id":"exc-fabry-kidney"}]},{"claim_id":"clm-father-inheritance","text":"Her father's kidney failure of undocumented cause is compatible with X-linked inheritance but does not establish it.","record_refs":[{"record_id":"rec-2021-nephro","excerpt":"father started dialysis at age 48, cause not documented"}],"source_refs":[{"source_id":"src-genereviews-fabry","excerpt_id":"exc-fabry-inheritance"}]},{"claim_id":"clm-no-drug-cause-cornea","text":"Medications can cause similar corneal changes, but the record documents no amiodarone or chloroquine use.","record_refs":[{"record_id":"rec-2023-eye","excerpt":"Patient takes no amiodarone or chloroquine"}],"source_refs":[{"source_id":"src-genereviews-fabry","excerpt_id":"exc-fabry-phenocopy"}]},{"claim_id":"clm-sfn-often-idiopathic","text":"Small fiber neuropathy often has no identified cause, so separate common conditions remain possible.","record_refs":[{"record_id":"rec-2016-neuro-fu","excerpt":"Small fiber neuropathy of unknown cause"}],"source_refs":[{"source_id":"src-sfn-review","excerpt_id":"exc-sfn-causes"}]}],"prior_results":[{"prior_result_id":"pri-enzyme-2016","test_name":"2016 alpha-Gal A enzyme screen","record_refs":[{"record_id":"rec-2016-enzyme","excerpt":"within the laboratory reference range"},{"record_id":"rec-2016-neuro-fu","excerpt":"Fabry disease considered unlikely"}],"result_summary":"Leukocyte enzyme activity within the reference range.","interpretation_at_the_time":"Fabry disease considered unlikely.","what_it_established":"Enzyme activity was not low. In a woman this does not settle the Fabry question, and no genetic test was performed.","limitation_claim_ids":["clm-enzyme-limit","clm-no-molecular-test"],"hypothesis_ids":["hyp-fabry"]}],"hypotheses":[{"hypothesis_id":"hyp-fabry","name":"Fabry disease","is_rare_disease":true,"status":"open","summary":"Findings from four specialties are compatible with Fabry disease. The 2016 normal enzyme screen does not exclude it in a woman, and no molecular test is on record. Unconfirmed.","supporting_finding_ids":["fnd-limb-pain","fnd-reduced-sweating","fnd-gi-symptoms","fnd-small-fiber-neuropathy","fnd-proteinuria","fnd-father-dialysis","fnd-cornea-verticillata"],"supporting_claim_ids":["clm-features-match","clm-kidney-involvement","clm-father-inheritance","clm-no-drug-cause-cornea","clm-enzyme-limit"],"contradicting_claim_ids":[]},{"hypothesis_id":"hyp-separate-conditions","name":"Separate common conditions","is_rare_disease":false,"status":"open","summary":"Irritable bowel syndrome, idiopathic small fiber neuropathy, and an unrelated kidney condition could each explain part of the picture. This would not account for the corneal opacities without a medication cause.","supporting_finding_ids":["fnd-gi-symptoms","fnd-small-fiber-neuropathy"],"supporting_claim_ids":["clm-sfn-often-idiopathic"],"contradicting_claim_ids":["clm-no-drug-cause-cornea"]}],"missing_evidence":[{"missing_id":"mis-gla-report","priority":1,"description":"GLA gene molecular testing report","why_it_matters":"Molecular testing identifies heterozygous females, which the 2016 enzyme screen could not do.","check_existing_first":true,"existing_record_refs":[{"record_id":"rec-2024-pcp","excerpt":"She recalls a visit to an outside genetics clinic in 2019, but no report from that visit is in our chart."}],"claim_ids":["clm-enzyme-limit","clm-no-molecular-test"],"hypothesis_ids":["hyp-fabry","hyp-separate-conditions"],"possible_outcomes":[{"outcome":"A report exists with a pathogenic GLA variant","implication":"Fabry disease becomes the leading question, pending clinician confirmation."},{"outcome":"A report exists with no GLA variant found","implication":"Fabry disease becomes much less likely and separate causes deserve more attention."},{"outcome":"No report exists","implication":"The clinician decides whether molecular testing is warranted."}]},{"missing_id":"mis-father-diagnosis","priority":2,"description":"Cause of father's kidney failure","why_it_matters":"A documented cause in the father would strengthen or weaken the inheritance link.","check_existing_first":false,"existing_record_refs":[],"claim_ids":["clm-father-inheritance"],"hypothesis_ids":["hyp-fabry"],"possible_outcomes":[{"outcome":"Father had a Fabry diagnosis","implication":"Strongly supports the inheritance link."},{"outcome":"Father had a different documented cause","implication":"Removes family history as supporting evidence."}]}],"clinician_questions":[{"question_id":"q-outside-report","text":"Can the 2019 outside genetics clinic report be obtained, and did it include GLA testing?","missing_ids":["mis-gla-report"]},{"question_id":"q-father-records","text":"Is the cause of the father's kidney failure documented anywhere the family can share?","missing_ids":["mis-father-diagnosis"]}]},"timeline":[{"record_id":"rec-2012-pcp","date":"2012-05-10","specialty":"primary care","title":"Primary care visit: limb pain","finding_ids":["fnd-limb-pain","fnd-reduced-sweating"]},{"record_id":"rec-2014-gi","date":"2014-09-22","specialty":"gastroenterology","title":"Gastroenterology consult: abdominal pain","finding_ids":["fnd-gi-symptoms","fnd-celiac-negative"]},{"record_id":"rec-2016-neuro","date":"2016-02-03","specialty":"neurology","title":"Neurology consult: small fiber neuropathy","finding_ids":["fnd-small-fiber-neuropathy","fnd-diabetes-absent"]},{"record_id":"rec-2016-enzyme","date":"2016-03-01","specialty":"neurology","title":"Alpha-galactosidase A enzyme activity","finding_ids":["fnd-enzyme-normal"]},{"record_id":"rec-2016-neuro-fu","date":"2016-03-29","specialty":"neurology","title":"Neurology follow-up","finding_ids":[]},{"record_id":"rec-2018-derm","date":"2018-07-02","specialty":"dermatology","title":"Dermatology: skin spots","finding_ids":[]},{"record_id":"rec-2021-nephro","date":"2021-11-08","specialty":"nephrology","title":"Nephrology consult: proteinuria","finding_ids":["fnd-proteinuria","fnd-father-dialysis"]},{"record_id":"rec-2022-cardio","date":"2022-09-14","specialty":"cardiology","title":"Cardiology: palpitations","finding_ids":[]},{"record_id":"rec-2023-eye","date":"2023-04-19","specialty":"ophthalmology","title":"Ophthalmology: routine exam","finding_ids":["fnd-cornea-verticillata"]},{"record_id":"rec-2024-pcp","date":"2024-01-12","specialty":"primary care","title":"Primary care follow-up","finding_ids":[]}],"graph":{"nodes":[{"node_id":"fnd-limb-pain","type":"finding","label":"Burning pain in hands and feet since adolescence"},{"node_id":"fnd-reduced-sweating","type":"finding","label":"Rarely sweats"},{"node_id":"fnd-gi-symptoms","type":"finding","label":"Recurrent post-meal abdominal pain and diarrhea"},{"node_id":"fnd-small-fiber-neuropathy","type":"finding","label":"Small fiber neuropathy on skin biopsy"},{"node_id":"fnd-proteinuria","type":"finding","label":"Persistent proteinuria (UACR 410 mg/g)"},{"node_id":"fnd-father-dialysis","type":"finding","label":"Father on dialysis from age 48, cause unknown"},{"node_id":"fnd-cornea-verticillata","type":"finding","label":"Cornea verticillata, no causative medication"},{"node_id":"hyp-fabry","type":"hypothesis","label":"Fabry disease"},{"node_id":"hyp-separate-conditions","type":"hypothesis","label":"Separate common conditions"},{"node_id":"pri-enzyme-2016","type":"prior_result","label":"2016 alpha-Gal A enzyme screen"},{"node_id":"mis-gla-report","type":"missing_evidence","label":"GLA gene molecular testing report"},{"node_id":"mis-father-diagnosis","type":"missing_evidence","label":"Cause of father's kidney failure"}],"edges":[{"edge_id":"fnd-limb-pain--supports--hyp-fabry","source":"fnd-limb-pain","target":"hyp-fabry","relation":"supports"},{"edge_id":"fnd-reduced-sweating--supports--hyp-fabry","source":"fnd-reduced-sweating","target":"hyp-fabry","relation":"supports"},{"edge_id":"fnd-gi-symptoms--supports--hyp-fabry","source":"fnd-gi-symptoms","target":"hyp-fabry","relation":"supports"},{"edge_id":"fnd-small-fiber-neuropathy--supports--hyp-fabry","source":"fnd-small-fiber-neuropathy","target":"hyp-fabry","relation":"supports"},{"edge_id":"fnd-proteinuria--supports--hyp-fabry","source":"fnd-proteinuria","target":"hyp-fabry","relation":"supports"},{"edge_id":"fnd-father-dialysis--supports--hyp-fabry","source":"fnd-father-dialysis","target":"hyp-fabry","relation":"supports"},{"edge_id":"fnd-cornea-verticillata--supports--hyp-fabry","source":"fnd-cornea-verticillata","target":"hyp-fabry","relation":"supports"},{"edge_id":"fnd-gi-symptoms--supports--hyp-separate-conditions","source":"fnd-gi-symptoms","target":"hyp-separate-conditions","relation":"supports"},{"edge_id":"fnd-small-fiber-neuropathy--supports--hyp-separate-conditions","source":"fnd-small-fiber-neuropathy","target":"hyp-separate-conditions","relation":"supports"},{"edge_id":"pri-enzyme-2016--previously_tested--hyp-fabry","source":"pri-enzyme-2016","target":"hyp-fabry","relation":"previously_tested"},{"edge_id":"mis-gla-report--would_clarify--hyp-fabry","source":"mis-gla-report","target":"hyp-fabry","relation":"would_clarify"},{"edge_id":"mis-gla-report--would_clarify--hyp-separate-conditions","source":"mis-gla-report","target":"hyp-separate-conditions","relation":"would_clarify"},{"edge_id":"mis-father-diagnosis--would_clarify--hyp-fabry","source":"mis-father-diagnosis","target":"hyp-fabry","relation":"would_clarify"}]},"disclaimer":"Clinical decision support prototype using synthetic data. Not clinically validated."},"sources":{"src-genereviews-fabry":{"source_id":"src-genereviews-fabry","source_type":"genereviews","title":"Fabry Disease","publisher":"GeneReviews (NCBI Bookshelf)","year":null,"url":"https://www.ncbi.nlm.nih.gov/books/NBK1292/","pmid":null,"excerpts":[{"excerpt_id":"exc-fabry-female-enzyme","text":"[Unverified paraphrase] In females heterozygous for a GLA pathogenic variant, alpha-galactosidase A enzyme activity may be within the normal range, so molecular genetic testing of GLA is needed to identify heterozygotes.","location":"Diagnosis"},{"excerpt_id":"exc-fabry-features","text":"[Unverified paraphrase] Classic features include episodic pain in the hands and feet (acroparesthesias), reduced sweating, gastrointestinal symptoms, angiokeratomas, and characteristic corneal opacities (cornea verticillata).","location":"Clinical Description"},{"excerpt_id":"exc-fabry-kidney","text":"[Unverified paraphrase] Kidney involvement, beginning with proteinuria and progressing to reduced kidney function, is a major source of morbidity.","location":"Clinical Description"},{"excerpt_id":"exc-fabry-inheritance","text":"[Unverified paraphrase] Fabry disease is inherited in an X-linked manner. All daughters of an affected male inherit the pathogenic variant, and heterozygous females range from asymptomatic to severely affected.","location":"Genetic Counseling"},{"excerpt_id":"exc-fabry-phenocopy","text":"[Unverified paraphrase] Corneal opacities resembling cornea verticillata can also be caused by medications such as amiodarone and chloroquine.","location":"Differential Diagnosis"}],"verification_status":"unverified","retrieved_on":null},"src-sfn-review":{"source_id":"src-sfn-review","source_type":"pubmed","title":"PLACEHOLDER: review of small fiber neuropathy causes (to be selected and verified)","publisher":"PubMed","year":null,"url":"https://pubmed.ncbi.nlm.nih.gov/","pmid":null,"excerpts":[{"excerpt_id":"exc-sfn-causes","text":"[Unverified paraphrase] Small fiber neuropathy has many causes, including diabetes and immune, infectious, toxic, and genetic conditions, and in many patients no cause is found.","location":null}],"verification_status":"unverified","retrieved_on":null}},"evidenceVersion":"evidence-draft-1"};
+const clone = o => JSON.parse(JSON.stringify(o));
+const wait = ms => new Promise(r => setTimeout(r, ms));
+const SCENARIOS = {
+  fixture:  'GET /fixtures/analyses/sarah-001 · provenance fixture',
+  running:  'POST /analyses → 202, then poll queued → running → completed (live)',
+  live:     'POST /analyses → 200 reused live run',
+  replayed: 'Live run failed (timeout) → replayed earlier validated run',
+  failed:   'Live run failed (timeout), no earlier run → status failed',
+};
+let scenario = 'fixture';
+/* Design-only statuses for the 9 patients without a backend run. Counts and states only, no clinical claims.
+   Negative controls show "no question raised", which is what they exist to test. */
+const ILLUSTRATIVE = {
+  'david-004':  {status:'open_question',    open_questions:2, missing_reports:1, last_run:'2026-10-24T16:10:00Z'},
+  'maria-003':  {status:'awaiting_records', open_questions:1, missing_reports:2, last_run:'2026-10-24T15:52:00Z'},
+  'priya-005':  {status:'not_analysed',     open_questions:0, missing_reports:0, last_run:null},
+  'kevin-008':  {status:'open_question',    open_questions:1, missing_reports:1, last_run:'2026-10-24T14:31:00Z'},
+  'robert-010': {status:'awaiting_records', open_questions:0, missing_reports:1, last_run:'2026-10-24T13:05:00Z'},
+  'tom-006':    {status:'not_analysed',     open_questions:0, missing_reports:0, last_run:null},
+  'emma-009':   {status:'no_question',      open_questions:0, missing_reports:0, last_run:'2026-10-24T12:40:00Z'},
+  'james-002':  {status:'no_question',      open_questions:0, missing_reports:0, last_run:'2026-10-24T12:38:00Z'},
+  'linda-007':  {status:'no_question',      open_questions:0, missing_reports:0, last_run:'2026-10-24T12:36:00Z'},
+};
+/* What runAnalysis resolves to for the not-analysed patients, so a demo run visibly changes status. */
+const POST_RUN = {
+  'priya-005': {status:'open_question', open_questions:1, missing_reports:1, last_run:'2026-10-24T18:30:00Z'},
+  'tom-006':   {status:'no_question',   open_questions:0, missing_reports:0, last_run:'2026-10-24T18:30:00Z'},
+};
+const listeners = new Set();
+function liveRun(){
+  const r = clone(DATA.fixtureRun);
+  Object.assign(r, {run_id:'run-01JB7Q4M2X', provenance:'live', evidence_mode:'live',
+    versions:{schema_version:'analysis.v1', model:'claude-sonnet-5-5', prompt:'extract-v1+synth-v1', evidence:DATA.evidenceVersion},
+    created_at:'2026-10-24T17:42:10Z', completed_at:'2026-10-24T17:42:48Z'});
+  return r;
+}
+function runFor(id, scen){
+  if (id !== 'sarah-001') return null;
+  if (scen === 'fixture') return clone(DATA.fixtureRun);
+  if (scen === 'live' || scen === 'running') return liveRun();
+  const err = {code:'timeout', message:'Model did not respond within 60 s.', retryable:true};
+  if (scen === 'replayed'){
+    const r = liveRun();
+    Object.assign(r, {run_id:'run-01JB7R9K0P', provenance:'replayed', replayed_from_run_id:'run-01JB7Q4M2X',
+      fallback_reason:'Live analysis failed (timeout). Showing a previously validated run from 2026-10-24 17:42 UTC for the same patient record.',
+      error:err, created_at:'2026-10-24T18:05:02Z', completed_at:'2026-10-24T18:06:02Z'});
+    return r;
+  }
+  const r = liveRun();
+  Object.assign(r, {run_id:'run-01JB7R9K0P', status:'failed', output:null, timeline:[], graph:{nodes:[],edges:[]},
+    error:err, created_at:'2026-10-24T18:05:02Z', completed_at:'2026-10-24T18:06:02Z'});
+  return r;
+}
+window.ncApi = {
+  data: DATA,
+  scenarios: SCENARIOS,
+  get scenario(){ return scenario; },
+  setScenario(s){ scenario = s; listeners.forEach(fn => fn(s)); },
+  onScenario(fn){ listeners.add(fn); return () => listeners.delete(fn); },
+  async listPatients(){ await wait(150); return clone(DATA.patients); },              // GET /patients
+  async getPatient(id){ await wait(120); const p = DATA.records[id]; if(!p) throw {status:404}; return clone(p); }, // GET /patients/{id}
+  async getSource(id){ await wait(100); const s = DATA.sources[id]; if(!s) throw {status:404}; return clone(s); },  // GET /sources/{id}
+  /* Fetches Sarah's analysis for the active scenario. onStatus gets every polled AnalysisRun
+     ({status:'queued'|'running'|...}) so a UI can show progress. Other patients have no run:
+     resolves {status:404} as the fixture endpoint would. */
+  async getAnalysis(id, onStatus){
+    const scen = scenario;
+    if (id !== 'sarah-001'){ await wait(200); return {status:404, detail:`no fixture for patient '${id}'`}; }
+    if (scen === 'fixture'){ await wait(250); return runFor(id, scen); }
+    const base = runFor(id, 'live');
+    const stub = s => Object.assign(clone(base), {status:s, output:null, timeline:[], graph:{nodes:[],edges:[]}, completed_at:null});
+    if (scen === 'running' || scen === 'replayed' || scen === 'failed'){
+      onStatus && onStatus(stub('queued')); await wait(700);
+      onStatus && onStatus(stub('running')); await wait(scen === 'running' ? 2600 : 1800);
+    } else { await wait(250); }
+    return runFor(id, scen);
+  },
+  /* ---- Dashboard (Round 7) ----
+     Real per-patient facts composed the way a frontend would today: GET /patients + GET /patients/{id} x10.
+     Only sarah-001 has an analysis in the backend; call getAnalysis('sarah-001', onStatus) for its live state.
+     For the other 9, `illustrative` holds DESIGN-ONLY statuses (no clinical content) when ncApi.illustrative
+     is true. They are not backend data and must be labelled "Illustrative" wherever shown. */
+  illustrative: true,
+  setIllustrative(b){ this.illustrative = !!b; listeners.forEach(fn => fn(scenario)); },
+  async listPatientSummaries(){
+    await wait(180);
+    return DATA.patients.map(p => {
+      const docs = [...DATA.records[p.patient_id].documents].sort((a,b) => a.date.localeCompare(b.date));
+      const last = docs[docs.length - 1];
+      const ill = p.patient_id === 'sarah-001' || !this.illustrative ? null : clone(ILLUSTRATIVE[p.patient_id] || null);
+      return {
+        patient_id: p.patient_id,
+        display_name: p.display_name.replace(/ \(synthetic.*\)$/, ''),
+        negative_control: /negative control/.test(p.display_name),
+        sex_at_birth: p.sex_at_birth, birth_year: p.birth_year, record_version: p.current_version,
+        document_count: docs.length, first_date: docs[0].date, last_date: last.date,
+        last_title: last.title, last_specialty: last.specialty,
+        specialties: [...new Set(docs.map(d => d.specialty))],
+        analysis_source: p.patient_id === 'sarah-001' ? 'backend' : (ill ? 'illustrative' : 'none'),
+        illustrative: ill,
+      };
+    });
+  },
+  /* Condense an AnalysisRun for a dashboard row. */
+  summarizeRun(run){
+    if (!run || run.status === 404) return null;
+    const o = run.output;
+    return {
+      run_id: run.run_id, status: run.status, provenance: run.provenance, evidence_mode: run.evidence_mode,
+      completed_at: run.completed_at, error: run.error, fallback_reason: run.fallback_reason,
+      open_hypotheses: o ? o.hypotheses.filter(h => h.status === 'open').map(h => ({id:h.hypothesis_id, name:h.name, rare:h.is_rare_disease})) : [],
+      missing: o ? [...o.missing_evidence].sort((a,b) => a.priority - b.priority).map(m => ({id:m.missing_id, description:m.description, priority:m.priority, check_existing_first:m.check_existing_first})) : [],
+      questions: o ? o.clinician_questions.map(q => ({id:q.question_id, text:q.text})) : [],
+      findings: o ? o.findings.length : 0,
+      specialties_with_findings: o ? [...new Set(o.findings.map(f => f.specialty))] : [],
+    };
+  },
+  /* POST /analyses for a dashboard "Run analysis" button. Non-Sarah patients poll queued → running,
+     then resolve to their illustrative status (or a 404 when illustrative is off). */
+  async runAnalysis(id, onStatus){
+    if (id === 'sarah-001') return this.getAnalysis(id, onStatus);
+    const st = s => ({run_id:'run-demo-'+id, status:s, patient_id:id});
+    onStatus && onStatus(st('queued')); await wait(600);
+    onStatus && onStatus(st('running')); await wait(1600);
+    const after = POST_RUN[id] || ILLUSTRATIVE[id];
+    return this.illustrative && after ? Object.assign(st('completed'), {illustrative: clone(after)}) : {status:404, detail:`no fixture for patient '${id}'`};
+  },
+  /* Resolve helpers for drawers: record excerpt + source excerpt by IDs. */
+  record(patientId, recordId){ return (DATA.records[patientId]?.documents || []).find(d => d.record_id === recordId) || null; },
+  excerpt(sourceId, excerptId){ const s = DATA.sources[sourceId]; return s ? {source:s, excerpt:s.excerpts.find(e => e.excerpt_id === excerptId) || null} : null; },
+};
+})();
+
+</script></head><body><div class="wrap"><style>
+#r6V{--bg:#fbf8f2;--ink:#24211c;--mut:#6f675b;--faint:#a39a8b;--line:#e7e0d3;--sig:#d4520c;
+  --nerve:#6d4aa8;--sweat:#0d7c80;--gut:#a0700a;--kidney:#a8385f;--eye:#2c63b2;--family:#4b7b2c;--blood:#5d6a7a;--heart:#b23a3a;--lung:#2f7894;--joint:#7a6a2a;
+  color:var(--ink);font-family:"Atkinson Hyperlegible Next",system-ui,sans-serif;margin:0 0 32px}
+#r6V *,#r6V *::before,#r6V *::after{box-sizing:border-box}
+#r6V button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+#r6V :focus{outline:none}
+#r6V :focus-visible{outline:3px solid #0284c7;outline-offset:2px}
+#r6V .v-top{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 18px}
+#r6V h2{font-family:"Source Serif 4",Georgia,serif;font-weight:600;font-size:26px;line-height:1.2;margin:0;letter-spacing:-.01em}
+#r6V .v-cap{margin:0;color:var(--mut);font-size:16px}
+#r6V .v-notes{margin:6px 0 12px;font-size:14px;color:var(--mut)}
+#r6V .v-notes summary{cursor:pointer;width:max-content;min-height:24px}
+#r6V .v-notes ul{margin:6px 0 0;padding-left:18px;max-width:78ch}
+#r6V .v-notes a{color:var(--eye)}
+#r6V .v-screen{background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:10px 16px 8px}
+#r6V .v-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 24px;min-height:48px;padding-bottom:4px}
+#r6V .v-left{display:flex;flex-wrap:wrap;align-items:center;gap:8px 24px}
+#r6V .v-pt{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+#r6V .v-pt b{font-weight:600;font-size:17px}
+#r6V .v-tag{font-family:"Atkinson Hyperlegible Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);display:inline-flex;align-items:center;gap:6px}
+#r6V .v-tag::before{content:"";width:7px;height:7px;border:1.5px solid var(--mut);display:inline-block}
+#r6V .v-tag.syn{color:var(--ink);font-weight:600}
+#r6V .v-tag.syn::before{border-color:var(--ink);background:repeating-linear-gradient(45deg,var(--ink) 0 1.5px,transparent 1.5px 3px)}
+#r6V .v-check{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:4px 14px 4px 8px;border:1.5px dashed var(--sig);border-radius:2px;text-align:left;line-height:1.2}
+#r6V .v-check[hidden]{display:none}
+#r6V .v-check svg{flex:none}
+#r6V .v-check .k{display:block;font-family:"Atkinson Hyperlegible Mono",monospace;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--sig)}
+#r6V .v-check .t{display:block;font-size:15px;font-weight:600}
+#r6V .v-check:hover .t{text-decoration:underline;text-underline-offset:3px}
+#r6V .v-sw{display:flex;gap:0 18px;border-bottom:1px solid var(--line)}
+#r6V .v-sw button{min-height:40px;padding:8px 0 9px;margin-bottom:-1px;border-bottom:2px solid transparent;font-size:14px;font-weight:600;color:var(--mut);white-space:nowrap}
+#r6V .v-sw button[aria-checked="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+#r6V .v-ctl{display:flex;flex-wrap:wrap;align-items:center;gap:6px 22px;font-size:14px;padding:2px 0 4px}
+#r6V .v-ctl[hidden]{display:none}
+#r6V .v-ctl select{font:inherit;font-family:"Atkinson Hyperlegible Mono",monospace;font-size:13px;min-height:40px;padding:0 6px;border:1px solid #cfc6b6;border-radius:2px;background:var(--bg);color:var(--ink)}
+#r6V .v-ctl label{display:inline-flex;align-items:center;gap:8px;min-height:40px;cursor:pointer}
+#r6V .v-ctl input{width:18px;height:18px;accent-color:var(--ink)}
+#r6V .v-yr{display:inline-flex;align-items:center;gap:6px}
+#r6V .v-stage{position:relative;overflow:hidden}
+#r6V svg.v-g{display:block;width:100%;height:auto;-webkit-tap-highlight-color:transparent;touch-action:pan-x pan-y;user-select:none;-webkit-user-select:none}
+#r6V svg.v-g.zoomed{touch-action:none;cursor:grab}
+#r6V svg.v-g.panning{cursor:grabbing}
+#r6V .v-orbit{fill:none;stroke:var(--line);stroke-width:1.2;vector-effect:non-scaling-stroke}
+#r6V .v-e{fill:none;stroke-linecap:round;vector-effect:non-scaling-stroke}
+#r6V .v-e.sup{stroke-width:1.9;opacity:.62}
+#r6V .v-e.bundle{opacity:.5}
+#r6V .v-e.prior{stroke:var(--blood);stroke-width:2.4;stroke-dasharray:.1 6.5}
+#r6V .v-e.clar{stroke:var(--sig);stroke-width:2;stroke-dasharray:7 6}
+#r6V .v-e.lazy,#r6V svg.v-dim .v-e.lazy:not(.on){opacity:0}
+#r6V svg.v-dim .v-e.lazy.on{opacity:1}
+#r6V .v-n{cursor:pointer}
+#r6V .v-n.cap{cursor:default;pointer-events:none}
+#r6V .v-hit{fill:transparent;pointer-events:all}
+#r6V .v-fr{fill:none;stroke:#0284c7;stroke-width:3;opacity:0}
+#r6V .v-n:focus-visible{outline:none}
+#r6V .v-n:focus-visible .v-fr{opacity:1}
+#r6V .v-lab{paint-order:stroke;stroke:var(--bg);stroke-width:5px;stroke-linejoin:round}
+#r6V .v-lab .a{font-size:15px;font-weight:600;fill:var(--ink)}
+#r6V .v-lab .b{font-family:"Atkinson Hyperlegible Mono",monospace;font-size:12px;fill:var(--mut)}
+#r6V .v-lab .s{fill:var(--sig);font-weight:600}
+#r6V .v-lab .qt{font-family:"Source Serif 4",Georgia,serif;font-size:13px;font-style:italic;fill:var(--ink)}
+#r6V .v-lab.ghost .a{font-weight:400;fill:var(--mut);font-size:14px}
+#r6V .v-hn{font-family:"Source Serif 4",Georgia,serif;font-weight:500;fill:var(--ink)}
+#r6V .v-hs{font-family:"Atkinson Hyperlegible Mono",monospace;font-size:10.5px;letter-spacing:.08em;fill:var(--mut)}
+#r6V .v-cn{font-weight:700;fill:#fff}
+#r6V svg.v-dim .v-n:not(.on),#r6V svg.v-dim .v-e:not(.on){opacity:.14}
+#r6V svg.v-dim .v-e.on{opacity:1}
+#r6V svg.v-dim .v-e.bundle.on{opacity:.75}
+#r6V .v-n.sel .v-fr{opacity:1;stroke:var(--ink);stroke-width:1.5;stroke-dasharray:2 4}
+@media (prefers-reduced-motion:no-preference){#r6V .v-n,#r6V .v-e{transition:opacity .22s ease}}
+#r6V .v-zoom{position:absolute;right:6px;bottom:6px;display:flex;border:1px solid #cfc6b6;background:var(--bg);z-index:1}
+#r6V .v-zoom button{width:40px;height:40px;font-size:18px;font-weight:600;color:var(--ink);border-left:1px solid #e3dbcd}
+#r6V .v-zoom button:first-child{border-left:0}
+#r6V .v-zoom button.fit{width:48px;font-size:13px;font-family:"Atkinson Hyperlegible Mono",monospace}
+#r6V .v-zoom button:hover{background:#f2ece1}
+#r6V .v-back{position:absolute;left:50%;top:6px;transform:translateX(-50%);min-height:40px;padding:0 14px;border:1px solid #cfc6b6;background:var(--bg);font-size:14px;font-weight:600;z-index:1}
+#r6V .v-back[hidden]{display:none}
+#r6V .v-panel{position:absolute;width:470px;max-width:calc(100% - 16px);background:var(--bg);border:1px solid #cfc6b6;border-top:3px solid var(--pc,var(--ink));padding:10px 14px 10px;font-size:14px;line-height:1.38;z-index:2}
+#r6V .v-panel[hidden]{display:none}
+#r6V .v-x{position:absolute;top:0;right:0;width:40px;height:40px;font-size:22px;line-height:1;color:var(--mut)}
+#r6V .v-x:hover{color:var(--ink)}
+#r6V .v-panel h3{margin:0 30px 3px 0;font-size:15px;line-height:1.3;display:flex;flex-wrap:wrap;align-items:baseline;gap:0 10px}
+#r6V .v-panel h3 .pt{font-weight:700}
+#r6V .v-panel .pm{font-family:"Atkinson Hyperlegible Mono",monospace;font-size:11.5px;font-weight:400;color:var(--mut)}
+#r6V .v-panel .ck{color:var(--sig);font-weight:600}
+#r6V .v-panel .m2{font-family:"Atkinson Hyperlegible Mono",monospace;font-size:11.5px;color:var(--mut)}
+#r6V .v-panel p{margin:3px 0 0}
+#r6V .v-panel .pq{font-family:"Source Serif 4",Georgia,serif;font-size:15px}
+#r6V .v-panel code{font-family:"Atkinson Hyperlegible Mono",monospace;font-size:10.5px;color:var(--mut);margin-left:6px;white-space:nowrap}
+#r6V .v-panel .pw{font-size:13.5px}
+#r6V .v-panel i{font-style:normal;font-family:"Atkinson Hyperlegible Mono",monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin-right:7px}
+#r6V .v-panel .pc{font-size:12.5px;color:var(--mut)}
+#r6V .v-panel .pc i{border-bottom:1px dotted var(--mut)}
+#r6V .v-panel a.id{font-family:"Atkinson Hyperlegible Mono",monospace;font-size:12px;white-space:nowrap}
+#r6V .v-panel .pc b{font-family:"Atkinson Hyperlegible Mono",monospace;font-size:12px;font-weight:600;color:var(--ink)}
+#r6V .v-panel details{margin-top:4px;font-size:13px;color:var(--mut)}
+#r6V .v-panel summary{cursor:pointer;min-height:28px;display:flex;align-items:center;font-size:12.5px;font-weight:600;color:var(--ink);width:max-content}
+#r6V .v-panel details p{margin:2px 0 4px}
+#r6V .v-panel .pb{min-height:32px;font-size:13px;font-weight:600;color:var(--mut);margin:-2px 0 2px}
+#r6V .v-panel ul{list-style:none;margin:4px 0 0;padding:0;max-height:300px;overflow:auto;border-top:1px solid var(--line)}
+#r6V .v-panel li button{display:flex;gap:10px;width:100%;min-height:40px;align-items:center;text-align:left;border-bottom:1px solid var(--line);font-size:14px}
+#r6V .v-panel li b{font-family:"Atkinson Hyperlegible Mono",monospace;font-size:12px;font-weight:500;color:var(--mut)}
+#r6V .v-panel li .d{flex:none;width:10px;height:10px;border-radius:50%;background:var(--dc);border:1.5px solid var(--dc)}
+#r6V .v-panel li .d.h{background:transparent}
+#r6V .v-panel{max-height:calc(100% - 16px);overflow:auto}
+#r6V .v-panel a{color:var(--eye);text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px}
+#r6V .v-panel a:hover{text-decoration-thickness:2px}
+#r6V .v-panel .loc{font-family:"Atkinson Hyperlegible Mono",monospace;font-size:11px;color:var(--mut)}
+#r6V .v-panel mark{background:rgba(212,82,12,.17);color:inherit;padding:0 1px;border-bottom:1.5px solid var(--sig)}
+#r6V .v-panel .rt{font-family:"Source Serif 4",Georgia,serif;font-size:14px;line-height:1.45;color:var(--ink)}
+#r6V .v-panel .hd{font-family:"Atkinson Hyperlegible Mono",monospace;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--mut);margin:9px 0 2px}
+#r6V .v-panel table{border-collapse:collapse;width:100%;font-size:12.5px;color:var(--ink);margin:2px 0 4px}
+#r6V .v-panel th,#r6V .v-panel td{border-top:1px solid var(--line);padding:4px 8px 4px 0;text-align:left;vertical-align:top;font-weight:400}
+#r6V .v-panel th{font-family:"Atkinson Hyperlegible Mono",monospace;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--mut);border-top:0}
+#r6V .v-panel .jl{display:flex;flex-wrap:wrap;gap:0 14px;margin:0;padding:0;list-style:none;border:0;max-height:180px;overflow:auto}
+#r6V .v-panel .jl button{min-height:32px;font-size:13px;color:var(--ink);text-decoration:underline dotted;text-underline-offset:3px;text-align:left}
+#r6V .v-panel .jl b{font-family:"Atkinson Hyperlegible Mono",monospace;font-size:11px;font-weight:400;color:var(--mut);margin-right:5px}
+#r6V .v-panel .cl{margin:2px 0 6px;color:var(--ink)}
+#r6V .v-panel .syn{font-family:"Atkinson Hyperlegible Mono",monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;color:var(--ink);border-left:3px solid var(--ink);padding-left:5px;margin-left:8px}
+#r6V .v-load{padding:80px 0;text-align:center;color:var(--mut)}
+@media (max-width:640px){
+  #r6V h2{font-size:22px}
+  #r6V .v-screen{padding:10px 8px 6px}
+  #r6V .v-bar{gap:8px}
+  #r6V .v-sw{gap:0 14px;width:100%}
+  #r6V .v-panel{left:8px!important;right:8px;width:auto}
+  #r6V .v-panel ul{max-height:46vh}
+}
+</style>
+<section id="r6V" class="r6mock" aria-labelledby="r6V-h">
+  <div class="v-top">
+    <h2 id="r6V-h">V · Constellation</h2>
+    <p class="v-cap">Every clue points to an open question, and one missing report.</p>
+  </div>
+  <details class="v-notes"><summary>Notes</summary>
+    <ul>
+      <li>Sarah: fixed hand-tuned layout from <code>run.graph</code> (12 nodes, 13 edges), two equal open-question hubs; the layout takes up to three. No physics.</li>
+      <li>60 / 250 records: synthetic stress test generated from a fixed seed in this script, not backend data. Semantic zoom: one node per body system, sized by finding count; edges bundled per system and hub, width by count. Click a system to fan out its findings.</li>
+      <li>Zoom: wheel or pinch, drag to pan, double-click a node, or the + / − / Fit buttons. Past 1.6× findings show year, specialty and the start of the quote; zoomed out shows icons only.</li>
+      <li>Motion: one load reveal and one hover fade, both off under reduced motion. Inspiration: <a href="https://motion.dev/docs/react-layout-animations" target="_blank" rel="noopener">Motion layout animations</a>.</li>
+    </ul>
+  </details>
+  <div class="v-screen" id="r6V-screen">
+    <div class="v-bar">
+      <div class="v-left">
+        <div class="v-pt"><b id="r6V-pt">Sarah</b><span class="v-tag" id="r6V-prov">sample data</span></div>
+        <button type="button" class="v-check" id="r6V-check" aria-label="Check first: GLA report, may already exist">
+          <svg width="28" height="32" viewBox="0 0 28 32" aria-hidden="true"><path d="M5 3h12l6 6v20H5z" fill="none" stroke="#d4520c" stroke-width="1.8" stroke-dasharray="4 3"/><path d="M17 3v6h6" fill="none" stroke="#d4520c" stroke-width="1.8"/><path d="M9.5 15h9M9.5 19h9M9.5 23h5" fill="none" stroke="#d4520c" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <span><span class="k">Check first</span><span class="t">GLA report · may already exist</span></span>
+        </button>
+      </div>
+      <div class="v-sw" id="r6V-sw" role="radiogroup" aria-label="Record volume">
+        <button type="button" role="radio" aria-checked="true" data-m="sarah">Sarah · 10 records</button>
+        <button type="button" role="radio" aria-checked="false" data-m="s60">60 records</button>
+        <button type="button" role="radio" aria-checked="false" data-m="s250">250 records</button>
+      </div>
+    </div>
+    <div class="v-ctl" id="r6V-ctl" hidden>
+      <span class="v-yr">Years <select id="r6V-y0" aria-label="From year"></select>–<select id="r6V-y1" aria-label="To year"></select></span>
+      <label><input type="checkbox" id="r6V-linked"> Only findings linked to open questions</label>
+    </div>
+    <div class="v-stage" id="r6V-stage">
+      <div class="v-load" id="r6V-load">Loading…</div>
+      <button type="button" class="v-back" id="r6V-back" hidden>← All systems</button>
+      <div class="v-zoom" id="r6V-zoom" role="group" aria-label="Zoom">
+        <button type="button" id="r6V-zin" aria-label="Zoom in">+</button>
+        <button type="button" id="r6V-zout" aria-label="Zoom out">−</button>
+        <button type="button" class="fit" id="r6V-zfit" aria-label="Fit to screen">Fit</button>
+      </div>
+      <div class="v-panel" id="r6V-panel" role="dialog" aria-labelledby="r6V-ptitle" hidden>
+        <button type="button" class="v-x" id="r6V-x" aria-label="Close detail">×</button>
+        <div id="r6V-pbody"></div>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+(function(){
+  const root = document.getElementById('r6V');
+  const $ = id => document.getElementById('r6V-' + id);
+  const api = window.ncApi;
+  const NS = 'http://www.w3.org/2000/svg';
+  const PID = 'sarah-001';
+
+  /* ---------- layout mappings (not clinical text) ---------- */
+  const SYS = {
+    'fnd-limb-pain':'nerve', 'fnd-small-fiber-neuropathy':'nerve', 'fnd-reduced-sweating':'sweat',
+    'fnd-gi-symptoms':'gut', 'fnd-celiac-negative':'gut', 'fnd-proteinuria':'kidney',
+    'fnd-cornea-verticillata':'eye', 'fnd-father-dialysis':'family', 'fnd-diabetes-absent':'blood',
+    'pri-enzyme-2016':'blood'
+  };
+  const SYS_NAME = {nerve:'Nerves', sweat:'Skin', gut:'Gut', kidney:'Kidney', eye:'Eye', family:'Family', blood:'Blood', heart:'Heart', lung:'Lungs', joint:'Joints'};
+  const ICON_OF = {nerve:'nerve', sweat:'drop', gut:'gut', kidney:'kidney', eye:'eye', family:'family', blood:'vial', heart:'heart', lung:'lung', joint:'bone'};
+  const SHORT = {
+    'fnd-limb-pain':['Burning limbs','Limbs'], 'fnd-reduced-sweating':['Rarely sweats','Sweat'],
+    'fnd-gi-symptoms':['Gut pain','Gut'], 'fnd-small-fiber-neuropathy':['Nerve biopsy','Nerves'],
+    'fnd-proteinuria':['Proteinuria','Kidney'], 'fnd-father-dialysis':['Father on dialysis','Father'],
+    'fnd-cornea-verticillata':['Cornea whorls','Cornea'],
+    'fnd-celiac-negative':['No celiac','No celiac'], 'fnd-diabetes-absent':['No diabetes','No diabetes'],
+    'pri-enzyme-2016':[['2016 test · normal','not conclusive'],['2016','normal?']],
+    'mis-gla-report':[['GLA report','missing?'],['GLA','missing?']],
+    'mis-father-diagnosis':[["Father's diagnosis",'missing?'],['Cause','missing?']]
+  };
+  const HUB_NAME = {'hyp-fabry':[['Fabry','disease?'],['Fabry','disease?']], 'hyp-separate-conditions':[['Separate','common','conditions?'],['Separate?']]};
+  /* "Why it matters": a faithful short form of each claim (<= 14 words). */
+  const WHY = {
+    'clm-enzyme-limit':'A normal enzyme result does not exclude Fabry disease in a woman',
+    'clm-no-molecular-test':'No GLA molecular test is on record',
+    'clm-features-match':'Each is a described feature of Fabry disease',
+    'clm-kidney-involvement':'Consistent with the kidney involvement described in Fabry disease',
+    'clm-father-inheritance':'Compatible with X-linked inheritance, but does not establish it',
+    'clm-no-drug-cause-cornea':'Medications can cause similar corneal changes; none are documented',
+    'clm-sfn-often-idiopathic':'Small fiber neuropathy often has no identified cause'
+  };
+  /* Sarah: hand-tuned positions. Two equal hubs in the middle band; the layout has room for a third. */
+  const SARAH = {
+    wide: {w:1200, h:600, fs:1, orbits:[['hyp-fabry',210],['hyp-separate-conditions',192]], nodes:{
+      'hyp-fabry':{x:530,y:300,r:54},
+      'hyp-separate-conditions':{x:890,y:300,r:54},
+      'mis-gla-report':{x:710,y:300,r:28,side:'t'},
+      'fnd-gi-symptoms':{x:710,y:126,r:30,side:'t'},
+      'fnd-small-fiber-neuropathy':{x:784,y:478,r:30,side:'b'},
+      'fnd-proteinuria':{x:629,y:485,r:30,side:'b'},
+      'fnd-reduced-sweating':{x:476,y:97,r:30,side:'t'},
+      'fnd-limb-pain':{x:348,y:195,r:30,side:'l'},
+      'fnd-cornea-verticillata':{x:348,y:405,r:30,side:'l'},
+      'fnd-father-dialysis':{x:476,y:503,r:30,side:'b'},
+      'mis-father-diagnosis':{x:322,y:548,r:22,side:'l'},
+      'pri-enzyme-2016':{x:180,y:300,r:30,side:'b'},
+      'fnd-celiac-negative':{x:1010,y:150,r:15,side:'r'},
+      'fnd-diabetes-absent':{x:1010,y:450,r:15,side:'r'}
+    }},
+    narrow: {w:340, h:660, fs:.9, orbits:[], nodes:{
+      'hyp-fabry':{x:92,y:322,r:42},
+      'hyp-separate-conditions':{x:250,y:322,r:42},
+      'mis-gla-report':{x:171,y:322,r:18,side:'t'},
+      'fnd-reduced-sweating':{x:40,y:205,r:21,side:'t'},
+      'fnd-limb-pain':{x:112,y:150,r:21,side:'t'},
+      'fnd-gi-symptoms':{x:204,y:196,r:21,side:'t'},
+      'fnd-celiac-negative':{x:298,y:214,r:13,side:'r'},
+      'fnd-cornea-verticillata':{x:36,y:452,r:21,side:'b'},
+      'fnd-father-dialysis':{x:112,y:498,r:21,side:'b'},
+      'fnd-proteinuria':{x:190,y:458,r:21,side:'b'},
+      'fnd-small-fiber-neuropathy':{x:268,y:450,r:21,side:'b'},
+      'fnd-diabetes-absent':{x:306,y:396,r:13,side:'r'},
+      'pri-enzyme-2016':{x:30,y:578,r:20,side:'r'},
+      'mis-father-diagnosis':{x:170,y:584,r:18,side:'r'}
+    }}
+  };
+
+  const ICONS = {
+    nerve:'<circle cx="7.5" cy="12" r="3"/><path d="M5.2 10 3 7M4.5 12H2M5.2 14 3 17M10.5 12H17.5M17.5 12l3.5-3.5M17.5 12H21.5M17.5 12l3.5 3.5"/>',
+    drop:'<path d="M12 3.2S6.4 9.6 6.4 14a5.6 5.6 0 0 0 11.2 0C17.6 9.6 12 3.2 12 3.2z"/><path d="M9.4 14.6a2.6 2.6 0 0 0 2.2 2.4"/>',
+    gut:'<path d="M5.5 4.5h9a2.75 2.75 0 0 1 0 5.5h-5a2.75 2.75 0 0 0 0 5.5h5a2.75 2.75 0 0 1 0 5.5H7"/>',
+    kidney:'<path d="M14.6 4.2C9.6 2.8 5 6.4 5 12s4.6 9.2 9.6 7.8c2.6-.7 3.2-3.4 1.4-5-1.1-1-1.1-4.6 0-5.6 1.8-1.6 1.2-4.3-1.4-5z"/><path d="M9.4 8.6c-1.4 2.2-1.4 4.6 0 6.8"/>',
+    eye:'<path d="M2.5 12c3.2-5.6 15.8-5.6 19 0-3.2 5.6-15.8 5.6-19 0z"/><circle cx="12" cy="12" r="3.7"/><path d="M12 12c.7 0 1-.7.7-1.2-.5-.7-1.8-.5-2 .4-.3 1.1.5 2.2 1.8 2.2 1.6 0 2.5-1.5 2-2.9"/>',
+    family:'<rect x="3.5" y="3.5" width="6" height="6"/><circle cx="17.5" cy="6.5" r="3"/><path d="M9.5 6.5h5M12 6.5v7"/><circle cx="12" cy="17" r="3.3"/>',
+    vial:'<path d="M8.5 3.5h7M10 3.5v13a2 2 0 0 0 4 0v-13M10 11h4"/>',
+    heart:'<path d="M12 20s-7.5-4.6-7.5-10A4.1 4.1 0 0 1 12 7.6 4.1 4.1 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/><path d="M6.5 12.5h3l1.3-2.4 2 4.6 1.4-2.2h3.3"/>',
+    lung:'<path d="M12 3.5v8M12 11.5l-2.2 2M12 11.5l2.2 2"/><path d="M9.8 8.2C6.6 7 4.2 11 4.2 16v1.6c0 1.4 1.2 2.2 2.6 1.7l3-1.2V8.2zM14.2 8.2c3.2-1.2 5.6 2.8 5.6 7.8v1.6c0 1.4-1.2 2.2-2.6 1.7l-3-1.2V8.2z"/>',
+    bone:'<path d="M8.6 15.4l6.8-6.8"/><circle cx="6.4" cy="15.2" r="2"/><circle cx="8.8" cy="17.6" r="2"/><circle cx="15.2" cy="6.4" r="2"/><circle cx="17.6" cy="8.8" r="2"/>',
+    doc:'<path d="M6.5 3h7.5l4 4v14h-11.5z"/><path d="M14 3v4h4"/><path d="M9.5 12h5M9.5 15h5M9.5 18h3"/>',
+    ask:'<path d="M9.4 9.3a2.7 2.7 0 1 1 3.8 2.5c-.9.4-1.2 1-1.2 1.8v.7"/><path d="M12 17.4v.2"/>'
+  };
+
+  /* ---------- synthetic stress test (deterministic, not backend data) ---------- */
+  const SYN_CFG = {
+    s60:{records:60, seed:60, from:2009, to:2025, systems:['nerve','sweat','gut','kidney','eye','family','blood','heart'], priors:3, missing:3},
+    s250:{records:250, seed:250, from:2003, to:2025, systems:['nerve','sweat','gut','kidney','eye','family','blood','heart','lung','joint'], priors:5, missing:6}
+  };
+  const SYN_ITEMS = {
+    nerve:['tingling in both feet','burning pain in the hands','reduced vibration sense','slowed nerve conduction','numb fingertips','pain worse with heat'],
+    sweat:['reduced sweating','small dark red skin spots','heat intolerance','dry skin on the shins'],
+    gut:['abdominal pain after meals','episodes of diarrhea','early fullness','bloating after meals','nausea after meals'],
+    kidney:['protein in urine','raised creatinine','reduced eGFR','microscopic blood in urine'],
+    eye:['whorl-like corneal opacities','tortuous retinal vessels','lens opacity'],
+    family:['relative on dialysis','relative with early stroke','relative with thick heart wall'],
+    blood:['mild anemia','raised inflammatory markers','low ferritin'],
+    heart:['thickened heart wall','short PR interval','palpitations','chest tightness on exertion'],
+    lung:['breathless on stairs','reduced airflow on spirometry','dry cough'],
+    joint:['joint pain in the hands','morning stiffness','swollen knee']
+  };
+  const SYN_SPEC = {nerve:'neurology', sweat:'dermatology', gut:'gastroenterology', kidney:'nephrology', eye:'ophthalmology', family:'genetics', blood:'laboratory', heart:'cardiology', lung:'pulmonology', joint:'rheumatology'};
+  const SYN_W = {nerve:2.2, sweat:1.2, gut:2, kidney:1.8, eye:.9, family:.7, blood:1.5, heart:1.4, lung:1, joint:1.3};
+  const HUB_AFF = [['nerve','sweat','gut','kidney','eye','family','heart'], ['gut','nerve','blood','joint'], ['kidney','heart','blood','family','lung']];
+  const MISSING_NAMES = ['Genetic report','Imaging report','Biopsy report','Specialist letter','Echo report','Lab panel'];
+  function mulberry32(a){ return function(){ a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const SYN_CACHE = {};
+  function generate(key){
+    if (SYN_CACHE[key]) return SYN_CACHE[key];
+    const cfg = SYN_CFG[key], rnd = mulberry32(cfg.seed * 7919);
+    const pad = (n, w) => String(n).padStart(w, '0');
+    const date = () => `${cfg.from + Math.floor(rnd() * (cfg.to - cfg.from + 1))}-${pad(1 + Math.floor(rnd() * 12), 2)}-${pad(1 + Math.floor(rnd() * 28), 2)}`;
+    const records = Array.from({length:cfg.records}, (_, i) => ({id:`syn-rec-${pad(i + 1, 3)}`, date:date()}));
+    const sources = Array.from({length:4}, (_, i) => ({id:`syn-src-${i + 1}`, publisher:'Synthetic source', title:`Placeholder review S${i + 1}`, location:`Section ${1 + Math.floor(rnd() * 5)}`}));
+    const hubs = HUB_AFF.map((aff, i) => ({id:`syn-hyp-${'abc'[i]}`, letter:'ABC'[i], aff:aff.filter(s => cfg.systems.includes(s))}));
+    const tw = cfg.systems.reduce((a, s) => a + SYN_W[s], 0);
+    const pickSys = () => { let x = rnd() * tw; for (const s of cfg.systems){ x -= SYN_W[s]; if (x <= 0) return s; } return cfg.systems[0]; };
+    const findings = [];
+    records.forEach((rec, i) => {
+      const nf = i % 10 === 9 ? 0 : (rnd() < .2 ? 2 : 1);
+      for (let j = 0; j < nf && findings.length < Math.round(cfg.records * 0.95); j++){
+        const sys = pickSys(), items = SYN_ITEMS[sys], text = items[Math.floor(rnd() * items.length)];
+        const absent = rnd() < .08;
+        const links = absent ? [] : hubs.filter((h, k) => h.aff.includes(sys) && rnd() < (k === 0 ? .75 : .5)).map(h => h.id);
+        findings.push({id:`syn-f-${pad(findings.length + 1, 3)}`, sys, date:rec.date, record_id:rec.id, specialty:SYN_SPEC[sys],
+          excerpt:(absent ? 'no ' : '') + text, label:(absent ? 'No ' : '') + text, absent, links, src:sources[Math.floor(rnd() * sources.length)]});
+      }
+    });
+    const priors = Array.from({length:cfg.priors}, (_, i) => { const rec = records[Math.floor(rnd() * records.length)]; return {id:`syn-pri-${i + 1}`, name:`Prior test P${i + 1}`, date:rec.date, record_id:rec.id, hub:hubs[i % hubs.length].id, src:sources[i % sources.length]}; });
+    const missing = Array.from({length:cfg.missing}, (_, i) => ({id:`syn-mis-${i + 1}`, name:MISSING_NAMES[i % MISSING_NAMES.length], hubs:[hubs[i % hubs.length].id].concat(rnd() < .4 ? [hubs[(i + 1) % hubs.length].id] : []), src:sources[(i + 2) % sources.length]}));
+    const dates = records.map(r => r.date).sort();
+    return SYN_CACHE[key] = {key, cfg, records, findings, hubs, priors, missing, sources, y0:+dates[0].slice(0, 4), y1:+dates[dates.length - 1].slice(0, 4)};
+  }
+
+  /* ---------- helpers ---------- */
+  const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+  const cssVar = n => getComputedStyle(root).getPropertyValue('--' + n).trim();
+  const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const fmtDate = d => { const [y, m, dd] = d.split('-'); return `${+dd} ${MONTHS[+m - 1]} ${y}`; };
+  const cap = s => s ? s[0].toUpperCase() + s.slice(1) : '';
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
+  const firstWords = (s, n) => { const w = s.split(/\s+/); return w.slice(0, n).join(' ') + (w.length > n ? '…' : ''); };
+  const reduce = !matchMedia('(prefers-reduced-motion: no-preference)').matches;
+  const mqNarrow = matchMedia('(max-width: 640px)');
+
+  let run, out, patientLine = '', mode = 'sarah', M = null, svg = null, gView = null;
+  let selected = null, expanded = null, openGroups = new Set(), revealed = false, listCtx = null;
+  let view = null, k = 1, zLevel = 'labels';
+  const filters = {y0:null, y1:null, linked:false};
+
+  function icon(name, parent, size, color){
+    const s = size / 24;
+    const g = el('g', {transform:`scale(${s}) translate(-12 -12)`, fill:'none', stroke:color, 'stroke-width':(2 / s * 0.95).toFixed(2), 'stroke-linecap':'round', 'stroke-linejoin':'round'}, parent);
+    g.innerHTML = ICONS[name];
+    return g;
+  }
+  function ctrl(a, b, bend){ const dx = b.x - a.x, dy = b.y - a.y; return {x:(a.x + b.x) / 2 - dy * bend, y:(a.y + b.y) / 2 + dx * bend}; }
+  function curve(a, b, bend){
+    const c = ctrl(a, b, bend);
+    const trim = (p, q, r) => { const vx = q.x - p.x, vy = q.y - p.y, l = Math.hypot(vx, vy) || 1; return {x:p.x + vx / l * r, y:p.y + vy / l * r}; };
+    const p0 = trim(a, c, a.r + 4), p2 = trim(b, c, b.r + 5);
+    return `M${p0.x.toFixed(1)} ${p0.y.toFixed(1)}Q${c.x.toFixed(1)} ${c.y.toFixed(1)} ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;
+  }
+
+  /* ---------- models ---------- */
+  function sarahModel(narrow){
+    const L = narrow ? SARAH.narrow : SARAH.wide;
+    const F = Object.fromEntries(out.findings.map(f => [f.finding_id, f]));
+    const nodes = [];
+    run.graph.nodes.forEach(gn => {
+      const p = L.nodes[gn.node_id]; if (!p) return;
+      const base = Object.assign({id:gn.node_id, label:gn.label}, p);
+      if (gn.type === 'finding') nodes.push(Object.assign(base, {type:'finding', sys:SYS[gn.node_id], data:F[gn.node_id]}));
+      else if (gn.type === 'hypothesis'){ const h = out.hypotheses.find(x => x.hypothesis_id === gn.node_id); nodes.push(Object.assign(base, {type:'hub', data:h, name:HUB_NAME[gn.node_id] ? HUB_NAME[gn.node_id][narrow ? 1 : 0] : [h.name], count:h.supporting_finding_ids.length, status:h.status})); }
+      else if (gn.type === 'prior_result') nodes.push(Object.assign(base, {type:'prior', sys:'blood', data:out.prior_results.find(x => x.prior_result_id === gn.node_id)}));
+      else nodes.push(Object.assign(base, {type:'missing', data:out.missing_evidence.find(x => x.missing_id === gn.node_id)}));
+    });
+    out.findings.filter(f => f.assertion === 'absent').forEach(f => { const p = L.nodes[f.finding_id]; if (p) nodes.push(Object.assign({id:f.finding_id, type:'ghost', label:f.label, sys:SYS[f.finding_id], data:f}, p)); });
+    const byId = Object.fromEntries(nodes.map(n => [n.id, n]));
+    const edges = run.graph.edges.filter(e => byId[e.source] && byId[e.target]).map(e => ({id:e.edge_id, s:e.source, t:e.target,
+      cls:e.relation === 'supports' ? 'sup' : e.relation === 'previously_tested' ? 'prior' : 'clar', color:SYS[e.source] ? cssVar(SYS[e.source]) : null, bend:e.relation === 'would_clarify' ? 0 : 0.14}));
+    // Hub rings open toward the missing report that would clarify them.
+    nodes.filter(n => n.type === 'hub').forEach(h => { const e = edges.find(x => x.cls === 'clar' && x.t === h.id && x.s === 'mis-gla-report'); if (e){ const s = byId[e.s], c = ctrl(s, h, e.bend); h.gap = Math.atan2(c.y - h.y, c.x - h.x); } });
+    return {kind:'sarah', w:L.w, h:L.h, fs:L.fs, nodes, edges, links:[], orbits:L.orbits.map(([id, r]) => ({x:byId[id].x, y:byId[id].y, r}))};
+  }
+
+  function filteredFindings(D){
+    return D.findings.filter(f => { const y = +f.date.slice(0, 4);
+      if (mode === 's250'){ if (filters.y0 && y < filters.y0) return false; if (filters.y1 && y > filters.y1) return false; if (filters.linked && !f.links.length) return false; }
+      return true; });
+  }
+
+  function synModel(narrow){
+    const D = generate(mode), fs = filteredFindings(D);
+    const W = narrow ? 340 : 1200, H = narrow ? 720 : 610;
+    const C = narrow ? {x:170, y:350} : {x:600, y:318}, E = narrow ? [130, 236] : [470, 200];
+    const nodes = [], edges = [], links = [];
+    const hubPos = narrow ? [{x:170,y:298},{x:113,y:396},{x:227,y:396}] : [{x:600,y:252},{x:490,y:390},{x:710,y:390}];
+    D.hubs.forEach((h, i) => { const sup = fs.filter(f => f.links.includes(h.id)); nodes.push(Object.assign({id:h.id, type:'hub', syn:true, data:h, name:[h.letter + '?'], count:sup.length, status:'open', r:narrow ? 36 : 48}, hubPos[i])); });
+    const systems = D.cfg.systems.map(s => ({s, items:fs.filter(f => f.sys === s)})).filter(x => x.items.length);
+    // Order systems around the ring by the hubs they feed, so each bundle stays short.
+    const n = D.cfg.systems.length, step = Math.PI * 2 / n, start = -Math.PI / 2 + (n % 4 === 0 ? step / 2 : 0);
+    const pull = s => { let x = 0, y = 0; const its = fs.filter(f => f.sys === s); D.hubs.forEach((h, i) => { const c = its.filter(f => f.links.includes(h.id)).length; x += c * (hubPos[i].x - C.x); y += c * (hubPos[i].y - C.y); }); return Math.atan2(y, x); };
+    const order = D.cfg.systems.slice().sort((a, b) => ((pull(a) + Math.PI * 2.5) % (Math.PI * 2)) - ((pull(b) + Math.PI * 2.5) % (Math.PI * 2)));
+    order.forEach((s, i) => {
+      const sx = systems.find(x => x.s === s); if (!sx) return;
+      const a = start + i * step, cos = Math.cos(a), sin = Math.sin(a), c = sx.items.length;
+      const r = narrow ? Math.min(28, 12 + 2.3 * Math.sqrt(c)) : Math.min(46, 17 + 4.3 * Math.sqrt(c));
+      const side = narrow ? (sin < -0.05 ? 't' : 'b') : (Math.abs(cos) > 0.45 ? (cos < 0 ? 'l' : 'r') : (sin < 0 ? 't' : 'b'));
+      const ys = sx.items.map(f => +f.date.slice(0, 4));
+      nodes.push({id:'cl-' + s, type:'cluster', sys:s, items:sx.items, count:c, x:C.x + E[0] * cos, y:C.y + E[1] * sin, r, side, yr:[Math.min(...ys), Math.max(...ys)]});
+    });
+    const byId = Object.fromEntries(nodes.map(x => [x.id, x]));
+    nodes.filter(x => x.type === 'cluster').forEach(cl => D.hubs.forEach(h => {
+      const c = cl.items.filter(f => f.links.includes(h.id)).length;
+      if (c) edges.push({id:`${cl.id}--${h.id}`, s:cl.id, t:h.id, cls:'bundle', color:cssVar(cl.sys), width:1 + 1.6 * Math.sqrt(c), bend:0.1, n:c});
+    }));
+    // Priors and missing: individual nodes up to 3 (desktop), else one collapsed node that expands.
+    const group = (kind, items, gx, gy, side, arcFrom) => {
+      const collapse = narrow || items.length > 3;
+      if (!collapse){
+        items.forEach((it, i) => {
+          const nd = kind === 'prior' ? {id:it.id, type:'prior', syn:true, sys:'blood', data:it, x:gx + i * 66, y:gy, r:18, side:'b'}
+                                      : {id:it.id, type:'missing', syn:true, data:it, x:gx + i * 122, y:gy, r:18, side:'b'};
+          nodes.push(nd);
+          (kind === 'prior' ? [it.hub] : it.hubs).forEach(hid => edges.push({id:`${it.id}--${hid}`, s:it.id, t:hid, cls:(kind === 'prior' ? 'prior' : 'clar') + ' lazy', bend:0.12}));
+        });
+        return;
+      }
+      const gid = 'grp-' + kind;
+      const gp = {id:gid, type:'group', kind, items, count:items.length, x:gx, y:gy, r:narrow ? 18 : 24, side};
+      nodes.push(gp);
+      const hubs = [...new Set(items.flatMap(it => kind === 'prior' ? [it.hub] : it.hubs))];
+      hubs.forEach(hid => edges.push({id:`${gid}--${hid}`, s:gid, t:hid, cls:(kind === 'prior' ? 'prior' : 'clar') + ' lazy', bend:0.12}));
+      if (!narrow && openGroups.has(gid)){
+        const R = 96, a0 = arcFrom, a1 = arcFrom + Math.PI / 2;
+        items.forEach((it, i) => {
+          const a = a0 + (a1 - a0) * (items.length === 1 ? .5 : i / (items.length - 1));
+          nodes.push({id:it.id, type:kind === 'prior' ? 'prior' : 'missing', syn:true, sys:'blood', data:it, x:gx + R * Math.cos(a), y:gy + R * Math.sin(a), r:15, side:'n', member:gid});
+          links.push([it.id, gid]);
+          (kind === 'prior' ? [it.hub] : it.hubs).forEach(hid => links.push([it.id, hid]));
+        });
+      }
+    };
+    if (narrow){ group('prior', D.priors, 30, 34, 'r'); group('missing', D.missing, 232, 34, 'r'); }
+    else { group('prior', D.priors, D.priors.length > 3 ? 60 : 50, 46, 'r', 0); group('missing', D.missing, D.missing.length > 3 ? 1140 : 900, 46, 'l', Math.PI / 2); }
+    // Hubs open toward their first missing link.
+    nodes.filter(x => x.type === 'hub').forEach(h => { const e = edges.find(x => x.cls.startsWith('clar') && x.t === h.id); const s = e && nodes.find(x => x.id === e.s); h.gap = s ? Math.atan2(ctrl(s, h, e.bend).y - h.y, ctrl(s, h, e.bend).x - h.x) : -Math.PI / 2; });
+    // Fan-out: the expanded system's findings on local sub-rings, ordered by date.
+    if (expanded && !narrow){
+      const cl = nodes.find(x => x.id === expanded);
+      if (cl){
+        const items = cl.items.slice().sort((a, b) => a.date.localeCompare(b.date));
+        let i = 0, ring = 0, Rmax = 0;
+        while (i < items.length){
+          const R = cl.r + 19 + ring * 17, capN = Math.floor(Math.PI * 2 * R / 17), m = Math.min(capN, items.length - i);
+          for (let j = 0; j < m; j++, i++){
+            const a = -Math.PI / 2 + j / m * Math.PI * 2, f = items[i];
+            nodes.push({id:f.id, type:'dot', sys:f.sys, data:f, x:cl.x + R * Math.cos(a), y:cl.y + R * Math.sin(a), r:6.5, member:cl.id});
+            links.push([f.id, cl.id]); f.links.forEach(h => links.push([f.id, h]));
+          }
+          Rmax = R; ring++;
+        }
+        const capY = cl.y + Rmax + 22 > H - 8 ? cl.y - Rmax - 14 : cl.y + Rmax + 22;
+        nodes.push({id:'cap-' + cl.id, type:'caption', x:cl.x, y:capY, r:0, text:`${SYS_NAME[cl.sys]} · ${cl.count} · ${cl.yr[0]}–${cl.yr[1]}`, member:cl.id});
+        links.push(['cap-' + cl.id, cl.id]);
+      }
+    }
+    return {kind:'syn', D, w:W, h:H, fs:narrow ? .9 : 1, nodes, edges, links, orbits:[{x:C.x, y:C.y, rx:E[0], ry:E[1]}]};
+  }
+
+  /* ---------- labels (semantic zoom) ---------- */
+  function labelLines(n, narrow){
+    if (zLevel === 'icons') return [];
+    const det = zLevel === 'detail';
+    if (n.type === 'finding' || n.type === 'ghost'){
+      const s = SHORT[n.id] ? SHORT[n.id][narrow ? 1 : 0] : n.label, f = n.data, y = f.date.slice(0, 4);
+      if (n.type === 'ghost' && !det) return [];
+      if (!det) return [{t:s, c:'a'}, {t:y, c:'b'}];
+      return [{t:s, c:'a'}, {t:`${y} · ${cap(f.specialty)}`, c:'b'}, {t:`“${firstWords(f.record_refs[0].excerpt, 4)}”`, c:'qt'}];
+    }
+    if (n.type === 'prior' || n.type === 'missing'){
+      if (n.syn){ if (n.side === 'n') return []; return n.type === 'prior' ? [{t:n.data.date.slice(0, 4), c:'b'}] : [{t:n.data.name + '?', c:'a'}]; }
+      const s = SHORT[n.id][narrow ? 1 : 0], lines = [{t:s[0], c:'a'}, {t:s[1], c:'a s'}];
+      if (det && n.type === 'prior') lines.push({t:`“${firstWords(n.data.record_refs[0].excerpt, 4)}”`, c:'qt'});
+      return lines;
+    }
+    if (n.type === 'cluster') return n.id === expanded ? [] : det ? [{t:SYS_NAME[n.sys], c:'a'}, {t:`${n.yr[0]}–${n.yr[1]}`, c:'b'}] : [{t:SYS_NAME[n.sys], c:'a'}];
+    if (n.type === 'group') return [{t:n.kind === 'missing' ? 'missing' : 'prior tests', c:n.kind === 'missing' ? 'a s' : 'a'}];
+    if (n.type === 'caption') return [{t:n.text, c:'b'}];
+    return [];
+  }
+  function drawLabel(gN, n, narrow){
+    const old = gN.querySelector(':scope > .v-lw'); if (old) old.remove();
+    const lines = labelLines(n, narrow);
+    if (!lines.length) return;
+    const fs = M.fs, kk = k;
+    const lw = el('g', {class:'v-lw', transform:`scale(${(1 / kk).toFixed(4)})`}, gN);
+    const t = el('text', {class:'v-lab' + (n.type === 'ghost' ? ' ghost' : ''), 'aria-hidden':'true'}, lw);
+    const r = n.r * kk, lh = 17 * fs, gap = 10 * fs, side = n.type === 'caption' ? 'c' : n.side, cnt = lines.length;
+    let x = 0, y0, anchor = 'middle';
+    if (side === 'l' || side === 'r' || side === 'n'){ anchor = side === 'l' ? 'end' : 'start'; x = (side === 'l' ? -1 : 1) * (r + gap); y0 = -((cnt - 1) * lh) / 2 + 5 * fs; }
+    else if (side === 't'){ y0 = -r - gap - (cnt - 1) * lh - 3 * fs; }
+    else if (side === 'c'){ y0 = 4; }
+    else { y0 = r + gap + 13 * fs; }
+    t.setAttribute('text-anchor', anchor);
+    lines.forEach((ln, i) => {
+      const sp = el('tspan', {x, y:(y0 + i * lh).toFixed(1), class:ln.c}, t);
+      if (fs !== 1) sp.style.fontSize = ({a:15, b:12, qt:13})[ln.c.split(' ')[0]] * fs + 'px';
+      sp.textContent = ln.t;
+    });
+  }
+
+  /* ---------- node drawing ---------- */
+  function drawNode(gN, n, narrow){
+    const r = n.r, col = n.sys ? cssVar(n.sys) : cssVar('ink'), sig = cssVar('sig'), ink = cssVar('ink'), bg = cssVar('bg');
+    if (n.type === 'hub'){
+      const P = a => `${(Math.cos(a) * r).toFixed(1)} ${(Math.sin(a) * r).toFixed(1)}`, gp = 0.32, g0 = n.gap == null ? -Math.PI / 2 : n.gap;
+      el('circle', {r, fill:bg, class:'v-shape'}, gN);
+      el('path', {d:`M${P(g0 + gp)}A${r} ${r} 0 1 1 ${P(g0 - gp + Math.PI * 2)}`, fill:'none', stroke:ink, 'stroke-width':2.6, 'stroke-linecap':'round'}, gN);
+      el('circle', {r:r - 7, fill:'none', stroke:cssVar('line'), 'stroke-width':1}, gN);
+      const lines = n.name, big = n.syn ? (narrow ? 22 : 28) : (lines.length > 2 ? (narrow ? 12 : 14.5) : (narrow ? 14 : 18));
+      const lh = big * 1.08, stGap = narrow ? 13 : 15, total = big * 0.72 + (lines.length - 1) * lh + stGap;
+      let y = -total / 2 + big * 0.72;
+      lines.forEach((w, i) => { const t = el('text', {class:'v-hn v-in', 'text-anchor':'middle', y:y.toFixed(1), 'aria-hidden':'true'}, gN); t.style.fontSize = big + 'px'; t.textContent = w; if (i < lines.length - 1) y += lh; });
+      const st = el('text', {class:'v-hs v-in', 'text-anchor':'middle', y:(y + stGap).toFixed(1), 'aria-hidden':'true'}, gN);
+      if (narrow){ st.style.fontSize = '9px'; st.style.letterSpacing = '.02em'; }
+      st.textContent = `${n.status.toUpperCase()} · ${n.count}`;
+    } else if (n.type === 'prior'){
+      const cid = 'r6V-half-' + n.id;
+      const cp = el('clipPath', {id:cid}, gN); el('rect', {x:-r - 2, y:-r - 2, width:r + 2, height:2 * r + 4}, cp);
+      const cp2 = el('clipPath', {id:cid + 'b'}, gN); el('rect', {x:0, y:-r - 2, width:r + 2, height:2 * r + 4}, cp2);
+      el('circle', {r, fill:bg, stroke:col, 'stroke-width':2.2, class:'v-shape'}, gN);
+      el('circle', {r, fill:col, 'clip-path':`url(#${cid})`}, gN);
+      icon('vial', el('g', {'clip-path':`url(#${cid})`}, gN), r * 1.15, '#fff');
+      icon('vial', el('g', {'clip-path':`url(#${cid}b)`}, gN), r * 1.15, col);
+    } else if (n.type === 'missing'){
+      el('circle', {r:r + (r > 20 ? 9 : 6), fill:'none', stroke:sig, 'stroke-width':1, 'stroke-dasharray':'2 5', opacity:.6}, gN);
+      el('circle', {r, fill:bg, stroke:sig, 'stroke-width':2.2, 'stroke-dasharray':'6 5', class:'v-shape'}, gN);
+      icon(n.id === 'mis-father-diagnosis' ? 'ask' : 'doc', gN, r * 1.15, sig);
+    } else if (n.type === 'group'){
+      if (n.kind === 'missing'){
+        el('circle', {r:r + 8, fill:'none', stroke:sig, 'stroke-width':1, 'stroke-dasharray':'2 5', opacity:.6}, gN);
+        el('circle', {r, fill:bg, stroke:sig, 'stroke-width':2.2, 'stroke-dasharray':'6 5', class:'v-shape'}, gN);
+        const t = el('text', {class:'v-in', 'text-anchor':'middle', y:(r * .3).toFixed(1), fill:sig, 'font-weight':700}, gN); t.style.fontSize = (r * .78) + 'px'; t.textContent = '+' + n.count;
+      } else {
+        const bl = cssVar('blood'), cid = 'r6V-half-' + n.id;
+        const cp = el('clipPath', {id:cid}, gN); el('rect', {x:-r - 2, y:-r - 2, width:r + 2, height:2 * r + 4}, cp);
+        el('circle', {r, fill:bg, stroke:bl, 'stroke-width':2.2, class:'v-shape'}, gN);
+        el('circle', {r, fill:bl, 'clip-path':`url(#${cid})`}, gN);
+        const t = el('text', {class:'v-in', 'text-anchor':'middle', y:(r * .3).toFixed(1), fill:ink, 'font-weight':700, 'paint-order':'stroke', stroke:bg, 'stroke-width':3}, gN); t.style.fontSize = (r * .78) + 'px'; t.textContent = n.count;
+      }
+    } else if (n.type === 'ghost'){
+      el('circle', {r, fill:bg, stroke:col, 'stroke-width':1.6, class:'v-shape'}, gN);
+      icon(ICON_OF[n.sys], gN, r * 1.25, col).setAttribute('opacity', .75);
+    } else if (n.type === 'cluster'){
+      el('circle', {r, fill:col, class:'v-shape'}, gN);
+      icon(ICON_OF[n.sys], el('g', {transform:`translate(0 ${(-r * .3).toFixed(1)})`}, gN), r * .62, '#fff');
+      const t = el('text', {class:'v-cn v-in', 'text-anchor':'middle', y:(r * .55).toFixed(1)}, gN); t.style.fontSize = Math.max(12, r * .5) + 'px'; t.textContent = n.count;
+    } else if (n.type === 'dot'){
+      const hollow = n.data.absent || !n.data.links.length;
+      el('circle', {r, fill:hollow ? bg : col, stroke:col, 'stroke-width':1.6, class:'v-shape'}, gN);
+    } else if (n.type === 'caption'){
+      // label only
+    } else {
+      el('circle', {r, fill:col, class:'v-shape'}, gN);
+      icon(ICON_OF[n.sys], gN, r * 1.2, '#fff');
+    }
+    if (n.type !== 'caption'){
+      el('circle', {r:r + (narrow ? 7 : 6), class:'v-fr'}, gN);
+      el('circle', {r:Math.max(r + (n.type === 'dot' ? 3 : 6), n.type === 'dot' ? 9 : (narrow ? 23 : 24)), class:'v-hit'}, gN);
+    }
+    drawLabel(gN, n, narrow);
+  }
+
+  function ariaOf(n){
+    if (n.type === 'finding' || n.type === 'ghost') return `${n.data.label}, ${n.data.date.slice(0, 4)}${n.type === 'ghost' ? ', documented negative' : ''}`;
+    if (n.type === 'hub') return n.syn ? `Synthetic question ${n.data.letter}, open, ${n.count} findings` : `${n.data.name}, open, ${n.count} supporting findings`;
+    if (n.type === 'cluster') return `${SYS_NAME[n.sys]}: ${n.count} findings`;
+    if (n.type === 'group') return n.kind === 'missing' ? `${n.count} missing items` : `${n.count} prior tests`;
+    if (n.type === 'dot') return `${n.data.label}, ${n.data.date.slice(0, 4)}`;
+    if (n.syn) return n.type === 'prior' ? `${n.data.name}, ${n.data.date.slice(0, 4)}` : `${n.data.name}, missing`;
+    return [].concat(SHORT[n.id] ? SHORT[n.id][0] : n.label).join(' ');
+  }
+
+  /* ---------- render ---------- */
+  function render(){
+    const narrow = mqNarrow.matches;
+    if (narrow) { expanded = null; openGroups.clear(); }
+    M = mode === 'sarah' ? sarahModel(narrow) : synModel(narrow);
+    const keepView = svg && view && view.W === M.w && view.H === M.h;
+    if (svg) svg.remove();
+    $('load').hidden = true;
+    svg = el('svg', {class:'v-g', id:'r6V-svg', role:'group', 'aria-label':mode === 'sarah' ? 'Clue graph: findings around two open questions' : 'Synthetic stress test: body-system clusters around three open questions'});
+    if (M.kind === 'syn') svg.dataset.systems = JSON.stringify(M.D.cfg.systems.reduce((o, s) => { const c = filteredFindings(M.D).filter(f => f.sys === s).length; if (c) o[s] = c; return o; }, {}));
+    $('stage').insertBefore(svg, $('back'));
+    if (!keepView) view = {x:0, y:0, w:M.w, h:M.h, W:M.w, H:M.h};
+    k = M.w / view.w; zLevel = levelOf(k);
+    setViewBox();
+    gView = el('g', {}, svg);
+    M.orbits.forEach(o => o.rx ? el('ellipse', {class:'v-orbit', cx:o.x, cy:o.y, rx:o.rx, ry:o.ry}, gView) : el('circle', {class:'v-orbit', cx:o.x, cy:o.y, r:o.r}, gView));
+    const gE = el('g', {}, gView), gN = el('g', {}, gView);
+    const byId = Object.fromEntries(M.nodes.map(n => [n.id, n]));
+    M.edges.forEach(e => {
+      const a = byId[e.s], b = byId[e.t];
+      const p = el('path', {class:'v-e ' + e.cls, d:curve(a, b, e.bend), 'data-s':e.s, 'data-t':e.t, 'data-id':e.id}, gE);
+      if (e.color) p.setAttribute('stroke', e.color);
+      if (e.width) p.style.strokeWidth = e.width;
+    });
+    M.nodes.forEach(n => {
+      const g = el('g', {class:'v-n' + (n.type === 'caption' ? ' cap' : ''), 'data-id':n.id, 'data-type':n.type, transform:`translate(${n.x.toFixed(1)} ${n.y.toFixed(1)})`}, gN);
+      if (n.type !== 'caption'){
+        g.setAttribute('tabindex', 0); g.setAttribute('role', 'button'); g.setAttribute('aria-label', ariaOf(n));
+        g.addEventListener('pointerenter', ev => { if (ev.pointerType === 'mouse') hi(n.id); });
+        g.addEventListener('pointerleave', () => hi(null));
+        g.addEventListener('focus', () => hi(n.id));
+        g.addEventListener('blur', () => hi(null));
+        g.addEventListener('click', ev => { ev.stopPropagation(); if (drag.moved) return; activate(n); });
+        g.addEventListener('dblclick', ev => { ev.stopPropagation(); zoomToNode(n); });
+        g.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); activate(n); } });
+      }
+      drawNode(g, n, narrow);
+    });
+    svg.addEventListener('click', () => { if (drag.moved) return; if (!$('panel').hidden) close(); else if (expanded || openGroups.size) collapseAll(); });
+    bindZoom();
+    $('back').hidden = !expanded;
+    if (!revealed && !reduce && mode === 'sarah') reveal();
+    revealed = true;
+    hi(null);
+    if (!$('panel').hidden) place();
+  }
+
+  function reveal(){
+    // One-time load reveal: nodes scale out from the hubs' middle, then the threads fade in.
+    const hubs = M.nodes.filter(n => n.type === 'hub'), cx = hubs.reduce((a, h) => a + h.x, 0) / hubs.length, cy = hubs.reduce((a, h) => a + h.y, 0) / hubs.length;
+    svg.querySelectorAll('.v-n').forEach((g, i) => {
+      const n = M.nodes.find(x => x.id === g.dataset.id), isH = n.type === 'hub';
+      g.animate([{transform:`translate(${isH ? n.x : cx}px, ${isH ? n.y : cy}px) scale(${isH ? .7 : .2})`, opacity:0}, {transform:`translate(${n.x}px, ${n.y}px) scale(1)`, opacity:1}],
+        {duration:isH ? 420 : 620, delay:isH ? 0 : 120 + i * 28, easing:'cubic-bezier(.2,.75,.25,1)', fill:'backwards'});
+    });
+    svg.querySelectorAll('.v-e').forEach(p => p.animate([{opacity:0}, {opacity:getComputedStyle(p).opacity}], {duration:380, delay:620, easing:'ease-out', fill:'backwards'}));
+  }
+
+  /* ---------- highlight ---------- */
+  function neighbours(id){
+    const set = new Set([id]);
+    M.edges.forEach(e => { if (e.s === id) set.add(e.t); if (e.t === id) set.add(e.s); });
+    M.links.forEach(([a, b]) => { if (a === id) set.add(b); if (b === id) set.add(a); });
+    M.nodes.forEach(n => { if (n.member === id) set.add(n.id); });
+    return set;
+  }
+  function hi(id){
+    if (!svg) return;
+    const base = id || selected || expanded || (openGroups.size ? [...openGroups][0] : null);
+    svg.classList.toggle('v-dim', !!base);
+    const nb = base ? neighbours(base) : new Set();
+    if (expanded && base !== expanded) neighbours(expanded).forEach(x => nb.add(x));
+    svg.querySelectorAll('.v-n').forEach(g => { g.classList.toggle('on', nb.has(g.dataset.id)); g.classList.toggle('sel', g.dataset.id === selected); });
+    svg.querySelectorAll('.v-e').forEach(p => p.classList.toggle('on', !!base && (p.dataset.s === base || p.dataset.t === base || (expanded && p.dataset.s === expanded))));
+  }
+
+  function activate(n){
+    const narrow = mqNarrow.matches;
+    const refocus = () => { const g = svg.querySelector(`.v-n[data-id="${n.id}"]`); if (g) g.focus({preventScroll:true}); };
+    if (n.type === 'cluster'){ if (narrow) openList(n); else { closePanelOnly(); expanded = expanded === n.id ? null : n.id; render(); refocus(); } return; }
+    if (n.type === 'group'){ if (narrow) openList(n); else { closePanelOnly(); openGroups.has(n.id) ? openGroups.delete(n.id) : openGroups.add(n.id); render(); refocus(); } return; }
+    open(n.id);
+  }
+  function collapseAll(){ expanded = null; openGroups.clear(); render(); }
+
+  /* ---------- detail panel ---------- */
+  const claim = id => out.claims.find(c => c.claim_id === id);
+  function whyOf(c){
+    if (!c) return null;
+    if (WHY[c.claim_id]) return WHY[c.claim_id];
+    const first = c.text.split(/,|;| because | so /)[0].replace(/\.$/, '');
+    return firstWords(first, 14);
+  }
+  function citeOf(c){
+    const ref = c && c.source_refs && c.source_refs[0]; if (!ref) return null;
+    const x = api.excerpt(ref.source_id, ref.excerpt_id); if (!x || !x.excerpt) return null;
+    const s = x.source, src = x.excerpt.text.replace(/^\[Unverified paraphrase\]\s*/, '');
+    const unverified = /^\[Unverified paraphrase\]/.test(x.excerpt.text) || s.verification_status === 'unverified';
+    const placeholder = /^PLACEHOLDER/i.test(s.title || '');
+    const o = {pub:s.publisher, title:placeholder ? null : s.title, url:s.url || null, loc:x.excerpt.location, unverified, src, idText:null, idHref:null, search:null};
+    if (s.pmid){ o.idText = `PMID ${s.pmid}`; o.idHref = `https://pubmed.ncbi.nlm.nih.gov/${s.pmid}/`; }
+    else if (/NBK\d+/.test(s.url || '')){ const nbk = s.url.match(/NBK\d+/)[0]; o.idText = nbk; o.idHref = `https://www.ncbi.nlm.nih.gov/books/${nbk}/`; }
+    else if (s.source_type === 'pubmed'){
+      o.idText = placeholder ? 'PMID pending (placeholder source)' : 'PMID pending';
+      const term = (s.title || '').replace(/^PLACEHOLDER:\s*(review of\s*)?/i, '').replace(/\(.*?\)/g, '').trim();
+      if (term) o.search = `https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(term).replace(/%20/g, '+')}`;
+    }
+    return o;
+  }
+  function recQuote(ref){
+    const rec = api.record(PID, ref.record_id);
+    return {q:ref.excerpt, rid:ref.record_id, meta:rec ? `${fmtDate(rec.date)} · ${cap(rec.specialty)}` : ''};
+  }
+  function claimForFinding(f){
+    const refs = f.record_refs, lc = s => s.toLowerCase();
+    const overlap = (a, b) => lc(a).includes(lc(b)) || lc(b).includes(lc(a));
+    const key = lc(f.label.split(/\s+/).slice(0, 3).join(' '));
+    return out.claims.find(c => c.record_refs.some(cr => refs.some(r => r.record_id === cr.record_id && overlap(r.excerpt, cr.excerpt))))
+        || out.claims.find(c => lc(c.text).includes(key))
+        || out.claims.find(c => c.record_refs.some(cr => refs.some(r => r.record_id === cr.record_id)));
+  }
+
+  function detailSarah(n){
+    const d = n.data, o = {color:n.type === 'missing' ? cssVar('sig') : n.sys ? cssVar(n.sys) : cssVar('ink'), more:[], est:null};
+    let c = null, refs = [];
+    if (n.type === 'finding' || n.type === 'ghost'){
+      o.title = d.label; refs = d.record_refs;
+      if (n.type === 'ghost') o.why = 'Documented negative';
+      else { c = claimForFinding(d); o.why = whyOf(c); }
+    } else if (n.type === 'prior'){
+      o.title = d.test_name; refs = d.record_refs; c = claim(d.limitation_claim_ids[0]); o.why = whyOf(c); o.est = d.what_it_established;
+    } else if (n.type === 'missing'){
+      o.title = d.description; c = claim(d.claim_ids[0]);
+      refs = d.existing_record_refs.length ? d.existing_record_refs : (c ? c.record_refs.slice(0, 1) : []);
+      o.why = d.why_it_matters && d.why_it_matters.split(/\s+/).length <= 14 ? d.why_it_matters.replace(/\.$/, '') : whyOf(c);
+      o.check = d.check_existing_first;
+    } else {
+      o.title = d.name; c = claim(d.supporting_claim_ids[0]); refs = c ? c.record_refs.slice(0, 1) : []; o.why = whyOf(c);
+      const specs = new Set(d.supporting_finding_ids.map(id => (out.findings.find(f => f.finding_id === id) || {}).specialty));
+      o.metaOverride = `Open · ${d.supporting_finding_ids.length} findings · ${specs.size} specialties`;
+    }
+    const qs = refs.map(recQuote);
+    o.quote = qs[0] || null; o.more = qs.slice(1);
+    o.meta = o.metaOverride || (o.quote ? o.quote.meta : '');
+    o.cite = citeOf(c);
+    return o;
+  }
+  const synCite = s => ({pub:s.publisher, title:s.title, url:null, loc:s.location, idText:'PMID —', idHref:null, search:null, unverified:true, src:'Synthetic placeholder text for the stress test; there is no real source behind it.'});
+  function detailSyn(n){
+    const D = M.D, col = n.sys ? cssVar(n.sys) : n.type === 'missing' ? cssVar('sig') : cssVar('ink');
+    const letter = id => (D.hubs.find(h => h.id === id) || {}).letter;
+    const recMeta = (rid, spec) => { const r = D.records.find(x => x.id === rid); return r ? `${fmtDate(r.date)} · ${cap(spec)}` : ''; };
+    if (n.type === 'dot'){
+      const f = n.data;
+      return {color:col, title:cap(f.label), meta:recMeta(f.record_id, f.specialty), quote:{q:f.excerpt, rid:f.record_id}, more:[],
+        why:f.absent ? 'Documented negative' : f.links.length ? `Linked to question ${f.links.map(letter).join(' and ')} (synthetic)` : 'Not linked to an open question', cite:synCite(f.src)};
+    }
+    if (n.type === 'hub'){
+      const f = filteredFindings(D).find(x => x.links.includes(n.id));
+      const sys = new Set(filteredFindings(D).filter(x => x.links.includes(n.id)).map(x => x.sys));
+      return {color:col, title:`Question ${n.data.letter} (synthetic)`, meta:`Open · ${n.count} findings · ${sys.size} systems`, quote:f ? {q:f.excerpt, rid:f.record_id} : null, more:[],
+        why:'Synthetic open question for the stress test', cite:f ? synCite(f.src) : null};
+    }
+    if (n.type === 'prior'){
+      const p = n.data;
+      return {color:cssVar('blood'), title:`${p.name} (synthetic)`, meta:recMeta(p.record_id, 'laboratory'), quote:{q:'result within the reference range', rid:p.record_id}, more:[],
+        why:`Previously tested question ${letter(p.hub)}; synthetic result`, cite:synCite(p.src)};
+    }
+    const m = n.data;
+    return {color:cssVar('sig'), title:`${m.name} (synthetic)`, meta:'Missing', check:true, quote:{q:'no report from that visit is in the chart', rid:'syn-rec-000'}, more:[],
+      why:`Would clarify question ${m.hubs.map(letter).join(' and ')}`, cite:synCite(m.src)};
+  }
+
+  function findNode(id){ return M.nodes.find(x => x.id === id) || (listCtx && listCtx.extra && listCtx.extra[id]); }
+  const LINK = (href, text) => `<a href="${esc(href)}" target="_blank" rel="noopener">${esc(text)} ↗</a>`;
+  function citeHTML(c){
+    if (!c) return '';
+    const name = [c.pub, c.title].filter(Boolean).join(' · ');
+    const bits = [c.url ? LINK(c.url, name) : esc(name)];
+    if (c.loc) bits.push(esc(c.loc));
+    if (c.idText) bits.push(c.idHref ? LINK(c.idHref, c.idText).replace('<a ', '<a class="id" ') : `<b>${esc(c.idText)}</b>`);
+    if (c.search) bits.push(LINK(c.search, 'Search PubMed'));
+    return `<p class="pc">${c.unverified ? '<i>Unverified paraphrase</i>' : ''}Cited: ${bits.join(' · ')}</p>`;
+  }
+  function srcHTML(c){
+    const links = [c.idHref ? LINK(c.idHref, c.idText) : c.url ? LINK(c.url, c.pub) : c.idText ? `<b>${esc(c.idText)}</b>` : '', c.search ? LINK(c.search, 'Search PubMed') : ''].filter(Boolean);
+    return `<p>“${esc(c.src)}”${c.loc ? ` <span class="loc">${esc(c.loc)}</span>` : ''}${links.length ? ' · ' + links.join(' · ') : ''}</p>`;
+  }
+  function highlight(text, excerpts){
+    const ranges = [];
+    excerpts.forEach(x => { let i = text.indexOf(x); if (i < 0) i = text.toLowerCase().indexOf(x.toLowerCase()); if (i >= 0) ranges.push([i, i + x.length]); });
+    ranges.sort((a, b) => a[0] - b[0]);
+    let html = '', pos = 0;
+    ranges.forEach(([a, b]) => { if (a < pos) return; html += esc(text.slice(pos, a)) + `<mark>${esc(text.slice(a, b))}</mark>`; pos = b; });
+    return html + esc(text.slice(pos));
+  }
+  function recordHTML(rec, excerpts, others, syn){
+    if (!rec) return '';
+    const obs = rec.observations || [];
+    return `<details class="dr"><summary>More about this record${syn ? '<span class="syn">Synthetic</span>' : ''}</summary>` +
+      `<p class="m2">${esc(rec.title)} · ${esc(rec.author_role)} · ${fmtDate(rec.date)} · ${esc(cap(rec.specialty))}<code>${esc(rec.record_id)}</code></p>` +
+      `<p class="rt">${highlight(rec.text, excerpts)}</p>` +
+      (obs.length ? '<table><thead><tr><th>Observation</th><th>Value (reference)</th><th>Reading</th></tr></thead><tbody>' +
+        obs.map(o => `<tr><td>${esc(o.name)}</td><td>${esc(o.value)}${o.unit ? ' ' + esc(o.unit) : ''}${o.reference_range ? ` <span class="loc">ref ${esc(o.reference_range)}</span>` : ''}</td><td>${esc(o.interpretation || '')}</td></tr>`).join('') + '</tbody></table>' : '') +
+      (others.length ? '<p class="hd">Also in this record</p><ul class="jl">' + others.map(f => f.jump ? `<li><button type="button" data-jump="${esc(f.id)}">${esc(f.label)}</button></li>` : `<li><span>${esc(f.label)}</span></li>`).join('') + '</ul>' : '') +
+      '</details>';
+  }
+  function diseaseHTML(d, syn){
+    return `<details class="dd"><summary>More about this disease${syn ? '<span class="syn">Synthetic</span>' : ''}</summary>` +
+      `<p class="rt">${esc(d.summary)}</p>` +
+      `<p class="hd">Supporting findings · ${d.findings.length}</p><ul class="jl">` + d.findings.map(f => `<li><button type="button" data-jump="${esc(f.id)}"><b>${f.year}</b>${esc(f.label)}</button></li>`).join('') + '</ul>' +
+      (d.claims.length ? '<p class="hd">Supporting claims</p>' + d.claims.map(c => `<div class="cl">${esc(c.text)}${citeHTML(c.cite)}</div>`).join('') : '') +
+      (d.contra.length ? '<p class="hd">Contradicting claims</p>' + d.contra.map(c => `<div class="cl">${esc(c.text)}${citeHTML(c.cite)}</div>`).join('') : '') +
+      d.missing.map(m => `<p class="hd">Would clarify · missing</p><p class="cl"><b>${esc(m.name)}</b>${m.check ? ' <span class="ck">check first</span>' : ''} · ${esc(m.why)}</p>` +
+        `<table class="oc"><thead><tr><th>If</th><th>Then</th></tr></thead><tbody>${m.outcomes.map(o => `<tr><td>${esc(o.outcome)}</td><td>${esc(o.implication)}</td></tr>`).join('')}</tbody></table>`).join('') +
+      (d.questions.length ? '<p class="hd">Questions for the clinician</p>' + d.questions.map(q => `<p class="cl">${esc(q)}</p>`).join('') : '') +
+      '</details>';
+  }
+
+  /* Extra sections: the record behind a finding, or everything about a hypothesis. */
+  function moreHTML(n){
+    if (M.kind === 'sarah'){
+      if (n.type === 'hub'){
+        const h = n.data, F = id => out.findings.find(f => f.finding_id === id);
+        const mis = out.missing_evidence.filter(m => m.hypothesis_ids.includes(h.hypothesis_id));
+        return diseaseHTML({summary:h.summary,
+          findings:h.supporting_finding_ids.map(F).filter(Boolean).map(f => ({id:f.finding_id, label:f.label, year:f.date.slice(0, 4)})),
+          claims:h.supporting_claim_ids.map(claim).filter(Boolean).map(c => ({text:c.text, cite:citeOf(c)})),
+          contra:h.contradicting_claim_ids.map(claim).filter(Boolean).map(c => ({text:c.text, cite:citeOf(c)})),
+          missing:mis.map(m => ({name:m.description, check:m.check_existing_first, why:m.why_it_matters, outcomes:m.possible_outcomes})),
+          questions:out.clinician_questions.filter(q => q.missing_ids.some(id => mis.some(m => m.missing_id === id))).map(q => q.text)}, false);
+      }
+      if (n.type === 'finding' || n.type === 'ghost' || n.type === 'prior'){
+        const refs = n.data.record_refs, rid = refs[0].record_id, rec = api.record(PID, rid);
+        const selfF = n.type === 'prior' ? null : n.id;
+        const others = out.findings.filter(f => f.finding_id !== selfF && f.record_refs.some(r => r.record_id === rid))
+          .map(f => ({id:f.finding_id, label:f.label, jump:M.nodes.some(x => x.id === f.finding_id)}));
+        return recordHTML(rec, refs.filter(r => r.record_id === rid).map(r => r.excerpt), others, false);
+      }
+      return '';
+    }
+    const D = M.D;
+    if (n.type === 'hub'){
+      const h = n.data, L = h.letter, fsx = filteredFindings(D).filter(f => f.links.includes(h.id)).sort((a, b) => a.date.localeCompare(b.date));
+      const bySys = D.cfg.systems.map(s => [s, fsx.filter(f => f.sys === s).length]).filter(x => x[1]);
+      const mis = D.missing.filter(m => m.hubs.includes(h.id));
+      return diseaseHTML({summary:`Synthetic open question ${L}, generated for the stress test. It has no clinical meaning; ${fsx.length} generated findings link to it.`,
+        findings:fsx.map(f => ({id:f.id, label:cap(f.label), year:f.date.slice(0, 4)})),
+        claims:bySys.map(([s, c], i) => ({text:`${c} ${SYS_NAME[s]} findings link to question ${L} (synthetic).`, cite:synCite(D.sources[i % D.sources.length])})),
+        contra:[],
+        missing:mis.map(m => ({name:m.name, check:true, why:`Would clarify question ${L} (synthetic)`, outcomes:[
+          {outcome:`Report found and supports ${L}`, implication:`Question ${L} becomes more likely (synthetic)`},
+          {outcome:`Report found and does not support ${L}`, implication:`Question ${L} becomes less likely (synthetic)`},
+          {outcome:'No report exists', implication:'The clinician decides whether to test (synthetic)'}]})),
+        questions:mis.map(m => `Can the ${m.name.toLowerCase()} be obtained? (synthetic)`)}, true);
+    }
+    if (n.type === 'dot'){
+      const f = n.data, spec = cap(f.specialty);
+      const rec = {title:`Synthetic ${f.specialty} note`, author_role:'Synthetic author', date:f.date, specialty:f.specialty, record_id:f.record_id,
+        text:`Synthetic record generated for the stress test. Seen in ${spec}; ${f.excerpt}. No real patient.`, observations:[]};
+      const others = D.findings.filter(x => x.record_id === f.record_id && x.id !== f.id).map(x => ({id:x.id, label:cap(x.label), jump:true}));
+      return recordHTML(rec, [f.excerpt], others, true);
+    }
+    if (n.type === 'prior'){
+      const p = n.data;
+      return recordHTML({title:'Synthetic laboratory report', author_role:'Synthetic laboratory', date:p.date, specialty:'laboratory', record_id:p.record_id,
+        text:`Synthetic record generated for the stress test. ${p.name}: result within the reference range. No real patient.`,
+        observations:[{name:p.name, value:'within range', unit:null, reference_range:'synthetic', interpretation:'normal'}]}, ['result within the reference range'], [], true);
+    }
+    return '';
+  }
+
+  function jump(id){
+    if (M.nodes.some(x => x.id === id)) { open(id); return; }
+    if (M.kind !== 'syn') return;
+    const f = M.D.findings.find(x => x.id === id); if (!f) return;
+    if (mqNarrow.matches){ const cl = M.nodes.find(x => x.id === 'cl-' + f.sys); if (cl){ openList(cl); open(id, {id:cl.id, title:SYS_NAME[f.sys], node:cl}); } return; }
+    expanded = 'cl-' + f.sys; closePanelOnly(); render(); open(id);
+  }
+
+  function open(id, back){
+    const n = findNode(id); if (!n) return;
+    selected = svg.querySelector(`.v-n[data-id="${id}"]`) ? id : (back ? back.id : null);
+    const o = M.kind === 'sarah' ? detailSarah(n) : detailSyn(n);
+    const c = o.cite;
+    $('pbody').innerHTML =
+      (back ? `<button type="button" class="pb" id="r6V-pback">← ${esc(back.title)}</button>` : '') +
+      `<h3 id="r6V-ptitle"><span class="pt">${esc(o.title)}</span><span class="pm">${o.check ? '<span class="ck">Check first</span> · ' : ''}${esc(o.meta || '')}</span></h3>` +
+      (o.quote ? `<p class="pq">“${esc(o.quote.q)}”<code>${esc(o.quote.rid)}</code></p>` : '') +
+      (o.why ? `<p class="pw"><i>Why it matters</i>${esc(o.why)}</p>` : '') +
+      citeHTML(c) +
+      ((c && c.src) || o.est || o.more.length ? `<details class="ds"><summary>Source quote${o.more.length ? ` · +${o.more.length} more` : ''}</summary>` +
+        (c && c.src ? srcHTML(c) : '') +
+        (o.est ? `<p><i>What it established</i>${esc(o.est)}</p>` : '') +
+        o.more.map(q => `<p>+1 more: “${esc(q.q)}” <code>${esc(q.rid)}</code></p>`).join('') + '</details>' : '') +
+      moreHTML(n);
+    const P = $('panel');
+    P.style.setProperty('--pc', o.color);
+    P.dataset.node = id; P.dataset.kind = 'detail';
+    P.hidden = false;
+    if (back) $('pback').addEventListener('click', ev => { ev.stopPropagation(); openList(back.node); });
+    P.querySelectorAll('[data-jump]').forEach(b => b.addEventListener('click', ev => { ev.stopPropagation(); jump(b.dataset.jump); }));
+    P.querySelectorAll('details').forEach(d => d.addEventListener('toggle', clampPanel));
+    hi(null);
+    place();
+    $('x').focus({preventScroll:true});
+  }
+  function clampPanel(){
+    const P = $('panel'), sh = $('stage').clientHeight;
+    const top = parseFloat(P.style.top) || 8;
+    P.style.top = Math.max(8, Math.min(top, sh - P.offsetHeight - 8)) + 'px';
+  }
+
+  function openList(n){
+    const items = n.type === 'cluster' ? n.items.slice().sort((a, b) => a.date.localeCompare(b.date)) : n.items;
+    const title = n.type === 'cluster' ? SYS_NAME[n.sys] : n.kind === 'missing' ? 'Missing items' : 'Prior tests';
+    const extra = {};
+    items.forEach(it => { extra[it.id] = n.type === 'cluster' ? {id:it.id, type:'dot', sys:it.sys, data:it} : {id:it.id, type:n.kind === 'missing' ? 'missing' : 'prior', syn:true, sys:'blood', data:it}; });
+    listCtx = {extra};
+    selected = n.id;
+    const col = n.type === 'cluster' ? cssVar(n.sys) : n.kind === 'missing' ? cssVar('sig') : cssVar('blood');
+    $('pbody').innerHTML = `<h3 id="r6V-ptitle"><span class="pt">${esc(title)}</span><span class="pm">${items.length}${n.type === 'cluster' ? ` findings · ${n.yr[0]}–${n.yr[1]}` : ''}</span></h3><ul>` +
+      items.map(it => `<li><button type="button" data-f="${esc(it.id)}"><span class="d${it.absent || (it.links && !it.links.length) ? ' h' : ''}" style="--dc:${col}"></span><b>${(it.date || '').slice(0, 4)}</b>${esc(cap(it.label || it.name))}</button></li>`).join('') + '</ul>';
+    const P = $('panel');
+    P.style.setProperty('--pc', col); P.dataset.node = n.id; P.dataset.kind = 'list'; P.hidden = false;
+    $('pbody').querySelectorAll('button[data-f]').forEach(b => b.addEventListener('click', ev => { ev.stopPropagation(); open(b.dataset.f, {id:n.id, title, node:n}); }));
+    hi(null); place();
+    $('x').focus({preventScroll:true});
+  }
+
+  function place(){
+    const P = $('panel'), st = $('stage');
+    if (P.hidden || !svg) return;
+    const sr = st.getBoundingClientRect(), narrow = mqNarrow.matches;
+    const rect = e => { const b = e.getBoundingClientRect(); return {x:b.left - sr.left, y:b.top - sr.top, w:b.width, h:b.height}; };
+    const obs = [...svg.querySelectorAll('.v-n.on')].map(g => ({b:rect(g), w:1}));
+    const sel = svg.querySelector('.v-n.sel'); if (sel) obs.push({b:rect(sel.querySelector('.v-hit') || sel), w:40});
+    [$('zoom'), $('back')].forEach(e => { if (!e.hidden) obs.push({b:rect(e), w:40}); });
+    const pw = P.offsetWidth, ph = P.offsetHeight, m = 8, cands = [];
+    for (const top of [true, false]) for (const left of (narrow ? [true] : [true, false])){
+      const x = left ? m : sr.width - pw - m, y = top ? m : sr.height - ph - m;
+      let cost = 0;
+      obs.forEach(({b, w}) => { const ix = Math.max(0, Math.min(x + pw, b.x + b.w) - Math.max(x, b.x)), iy = Math.max(0, Math.min(y + ph, b.y + b.h) - Math.max(y, b.y)); cost += ix * iy * w; });
+      cands.push({x, y, cost});
+    }
+    cands.sort((a, b) => a.cost - b.cost);
+    P.style.left = cands[0].x + 'px'; P.style.top = cands[0].y + 'px';
+  }
+  function closePanelOnly(){ $('panel').hidden = true; selected = null; listCtx = null; }
+  function close(){
+    if ($('panel').hidden) return;
+    const id = $('panel').dataset.node;
+    closePanelOnly();
+    hi(null);
+    const g = svg && svg.querySelector(`.v-n[data-id="${id}"]`);
+    if (g) g.focus({preventScroll:true});
+  }
+
+  /* ---------- zoom & pan (viewBox) ---------- */
+  const drag = {moved:false, pts:new Map(), start:null, pinch:null};
+  function levelOf(kk){ return kk < 0.85 ? 'icons' : kk >= 1.6 ? 'detail' : 'labels'; }
+  function setViewBox(){
+    svg.setAttribute('viewBox', `${view.x.toFixed(2)} ${view.y.toFixed(2)} ${view.w.toFixed(2)} ${view.h.toFixed(2)}`);
+    svg.classList.toggle('zoomed', k > 1.01);
+    svg.dataset.k = k.toFixed(3); svg.dataset.z = zLevel;
+  }
+  function applyView(v){
+    const kk = Math.max(0.6, Math.min(5, v.W / v.w));
+    const w = v.W / kk, h = v.H / kk;
+    const cx = v.x + v.w / 2, cy = v.y + v.h / 2;
+    let x = cx - w / 2, y = cy - h / 2;
+    x = Math.max(-w * .5, Math.min(v.W - w * .5, x)); y = Math.max(-h * .5, Math.min(v.H - h * .5, y));
+    if (kk <= 1){ x = (v.W - w) / 2; y = (v.H - h) / 2; }
+    view = {x, y, w, h, W:v.W, H:v.H};
+    const prevLevel = zLevel, prevK = k;
+    k = kk; zLevel = levelOf(k);
+    setViewBox();
+    if (Math.abs(prevK - k) > 1e-4 || prevLevel !== zLevel){
+      const narrow = mqNarrow.matches;
+      svg.querySelectorAll('.v-n').forEach(g => { const n = M.nodes.find(x => x.id === g.dataset.id); if (n) drawLabel(g, n, narrow); });
+    }
+    if (!$('panel').hidden) place();
+  }
+  function zoomAbout(px, py, factor){
+    const nk = Math.max(0.6, Math.min(5, k * factor)), w = view.W / nk, h = view.H / nk;
+    applyView({x:px - (px - view.x) * (w / view.w), y:py - (py - view.y) * (h / view.h), w, h, W:view.W, H:view.H});
+  }
+  function toUser(cx, cy){ const p = new DOMPoint(cx, cy).matrixTransform(svg.getScreenCTM().inverse()); return {x:p.x, y:p.y}; }
+  let anim = 0, pending = null;
+  function easeTo(target){
+    cancelAnimationFrame(anim); pending = target;
+    const from = Object.assign({}, view), t0 = performance.now(), dur = reduce ? 0 : 200;
+    const step = now => {
+      const t = dur ? Math.min(1, (now - t0) / dur) : 1, e = 1 - Math.pow(1 - t, 3);
+      applyView({x:from.x + (target.x - from.x) * e, y:from.y + (target.y - from.y) * e, w:from.w + (target.w - from.w) * e, h:from.h + (target.h - from.h) * e, W:view.W, H:view.H});
+      if (t < 1) anim = requestAnimationFrame(step); else pending = null;
+    };
+    anim = requestAnimationFrame(step);
+  }
+  function zoomBtn(f){
+    const v = pending || view, nk = Math.max(0.6, Math.min(5, (view.W / v.w) * f)), w = view.W / nk, h = view.H / nk, cx = v.x + v.w / 2, cy = v.y + v.h / 2;
+    easeTo({x:cx - w / 2, y:cy - h / 2, w, h});
+  }
+  function zoomToNode(n){
+    const nk = Math.max(k, n.type === 'cluster' ? 2 : 1.9), w = view.W / nk, h = view.H / nk;
+    if (n.type === 'cluster' && !mqNarrow.matches && expanded !== n.id){ expanded = n.id; render(); }
+    easeTo({x:n.x - w / 2, y:n.y - h / 2, w, h});
+  }
+  function bindZoom(){
+    svg.addEventListener('wheel', ev => { ev.preventDefault(); const p = toUser(ev.clientX, ev.clientY); zoomAbout(p.x, p.y, Math.exp(-ev.deltaY * (ev.ctrlKey ? 0.01 : 0.0015))); }, {passive:false});
+    svg.addEventListener('pointerdown', ev => {
+      drag.pts.set(ev.pointerId, {x:ev.clientX, y:ev.clientY});
+      if (drag.pts.size === 1){ drag.moved = false; drag.start = {x:ev.clientX, y:ev.clientY, view:Object.assign({}, view)}; }
+      if (drag.pts.size === 2){ const [a, b] = [...drag.pts.values()]; drag.pinch = {d:Math.hypot(a.x - b.x, a.y - b.y), k}; }
+    });
+    svg.addEventListener('pointermove', ev => {
+      if (!drag.pts.has(ev.pointerId)) return;
+      drag.pts.set(ev.pointerId, {x:ev.clientX, y:ev.clientY});
+      if (drag.pts.size === 2 && drag.pinch){
+        const [a, b] = [...drag.pts.values()], d = Math.hypot(a.x - b.x, a.y - b.y), mid = toUser((a.x + b.x) / 2, (a.y + b.y) / 2);
+        drag.moved = true; zoomAbout(mid.x, mid.y, (drag.pinch.k * d / drag.pinch.d) / k); return;
+      }
+      const s = drag.start; if (!s) return;
+      const dx = ev.clientX - s.x, dy = ev.clientY - s.y;
+      if (!drag.moved && Math.hypot(dx, dy) < 5) return;
+      if (k <= 1.01 && ev.pointerType !== 'mouse') return;
+      if (!drag.moved){ drag.moved = true; svg.setPointerCapture(ev.pointerId); svg.classList.add('panning'); }
+      const scale = s.view.w / svg.getBoundingClientRect().width;
+      applyView({x:s.view.x - dx * scale, y:s.view.y - dy * scale, w:s.view.w, h:s.view.h, W:view.W, H:view.H});
+    });
+    const end = ev => { drag.pts.delete(ev.pointerId); if (drag.pts.size < 2) drag.pinch = null; if (!drag.pts.size){ drag.start = null; svg.classList.remove('panning'); setTimeout(() => { drag.moved = false; }, 0); } };
+    svg.addEventListener('pointerup', end); svg.addEventListener('pointercancel', end);
+  }
+
+  /* ---------- mode switch & controls ---------- */
+  function setMode(m){
+    if (m === mode) return;
+    mode = m; expanded = null; openGroups.clear(); closePanelOnly(); view = null;
+    $('sw').querySelectorAll('button').forEach(b => b.setAttribute('aria-checked', b.dataset.m === m));
+    const syn = m !== 'sarah';
+    $('check').hidden = syn;
+    $('prov').textContent = syn ? 'Synthetic stress test, not backend data' : 'sample data';
+    $('prov').classList.toggle('syn', syn);
+    if (syn){ const D = generate(m); $('pt').textContent = `Synthetic patient · ${D.cfg.records} records ${D.y0}–${D.y1}`; }
+    else $('pt').textContent = patientLine;
+    $('ctl').hidden = m !== 's250';
+    if (m === 's250'){
+      const D = generate(m), opts = []; for (let y = D.y0; y <= D.y1; y++) opts.push(`<option>${y}</option>`);
+      $('y0').innerHTML = $('y1').innerHTML = opts.join('');
+      $('y0').value = D.y0; $('y1').value = D.y1; filters.y0 = D.y0; filters.y1 = D.y1; filters.linked = false; $('linked').checked = false;
+    }
+    render();
+  }
+  $('sw').querySelectorAll('button').forEach(b => b.addEventListener('click', () => setMode(b.dataset.m)));
+  $('sw').addEventListener('keydown', ev => {
+    if (ev.key !== 'ArrowRight' && ev.key !== 'ArrowLeft') return;
+    const bs = [...$('sw').querySelectorAll('button')], i = bs.findIndex(b => b.dataset.m === mode), j = (i + (ev.key === 'ArrowRight' ? 1 : bs.length - 1)) % bs.length;
+    bs[j].focus(); setMode(bs[j].dataset.m);
+  });
+  const refilter = () => { filters.y0 = +$('y0').value; filters.y1 = +$('y1').value; if (filters.y0 > filters.y1){ [filters.y0, filters.y1] = [filters.y1, filters.y0]; $('y0').value = filters.y0; $('y1').value = filters.y1; } filters.linked = $('linked').checked; closePanelOnly(); render(); };
+  $('y0').addEventListener('change', refilter); $('y1').addEventListener('change', refilter); $('linked').addEventListener('change', refilter);
+  $('zin').addEventListener('click', () => zoomBtn(1.5));
+  $('zout').addEventListener('click', () => zoomBtn(1 / 1.5));
+  $('zfit').addEventListener('click', () => easeTo({x:0, y:0, w:view.W, h:view.H}));
+  $('back').addEventListener('click', ev => { ev.stopPropagation(); collapseAll(); });
+  $('x').addEventListener('click', ev => { ev.stopPropagation(); close(); });
+  $('panel').addEventListener('click', ev => ev.stopPropagation());
+  $('panel').addEventListener('pointerdown', ev => ev.stopPropagation());
+  root.addEventListener('keydown', ev => { if (ev.key !== 'Escape') return; if (!$('panel').hidden) close(); else if (expanded || openGroups.size) collapseAll(); });
+  $('check').addEventListener('click', () => open('mis-gla-report'));
+  $('check').addEventListener('pointerenter', () => hi('mis-gla-report'));
+  $('check').addEventListener('pointerleave', () => hi(null));
+  mqNarrow.addEventListener('change', () => { view = null; closePanelOnly(); render(); });
+  addEventListener('resize', () => place());
+
+  (async () => {
+    try {
+      const [r, p] = await Promise.all([api.getAnalysis(PID), api.getPatient(PID)]);
+      if (!r || r.status !== 'completed' || !r.output) { $('load').textContent = 'No completed analysis'; return; }
+      run = r; out = r.output;
+      const docs = p.documents.map(d => d.date).sort();
+      const age = +run.created_at.slice(0, 4) - p.demographics.birth_year;
+      const name = p.demographics.display_name.replace(/\s*\(.*\)$/, '');
+      const sex = p.demographics.sex_at_birth === 'female' ? 'F' : p.demographics.sex_at_birth === 'male' ? 'M' : '';
+      patientLine = `${name} · ${age} · ${sex} · ${docs.length} records ${docs[0].slice(0, 4)}–${docs[docs.length - 1].slice(0, 4)}`;
+      $('pt').textContent = patientLine;
+      $('prov').textContent = run.provenance === 'fixture' ? 'sample data' : run.provenance;
+      render();
+    } catch (e) { $('load').textContent = 'Could not load the analysis'; console.error(e); }
+  })();
+})();
+</script>
+</div></body></html>
