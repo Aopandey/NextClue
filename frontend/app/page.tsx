@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+
 export default function Home() {
-  return <main>NextClue</main>;
+  redirect("/patients/sarah-001");
 }

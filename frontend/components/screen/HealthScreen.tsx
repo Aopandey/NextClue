@@ -1,0 +1,56 @@
+"use client";
+
+import { useState } from "react";
+import { ConstellationView } from "@/components/constellation/ConstellationView";
+import { DetailPanel } from "@/components/detail/DetailPanel";
+import { useAnalysis } from "@/lib/api/useAnalysis";
+import { PatientHeader } from "./PatientHeader";
+import { RunStatus } from "./RunStatus";
+import { useNarrow } from "./useNarrow";
+
+/** The patient health screen: header, run state, constellation, and the detail panel for the selected node. */
+export function HealthScreen({ patientId }: { patientId: string }) {
+  const { phase, run, patient, sources, elapsedMs, error, retry } = useAnalysis(patientId);
+  const narrow = useNarrow();
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const drawable = phase === "completed" && run?.output && patient ? { run, patient } : null;
+  const panelOpen = drawable !== null && selectedId !== null;
+
+  return (
+    <div className="flex min-h-dvh items-start">
+      <div
+        data-testid="screen-body"
+        className="min-w-0 flex-1 px-4 py-4 sm:px-8"
+        style={narrow && panelOpen ? { paddingBottom: "45vh" } : undefined}
+      >
+        <div className="space-y-3">
+          {drawable && <PatientHeader patient={drawable.patient} run={drawable.run} />}
+          <RunStatus phase={phase} run={run} error={error} elapsedMs={elapsedMs} retry={retry} patientId={patientId} />
+        </div>
+        {drawable && (
+          <main className="mt-3">
+            <ConstellationView run={drawable.run} selectedId={selectedId} onSelect={setSelectedId} narrow={narrow} />
+          </main>
+        )}
+        {drawable && (
+          <footer className="mt-4 space-y-1 text-[12.5px] text-[var(--mut)]">
+            <p>{drawable.run.disclaimer}</p>
+            <p>The clinician decides; nothing here is confirmed.</p>
+          </footer>
+        )}
+      </div>
+      {drawable && selectedId && (
+        <DetailPanel
+          run={drawable.run}
+          patient={drawable.patient}
+          sources={sources}
+          nodeId={selectedId}
+          onClose={() => setSelectedId(null)}
+          onSelect={setSelectedId}
+          narrow={narrow}
+        />
+      )}
+    </div>
+  );
+}

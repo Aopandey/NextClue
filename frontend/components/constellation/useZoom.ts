@@ -15,6 +15,16 @@ function prefersReducedMotion() {
   return typeof window.matchMedia !== "function" || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
+/**
+ * Keeps the page scrollable: the wheel zooms only with Ctrl/Meta held (a trackpad pinch sends ctrlKey), and
+ * touch pans/zooms only with two or more fingers. Mouse drag still pans; double-click is handled by the owner.
+ */
+export function allowGesture(event: Event & { ctrlKey?: boolean; metaKey?: boolean; touches?: TouchList; button?: number }): boolean {
+  if (event.type === "wheel") return Boolean(event.ctrlKey || event.metaKey);
+  if (event.type === "touchstart" || event.type === "touchmove") return (event.touches?.length ?? 0) >= 2;
+  return !event.ctrlKey && !event.button;
+}
+
 export type ZoomApi = {
   transform: ZoomTransform;
   scale: number;
@@ -41,9 +51,11 @@ export function useZoom(svgRef: RefObject<SVGSVGElement | null>, view: { w: numb
     const z = zoom<SVGSVGElement, unknown>()
       .scaleExtent(SCALE_EXTENT)
       .extent([[0, 0], [view.w, view.h]])
+      .filter(allowGesture)
       .on("zoom", (e) => setTransform(e.transform));
     behavior.current = z;
-    select(svg).call(z).on("dblclick.zoom", null);
+    // d3-zoom sets touch-action: none, which would stop one-finger swipes from scrolling the page.
+    select(svg).call(z).on("dblclick.zoom", null).style("touch-action", "pan-y");
     return () => {
       cancelAnimationFrame(frame.current);
       select(svg).on(".zoom", null);

@@ -34,7 +34,7 @@ export function ConstellationView({ run, selectedId, onSelect, narrow }: Props) 
         transform={transform}
         svgRef={svgRef}
       />
-      <ZoomControls onZoomIn={zoomIn} onZoomOut={zoomOut} onFit={fit} />
+      <ZoomControls onZoomIn={zoomIn} onZoomOut={zoomOut} onFit={fit} below={narrow} />
     </div>
   );
 }

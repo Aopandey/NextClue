@@ -5,6 +5,7 @@ import fixtureJson from "@/fixtures/sarah-001.run.json";
 import type { AnalysisRun } from "@/lib/contracts";
 import { layoutConstellation } from "@/lib/constellation/layout";
 import { ConstellationView } from "../ConstellationView";
+import { allowGesture } from "../useZoom";
 
 const run = fixtureJson as AnalysisRun;
 
@@ -112,5 +113,22 @@ describe("ConstellationView zoom", () => {
   it("uses the narrow layout when asked", () => {
     const { container } = setup({ narrow: true });
     expect(container.querySelector("svg")!.getAttribute("viewBox")).toBe("0 0 400 720");
+  });
+});
+
+describe("page scroll vs zoom gestures", () => {
+  const ev = (type: string, init: Record<string, unknown> = {}) => Object.assign(new Event(type), init);
+  it("wheel zooms only with Ctrl or Meta", () => {
+    expect(allowGesture(ev("wheel"))).toBe(false);
+    expect(allowGesture(ev("wheel", { ctrlKey: true }))).toBe(true);
+    expect(allowGesture(ev("wheel", { metaKey: true }))).toBe(true);
+  });
+  it("touch needs two fingers", () => {
+    expect(allowGesture(ev("touchstart", { touches: [{}] }))).toBe(false);
+    expect(allowGesture(ev("touchmove", { touches: [{}, {}] }))).toBe(true);
+  });
+  it("mouse drag pans; secondary button does not", () => {
+    expect(allowGesture(ev("mousedown", { button: 0 }))).toBe(true);
+    expect(allowGesture(ev("mousedown", { button: 2 }))).toBe(false);
   });
 });

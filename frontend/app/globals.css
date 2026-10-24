@@ -128,3 +128,9 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font-ui)}
 @media (prefers-reduced-motion:reduce){
   [data-slot="sheet-content"]{animation:none!important;transition:none!important}
 }
+
+/* Indeterminate run progress: a sliding hairline, not a percentage. Motion only when allowed. */
+@media (prefers-reduced-motion: no-preference) {
+  .run-progress-bar { animation: run-progress 1.4s ease-in-out infinite; }
+  @keyframes run-progress { from { transform: translateX(-100%); } to { transform: translateX(300%); } }
+}

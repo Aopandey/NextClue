@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 
-type Props = { onZoomIn: () => void; onZoomOut: () => void; onFit: () => void };
+type Props = { onZoomIn: () => void; onZoomOut: () => void; onFit: () => void; below?: boolean };
 
 const button: CSSProperties = {
   width: 40,
@@ -17,10 +17,12 @@ const button: CSSProperties = {
 
 const bar: CSSProperties = { position: "absolute", right: 12, bottom: 12, display: "flex", gap: 6 };
 
-/** Zoom in, zoom out and fit, bottom right of the canvas. */
-export function ZoomControls({ onZoomIn, onZoomOut, onFit }: Props) {
+const barBelow: CSSProperties = { display: "flex", gap: 6, justifyContent: "flex-end", marginTop: 8 };
+
+/** Zoom in, zoom out and fit: over the canvas's bottom right, or `below` it (phone: Check first sits there). */
+export function ZoomControls({ onZoomIn, onZoomOut, onFit, below }: Props) {
   return (
-    <div style={bar}>
+    <div style={below ? barBelow : bar}>
       <button type="button" aria-label="Zoom in" style={button} onClick={onZoomIn}>+</button>
       <button type="button" aria-label="Zoom out" style={button} onClick={onZoomOut}>−</button>
       <button type="button" aria-label="Fit" style={{ ...button, fontSize: 13 }} onClick={onFit}>Fit</button>
