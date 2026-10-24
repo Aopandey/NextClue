@@ -112,8 +112,7 @@ def start_analysis(req: AnalysisRequest) -> tuple[AnalysisRun, bool]:
         versions=versions,
         created_at=_now(),
     )
-    db.insert_run(run, compute_input_key(patient, excluded))
-    return run, True
+    return db.insert_run(run, compute_input_key(patient, excluded))
 
 
 def _run_with_budget(patient: PatientRecord, sources: list[Source], budget: RequestBudget) -> PipelineResult:
