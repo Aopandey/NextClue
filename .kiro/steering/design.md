@@ -11,7 +11,7 @@ Visual reference `docs/design/constellation/reference.html` governs the look; th
 - Banned: Inter, Lexend, Poppins, DM Sans, Space Grotesk, Plus Jakarta.
 
 ## Bans
-- No card grids, pills, drop shadows or decorative gradients. Light theme only (no `.dark`, no dark-mode media query).
+- No card grids, pills, drop shadows or decorative gradients. Light theme only: never set a `.dark` class, no dark-mode media query; keep the `@custom-variant dark` line in globals.css (it neutralises shadcn's `dark:` classes).
 - Never invent clinical content or a PMID. Every label, quote and claim comes from `AnalysisRun.output`, `PatientRecord.documents` or `Source`.
 - Never the word "diagnosis" in UI copy; hypotheses are "open", never "likely" or a percentage.
 - Excerpts: strip the `"[Unverified paraphrase] "` prefix; show "Unverified paraphrase" while `verification_status === "unverified"`.
@@ -21,7 +21,7 @@ Visual reference `docs/design/constellation/reference.html` governs the look; th
 - R1 truncation: cut at the last word boundary within 28 chars (fallback hard 28-char cut), trim trailing punctuation, append "…"; full text in the panel.
 - R2 Check first second line: `<first word> <last word of description> · may already exist` (e.g. "GLA report · may already exist").
 - R3 negative labels: label starting "No " → its first two words without punctuation ("No diabetes"); else "No " + first word lowercased ("No celiac").
-- Semantic zoom: scale > 1.6 shows finding detail; < 0.8 hides labels; extent [0.5, 4]. > 16 findings with a graph node → body-system clusters.
+- Semantic zoom: scale > 1.6 shows finding detail; < 0.8 hides labels; extent [0.5, 4]. No clustering (scale features deferred; 10-record view only).
 
 ## Motion
 - At most 2 transitions: a one-time load reveal and the hover dim, both only inside `@media (prefers-reduced-motion: no-preference)`.

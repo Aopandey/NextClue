@@ -15,10 +15,10 @@ For judges: seven findings from five specialties point at Fabry disease. A norma
 6. Detail panel, 4 lines (label + date · specialty; verbatim quote + `record_id`; "Why it matters" ≤ 14 words; citation line) plus collapsed disclosures: Source quote, More about this record, More about this disease.
 7. Citations are hyperlinks: `url` plus "PMID n" (PubMed) or an NCBI Bookshelf ID; PLACEHOLDER titles show "PMID pending" + "Search PubMed"; "Unverified paraphrase" while unverified; never invent a PMID.
 8. Zoom: wheel/pinch, drag pan, `+` `−` Fit, double-click zooms to a node; > 1.6× shows label, year, specialty, first 8 quote words; < 0.8× icons only.
-9. Scale: > 16 findings collapse into body-system clusters (count inside, bundled edges, click fans out, Back returns); ≥ 60 adds year filter + "Only linked to open questions"; > 3 missing → "+N missing"; dev-only `?stress=60|250` labelled synthetic.
+9. Scale: deferred (Mike, 2026-10-24: "keep it 10 for now"). Build only Sarah's 10-record view; no clusters, no year/linked-only filters, no "+N missing", no `?stress=60|250` synthetic records.
 10. Backend states are honest: loading, queued/running with elapsed time, completed by provenance (fixture / live · model / replayed + Retry live), failed with message + code (+ Retry if retryable), "Evidence: cached"; `run.disclaimer` always in the footer.
 11. Copy: never the word "diagnosis"; hypotheses are "open", never "likely" or a percentage.
 12. Look: light only on `#fbf8f2`; Atkinson Hyperlegible Next / Mono, Source Serif 4; no banned fonts, card grids, pills, shadows or decorative gradients; ≤ 2 transitions, off under reduced motion.
-13. Phone (390px): panel is a bottom sheet, tap targets ≥ 40px, one-word labels, clusters only above 16, no horizontal scroll.
+13. Phone (390px): panel is a bottom sheet, tap targets ≥ 40px, one-word labels, no horizontal scroll.
 
 Out of scope: dashboard/patient list, accounts, chat, treatment advice.
