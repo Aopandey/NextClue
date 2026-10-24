@@ -12,7 +12,7 @@ from app.data_files import load_fixture_output, load_patient_files, load_source_
 from app.pipeline import RetrievalFailed, run_pipeline
 from app.validation import AnalysisReferenceError
 from ai.gemini_client import GeminiRequestError, Settings
-from ai.pipeline import analyze_patient, extract_findings
+from ai.pipeline import _outcome_wording_errors, analyze_patient, extract_findings
 
 
 @pytest.fixture
@@ -142,6 +142,43 @@ def test_competing_explanations_cannot_share_a_claim(sarah, sample, test_sources
     extraction, handoff = stage_responses(sample)
     handoff["hypotheses"][0]["supporting_claim_ids"].append("clm-sfn-often-idiopathic")
     _rejected_twice(sarah, test_sources, extraction, handoff, "supports both")
+
+
+@pytest.mark.parametrize("implication,flagged", [
+    ("would establish the diagnosis of Fabry disease in a female proband.", True),
+    ("would confirm the diagnosis", True),
+    ("would rule out Fabry disease", True),
+    ("is a definitive answer", True),
+    ("would support the diagnosis of Fabry disease.", False),
+    ("would make Fabry disease less likely.", False),
+    ("would remain inconclusive regarding the diagnosis.", False),
+    ("Fabry disease becomes the leading question, pending clinician confirmation.", False),
+    ("Removes family history as supporting evidence.", False),
+])
+def test_outcome_wording_check(sample, implication, flagged):
+    payload = deepcopy(sample)
+    payload["missing_evidence"][1]["possible_outcomes"][0]["implication"] = implication
+    output = AnalysisOutput.model_validate(payload)
+    assert bool(_outcome_wording_errors(output)) is flagged
+
+
+def test_overconfident_possible_outcome_is_rejected(sarah, sample, test_sources):
+    # Seen in a real Sarah run: a variant result "would establish the diagnosis".
+    extraction, handoff = stage_responses(sample)
+    handoff["missing_evidence"][1]["possible_outcomes"][0]["implication"] = (
+        "would establish the diagnosis of Fabry disease in a female proband."
+    )
+    _rejected_twice(sarah, test_sources, extraction, handoff, "possible_outcomes")
+
+
+def test_overconfident_outcome_gets_one_correction(sarah, sample, test_sources):
+    extraction, handoff = stage_responses(sample)
+    bad = deepcopy(handoff)
+    bad["missing_evidence"][1]["possible_outcomes"][0]["implication"] = "would confirm the diagnosis."
+    with patch("ai.pipeline.generate_json", side_effect=[extraction, bad, handoff]) as generate:
+        run_pipeline(sarah, test_sources)
+    retry_payload = generate.call_args_list[2].kwargs["payload"]
+    assert any("possible_outcomes" in e for e in retry_payload["validation_errors_from_previous_attempt"])
 
 
 def test_unrelated_source_gets_one_correction(sarah, sample, test_sources):

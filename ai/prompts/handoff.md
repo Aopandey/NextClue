@@ -110,10 +110,11 @@ that would need to be newly obtained. Describe new information neutrally as a
 gap, not as a requirement; do not say a test is needed or required. Questions
 ask whether something exists or is appropriate; the clinician decides.
 
-Possible outcomes stay conditional ("would support", "would make less likely",
-"would remain inconclusive"). An outcome may say a result establishes or excludes
-a diagnosis only if a cited excerpt says that kind of result does so. Include an
-uncertain or inconclusive outcome where one is possible.
+Possible outcomes stay conditional and hedged: use only "would support", "would
+make ... less likely", "would remain inconclusive", or "would prompt the clinician
+to consider". Never write that a result would establish, confirm, prove, diagnose,
+rule out or exclude a diagnosis; the clinician makes the diagnosis. Include an
+inconclusive outcome where one is possible.
 
 Hypothesis summaries are one or two sentences, name what is unknown, and state
 that the explanation is unconfirmed. A summary may only state a medical
@@ -135,3 +136,5 @@ generalization if one of its linked claims cites evidence for it.
 8. Each source_ref's excerpt topic terms (for example "diarrhea", "proteinuria",
    "enzyme") must appear in the claim text or its record quotes. A hypothesis with
    is_rare_disease=false cannot rest only on rare-disease sources.
+9. Possible outcomes (outcome and implication text) never say a result would
+   establish, confirm, prove, diagnose, rule out or exclude a diagnosis.

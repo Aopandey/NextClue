@@ -177,6 +177,7 @@ def check_output(output: AnalysisOutput, patient: PatientRecord, sources: list[S
     refs += [r for m in output.missing_evidence for r in m.existing_record_refs]
     errors = ["Record excerpts must not be blank."] if any(not r.excerpt.strip() for r in refs) else []
     errors += _limitation_errors(output) + _shared_support_errors(output) + _existing_first_errors(output)
+    errors += _outcome_wording_errors(output)
     errors += [
         f"{h.hypothesis_id}: link at least one supporting or contradicting claim, or omit this explanation"
         for h in output.hypotheses if not (h.supporting_claim_ids or h.contradicting_claim_ids)
@@ -239,6 +240,27 @@ def _shared_support_errors(output: AnalysisOutput) -> list[str]:
                     "specific to each explanation or leave the claim with one of them"
                 )
             owner.setdefault(cid, h.hypothesis_id)
+    return errors
+
+
+_OVERCONFIDENT = re.compile(
+    r"\b(?:would|will|can|could)\s+(?:definitively\s+|conclusively\s+)?(?:establish|confirm|prove|diagnose|rule\s+out|exclude)\b"
+    r"|\b(?:confirms?|confirmed|proves?|proven|definitive(?:ly)?|conclusive(?:ly)?|diagnostic\s+of)\b",
+    re.IGNORECASE,
+)
+
+
+def _outcome_wording_errors(output: AnalysisOutput) -> list[str]:
+    """Possible outcomes may not claim to settle a diagnosis; the clinician does that."""
+    errors: list[str] = []
+    for m in output.missing_evidence:
+        for o in m.possible_outcomes:
+            hit = _OVERCONFIDENT.search(f"{o.outcome} {o.implication}")
+            if hit:
+                errors.append(
+                    f"{m.missing_id}: possible_outcomes says \"{hit.group(0)}\"; "
+                    "use \"would support\", \"would make ... less likely\" or \"would remain inconclusive\""
+                )
     return errors
 
 
