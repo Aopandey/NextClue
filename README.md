@@ -47,6 +47,15 @@ These are build tasks, not claims of completed work. Use a small Kiro spec and s
 
 [Event schedule](https://massaicoalition.com/hackachusetts/#day-of-events) · [Official rules](https://docs.google.com/document/d/1aDagPzc29sNGHdycZ-30GMf2z-Np2SwqZX_hY46tLrQ/edit) · [Challenge tracks](https://hackachusetts2026.vercel.app/)
 
+## Run the frontend
+
+```bash
+cd frontend && npm install && cp .env.example .env.local
+NEXT_PUBLIC_DATA_MODE=offline npm run dev   # bundled Sarah data, no backend
+```
+
+Open <http://localhost:3000> (not `127.0.0.1`, because of backend CORS). Data modes, env vars and tests: [frontend/README.md](frontend/README.md).
+
 ## How NextClue works
 
 ![NextClue flowchart: connect patient history, review evidence and earlier tests, identify missing information, and support clinician follow-up.](assets/nextclue-flowchart.png)

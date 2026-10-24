@@ -2,12 +2,12 @@ import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./e2e",
-  use: { baseURL: "http://localhost:3000" },
+  use: { baseURL: "http://localhost:3100" },
   webServer: {
-    command: "npm run dev",
-    url: "http://localhost:3000",
+    command: "npm run dev -- --port 3100",
+    url: "http://localhost:3100",
     env: { NEXT_PUBLIC_DATA_MODE: "offline" },
-    reuseExistingServer: true,
+    reuseExistingServer: false,
   },
   projects: [
     {
