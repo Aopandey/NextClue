@@ -14,6 +14,7 @@ from collections import Counter
 from collections.abc import Iterable
 
 from .contracts import AnalysisOutput, PatientRecord, RecordRef, Source
+from .data_files import load_source_topics
 
 
 class AnalysisReferenceError(ValueError):
@@ -94,6 +95,42 @@ def find_reference_errors(
     if not any(not h.is_rare_disease for h in output.hypotheses):
         errors.append("hypotheses must include at least one non-rare-disease alternative")
 
+    errors.extend(find_source_topic_errors(output, load_source_topics()))
+    return errors
+
+
+def find_source_topic_errors(output: AnalysisOutput, topics: dict) -> list[str]:
+    """A claim may only cite excerpts about the finding it states.
+
+    Sources and excerpts missing from `topics` are skipped: the hosted registry
+    can list excerpts the local side file does not.
+    """
+    errors: list[str] = []
+    terms_by_excerpt = topics["excerpts"]
+    for c in output.claims:
+        hay = (c.text + " " + " ".join(r.excerpt for r in c.record_refs)).lower()
+        for ref in c.source_refs:
+            terms = terms_by_excerpt.get(ref.excerpt_id)
+            if terms and not any(t in hay for t in terms):
+                errors.append(
+                    f"{c.claim_id}: cites {ref.source_id}/{ref.excerpt_id} but neither the claim nor its "
+                    f"record quote mentions {sorted(terms)[:4]}; cite an excerpt about this finding, or drop the claim"
+                )
+
+    claims = {c.claim_id: c for c in output.claims}
+    for h in output.hypotheses:
+        if h.is_rare_disease:
+            continue
+        for claim_id in h.supporting_claim_ids:
+            claim = claims.get(claim_id)
+            if claim and claim.source_refs and all(
+                topics["conditions"].get(r.source_id) in topics["rare_only_conditions"]
+                for r in claim.source_refs
+            ):
+                errors.append(
+                    f"{claim_id}: supports non-rare {h.hypothesis_id} but cites only rare-disease "
+                    f"source(s); cite evidence about {h.name!r}"
+                )
     return errors
 
 
@@ -129,6 +166,7 @@ def compute_cache_key(
     model: str,
     prompt_version: str,
     evidence_version: str,
+    retrieval_mode: str = "cached",
 ) -> str:
     """Identity of an analysis; any changed input yields a new key.
 
@@ -142,4 +180,5 @@ def compute_cache_key(
         "model": model,
         "prompt_version": prompt_version,
         "evidence_version": evidence_version,
+        "retrieval_mode": retrieval_mode,
     })

@@ -16,6 +16,9 @@ from concurrent.futures import TimeoutError as FuturesTimeout
 
 from pydantic import ValidationError
 
+from ai.budget import AnalysisDeadlineExceeded, RequestBudget, budget_scope
+from ai.configuration import ConfigurationError
+
 from . import db
 from .config import get_settings
 from .contracts import (
@@ -26,8 +29,9 @@ from .contracts import (
     PatientRecord,
     RunError,
     RunVersions,
+    Source,
 )
-from .pipeline import PipelineNotConnected, RetrievalFailed, run_pipeline
+from .pipeline import PipelineNotConnected, PipelineResult, RetrievalFailed, run_pipeline
 from .validation import AnalysisReferenceError, compute_cache_key, compute_input_key, validate_analysis
 from .views import build_graph, build_timeline
 
@@ -48,6 +52,21 @@ def _now() -> dt.datetime:
     return dt.datetime.now(dt.timezone.utc)
 
 
+def _expire_if_stale(run: AnalysisRun) -> bool:
+    """Fail an in-flight run no live worker can own (execute_run enforces the timeout)."""
+    age = (_now() - run.created_at).total_seconds()
+    if run.status not in ("queued", "running") or age <= 2 * get_settings().analysis_timeout_seconds:
+        return False
+    run.status = "failed"
+    run.error = RunError(
+        code="timeout", message="The analysis was interrupted before it finished.", retryable=True
+    )
+    run.completed_at = _now()
+    db.save_run(run)
+    log.warning("expired stale run %s", run.run_id)
+    return True
+
+
 def _without_excluded(patient: PatientRecord, excluded: list[str]) -> PatientRecord:
     return patient.model_copy(
         update={"documents": [d for d in patient.documents if d.record_id not in excluded]}
@@ -56,6 +75,7 @@ def _without_excluded(patient: PatientRecord, excluded: list[str]) -> PatientRec
 
 def start_analysis(req: AnalysisRequest) -> tuple[AnalysisRun, bool]:
     """Return (run, needs_execution). A reused run needs no execution."""
+    settings = get_settings()  # Reject bad configuration before database/provider work.
     patient = db.get_patient(req.patient_id, req.record_version)
     if patient is None:
         raise PatientNotFound(req.patient_id)
@@ -68,7 +88,6 @@ def start_analysis(req: AnalysisRequest) -> tuple[AnalysisRun, bool]:
         raise InvalidRequest("cannot exclude every document")
     excluded = sorted(set(req.excluded_record_ids))
 
-    settings = get_settings()
     registry = db.get_source_registry()
     versions = RunVersions(
         schema_version=ANALYSIS_SCHEMA_VERSION,
@@ -82,11 +101,20 @@ def start_analysis(req: AnalysisRequest) -> tuple[AnalysisRun, bool]:
         model=versions.model,
         prompt_version=versions.prompt,
         evidence_version=versions.evidence,
+        retrieval_mode=settings.retrieval_mode,
     )
 
     if not req.force_refresh:
         existing = db.find_reusable_run(cache_key)
-        if existing is not None:
+        if existing is not None and _expire_if_stale(existing):
+            existing = None
+        # A PubMed outage/empty match is an honest cache fallback, but must
+        # not permanently suppress live retrieval on later requests.
+        retry_retrieval = (
+            existing is not None and settings.retrieval_mode == "pubmed"
+            and existing.status == "completed" and existing.evidence_mode == "cached"
+        )
+        if existing is not None and not retry_retrieval:
             return existing, False
 
     run = AnalysisRun(
@@ -101,8 +129,19 @@ def start_analysis(req: AnalysisRequest) -> tuple[AnalysisRun, bool]:
         versions=versions,
         created_at=_now(),
     )
-    db.insert_run(run, compute_input_key(patient, excluded))
-    return run, True
+    input_key = compute_input_key(patient, excluded)
+    stored, inserted = db.insert_run(run, input_key)
+    if not inserted and _expire_if_stale(stored):
+        return db.insert_run(run, input_key)
+    return stored, inserted
+
+
+def _run_with_budget(patient: PatientRecord, sources: list[Source], budget: RequestBudget) -> PipelineResult:
+    # ContextVars do not transfer automatically into ThreadPoolExecutor workers.
+    with budget_scope(budget):
+        result = run_pipeline(patient, sources)
+        budget.remaining()
+        return result
 
 
 def execute_run(run_id: str) -> None:
@@ -119,10 +158,16 @@ def execute_run(run_id: str) -> None:
         db.save_run(run)
 
         timeout = get_settings().analysis_timeout_seconds
+        budget = RequestBudget.after(timeout)
         future = _executor.submit(
-            run_pipeline, _without_excluded(patient, run.excluded_record_ids), registry.sources
+            _run_with_budget, _without_excluded(patient, run.excluded_record_ids), registry.sources, budget
         )
-        result = future.result(timeout=timeout)
+        try:
+            result = future.result(timeout=budget.remaining())
+        except FuturesTimeout:
+            budget.cancelled.set()
+            future.cancel()  # Also stop work that has not left the queue yet.
+            raise
 
         output = (
             result.output if isinstance(result.output, AnalysisOutput)
@@ -143,7 +188,9 @@ def execute_run(run_id: str) -> None:
 
 
 def _classify(exc: Exception) -> RunError:
-    if isinstance(exc, FuturesTimeout):
+    if isinstance(exc, ConfigurationError):
+        return RunError(code="internal", message=f"Configuration error: {exc}", retryable=False)
+    if isinstance(exc, (FuturesTimeout, AnalysisDeadlineExceeded)):
         return RunError(code="timeout", message="The AI pipeline did not finish in time.", retryable=True)
     if isinstance(exc, RetrievalFailed):
         return RunError(code="retrieval_failed", message=str(exc), retryable=True)

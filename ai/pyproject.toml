@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nextclue-ai"
+version = "0.1.0"
+description = "NextClue Gemini integration"
+requires-python = ">=3.11"
+dependencies = ["google-genai==2.33.0", "httpx==0.28.1", "python-dotenv==1.2.4", "pydantic==2.14.1"]
+
+[tool.setuptools]
+packages = ["ai"]
+package-dir = {ai = "."}
+
+[tool.setuptools.package-data]
+ai = ["prompts/*.md"]

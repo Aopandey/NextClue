@@ -155,7 +155,7 @@
     {
       "claim_id": "clm-sfn-often-idiopathic",
       "text": "Small fiber neuropathy often has no identified cause, so separate common conditions remain possible.",
-      "record_refs": [{ "record_id": "rec-2016-neuro-fu", "excerpt": "Small fiber neuropathy of unknown cause" }],
+      "record_refs": [{ "record_id": "rec-2016-neuro-fu", "excerpt": "Small fiber neuropathy of unknown cause" }, { "record_id": "rec-2016-neuro", "excerpt": "Etiology unclear" }],
       "source_refs": [{ "source_id": "src-sfn-review", "excerpt_id": "exc-sfn-causes" }]
     }
   ],
