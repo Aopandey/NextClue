@@ -1,0 +1,49 @@
+/* Clue constellation. Colours are design tokens (app/globals.css); motion lives only in the guard at the end. */
+
+.cn { display: block; width: 100%; height: auto; overflow: visible; font-family: var(--font-ui); }
+
+/* Edges */
+.cn-edge-supports { opacity: .62; }
+.cn-edge-previously_tested { stroke-width: 2.4; stroke-dasharray: .1 6.5; }
+.cn-edge-would_clarify { stroke-width: 2; stroke-dasharray: 7 6; }
+
+/* Nodes */
+.cn-node { cursor: pointer; outline: none; }
+.cn-ring { fill: none; stroke: var(--ink); stroke-width: 2; opacity: 0; }
+.cn-node:focus-visible .cn-ring { opacity: 1; }
+.cn-node[data-selected] .cn-ring { opacity: 1; stroke-width: 1.5; stroke-dasharray: 2 4; }
+
+/* Hover / focus dim */
+.cn [data-dim="true"] { opacity: .25; }
+
+/* Labels: a background halo keeps text readable over edges. */
+.cn-label, .cn-hub-status, .cn-check-text, .cn-empty {
+  paint-order: stroke;
+  stroke: var(--bg);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+.cn-l-label { font-size: 13px; font-weight: 700; fill: var(--ink); }
+.cn-l-negative { font-size: 13px; font-weight: 400; fill: var(--mut); }
+.cn-l-year, .cn-l-detail { font-family: var(--font-mono); font-size: 11px; fill: var(--mut); }
+.cn-l-signal { font-size: 12px; font-weight: 700; fill: var(--sig); }
+.cn-quote { font-family: var(--font-serif); font-size: 13px; font-style: italic; fill: var(--ink); }
+
+.cn-hub-name { font-family: var(--font-serif); font-weight: 500; fill: var(--ink); }
+.cn-hub-status { font-family: var(--font-mono); font-size: 11px; fill: var(--mut); }
+
+.cn-check-head { font-family: var(--font-mono); font-size: 10.5px; font-weight: 600; letter-spacing: .12em; fill: var(--sig); }
+.cn-check-body { font-size: 13px; font-weight: 600; fill: var(--ink); }
+.cn-empty { font-size: 15px; fill: var(--mut); }
+
+/* Motion: the hover dim fade and the one-time load reveal, only when the user allows motion. */
+@media (prefers-reduced-motion: no-preference) {
+  .cn-node, .cn-edge { transition: opacity 150ms ease; }
+  .cn-reveal {
+    animation: cn-reveal 320ms cubic-bezier(.2, .75, .25, 1) backwards;
+    animation-delay: calc(var(--i) * 40ms);
+  }
+  @keyframes cn-reveal {
+    from { opacity: 0; transform: scale(.85); }
+  }
+}
