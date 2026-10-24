@@ -1,0 +1,203 @@
+{
+  "$defs": {
+    "Demographics": {
+      "additionalProperties": false,
+      "properties": {
+        "display_name": {
+          "title": "Display Name",
+          "type": "string"
+        },
+        "sex_at_birth": {
+          "enum": [
+            "female",
+            "male",
+            "intersex",
+            "unknown"
+          ],
+          "title": "Sex At Birth",
+          "type": "string"
+        },
+        "birth_year": {
+          "title": "Birth Year",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "display_name",
+        "sex_at_birth",
+        "birth_year"
+      ],
+      "title": "Demographics",
+      "type": "object"
+    },
+    "Observation": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "reference_range": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference Range"
+        },
+        "interpretation": {
+          "enum": [
+            "normal",
+            "abnormal",
+            "borderline",
+            "not_interpreted"
+          ],
+          "title": "Interpretation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "value",
+        "interpretation"
+      ],
+      "title": "Observation",
+      "type": "object"
+    },
+    "PatientDocument": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "pattern": "^rec-[a-z0-9-]+$",
+          "title": "Record Id",
+          "type": "string"
+        },
+        "date": {
+          "format": "date",
+          "title": "Date",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "clinic_note",
+            "lab_result",
+            "imaging",
+            "pathology",
+            "referral",
+            "genetic_report",
+            "other"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "specialty": {
+          "title": "Specialty",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "author_role": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Role only, never a name",
+          "title": "Author Role"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "observations": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Observation"
+          },
+          "title": "Observations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "record_id",
+        "date",
+        "type",
+        "specialty",
+        "title",
+        "text"
+      ],
+      "title": "PatientDocument",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "patient.v1",
+      "default": "patient.v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "patient_id": {
+      "title": "Patient Id",
+      "type": "string"
+    },
+    "record_version": {
+      "description": "Bump whenever any document changes",
+      "minimum": 1,
+      "title": "Record Version",
+      "type": "integer"
+    },
+    "synthetic": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic",
+      "type": "boolean"
+    },
+    "demographics": {
+      "$ref": "#/$defs/Demographics"
+    },
+    "documents": {
+      "items": {
+        "$ref": "#/$defs/PatientDocument"
+      },
+      "minItems": 1,
+      "title": "Documents",
+      "type": "array"
+    }
+  },
+  "required": [
+    "patient_id",
+    "record_version",
+    "demographics",
+    "documents"
+  ],
+  "title": "PatientRecord",
+  "type": "object"
+}

@@ -1,0 +1,167 @@
+{
+  "schema_version": "patient.v1",
+  "patient_id": "david-004",
+  "record_version": 1,
+  "synthetic": true,
+  "demographics": {
+    "display_name": "David (synthetic)",
+    "sex_at_birth": "male",
+    "birth_year": 1971
+  },
+  "documents": [
+    {
+      "record_id": "rec-2014-pcp",
+      "date": "2014-02-11",
+      "type": "clinic_note",
+      "specialty": "primary care",
+      "title": "Primary care: fatigue",
+      "author_role": "Primary care physician",
+      "text": "43-year-old with fatigue for a year. Drinks two beers on weekends. Exam unremarkable. TSH normal. Advised sleep hygiene.",
+      "observations": [
+        {
+          "name": "TSH",
+          "value": "2.1",
+          "unit": "mIU/L",
+          "reference_range": "0.4-4.0",
+          "interpretation": "normal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2015-rheum",
+      "date": "2015-09-29",
+      "type": "clinic_note",
+      "specialty": "rheumatology",
+      "title": "Rheumatology: hand pain",
+      "author_role": "Rheumatologist",
+      "text": "Pain and swelling of the second and third knuckles of both hands. Rheumatoid factor and anti-CCP negative. X-ray shows hook-like osteophytes at the second and third metacarpophalangeal joints. Impression: osteoarthritis.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2016-lab",
+      "date": "2016-05-17",
+      "type": "lab_result",
+      "specialty": "primary care",
+      "title": "Liver panel and ferritin",
+      "author_role": "Laboratory",
+      "text": "ALT 68 U/L. Ferritin 1,150 ng/mL. Transferrin saturation not performed.",
+      "observations": [
+        {
+          "name": "ALT",
+          "value": "68",
+          "unit": "U/L",
+          "reference_range": "7-55",
+          "interpretation": "abnormal"
+        },
+        {
+          "name": "Ferritin",
+          "value": "1150",
+          "unit": "ng/mL",
+          "reference_range": "24-336",
+          "interpretation": "abnormal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2016-pcp",
+      "date": "2016-06-02",
+      "type": "clinic_note",
+      "specialty": "primary care",
+      "title": "Primary care: lab review",
+      "author_role": "Primary care physician",
+      "text": "Raised ferritin and ALT attributed to alcohol use and possible fatty liver. Advised to stop drinking. Recheck in one year.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2018-endo",
+      "date": "2018-03-13",
+      "type": "clinic_note",
+      "specialty": "endocrinology",
+      "title": "Endocrinology: new diabetes",
+      "author_role": "Endocrinologist",
+      "text": "New diabetes, HbA1c 7.8%, with BMI 24. Low testosterone with reduced libido. Started metformin and testosterone replacement.",
+      "observations": [
+        {
+          "name": "HbA1c",
+          "value": "7.8",
+          "unit": "%",
+          "reference_range": "<5.7",
+          "interpretation": "abnormal"
+        },
+        {
+          "name": "Total testosterone",
+          "value": "190",
+          "unit": "ng/dL",
+          "reference_range": "300-1000",
+          "interpretation": "abnormal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2019-derm",
+      "date": "2019-07-08",
+      "type": "clinic_note",
+      "specialty": "dermatology",
+      "title": "Dermatology: skin darkening",
+      "author_role": "Dermatologist",
+      "text": "Generalized bronze-gray skin darkening without sun exposure change. No rash. Assessed as post-inflammatory hyperpigmentation.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2020-lab",
+      "date": "2020-10-21",
+      "type": "lab_result",
+      "specialty": "primary care",
+      "title": "Repeat ferritin",
+      "author_role": "Laboratory",
+      "text": "Ferritin 1,420 ng/mL. Patient reports no alcohol for three years. Transferrin saturation not performed.",
+      "observations": [
+        {
+          "name": "Ferritin",
+          "value": "1420",
+          "unit": "ng/mL",
+          "reference_range": "24-336",
+          "interpretation": "abnormal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2021-card",
+      "date": "2021-04-06",
+      "type": "clinic_note",
+      "specialty": "cardiology",
+      "title": "Cardiology: shortness of breath",
+      "author_role": "Cardiologist",
+      "text": "Exertional breathlessness. Echocardiogram shows mildly reduced ejection fraction of 48% with normal coronary CT. Cause of cardiomyopathy not determined.",
+      "observations": [
+        {
+          "name": "Left ventricular ejection fraction",
+          "value": "48",
+          "unit": "%",
+          "reference_range": "55-70",
+          "interpretation": "abnormal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2022-us",
+      "date": "2022-01-19",
+      "type": "imaging",
+      "specialty": "radiology",
+      "title": "Abdominal ultrasound",
+      "author_role": "Radiologist",
+      "text": "Liver mildly enlarged with coarse echotexture. No focal lesion. Spleen normal.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2023-pcp",
+      "date": "2023-11-14",
+      "type": "clinic_note",
+      "specialty": "primary care",
+      "title": "Primary care: follow-up",
+      "author_role": "Primary care physician",
+      "text": "Ongoing fatigue, joint pain, diabetes, and heart failure symptoms. Ferritin remains high despite abstinence. Family history: a cousin had liver cirrhosis without alcohol use. Genetic testing has not been discussed.",
+      "observations": []
+    }
+  ]
+}

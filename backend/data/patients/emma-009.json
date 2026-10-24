@@ -1,0 +1,166 @@
+{
+  "schema_version": "patient.v1",
+  "patient_id": "emma-009",
+  "record_version": 1,
+  "synthetic": true,
+  "demographics": {
+    "display_name": "Emma (synthetic, negative control)",
+    "sex_at_birth": "female",
+    "birth_year": 1990
+  },
+  "documents": [
+    {
+      "record_id": "rec-2019-pcp",
+      "date": "2019-02-04",
+      "type": "clinic_note",
+      "specialty": "primary care",
+      "title": "Primary care: tiredness",
+      "author_role": "Primary care physician",
+      "text": "Tiredness, hair shedding, and shortness of breath on stairs. Heavy menstrual periods for two years. Pale conjunctivae.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2019-lab",
+      "date": "2019-02-06",
+      "type": "lab_result",
+      "specialty": "primary care",
+      "title": "Blood count and iron studies",
+      "author_role": "Laboratory",
+      "text": "Hemoglobin 9.8 g/dL, MCV 72 fL, ferritin 6 ng/mL.",
+      "observations": [
+        {
+          "name": "Hemoglobin",
+          "value": "9.8",
+          "unit": "g/dL",
+          "reference_range": "12-15.5",
+          "interpretation": "abnormal"
+        },
+        {
+          "name": "MCV",
+          "value": "72",
+          "unit": "fL",
+          "reference_range": "80-100",
+          "interpretation": "abnormal"
+        },
+        {
+          "name": "Ferritin",
+          "value": "6",
+          "unit": "ng/mL",
+          "reference_range": "15-150",
+          "interpretation": "abnormal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2019-pcp-fu",
+      "date": "2019-02-11",
+      "type": "clinic_note",
+      "specialty": "primary care",
+      "title": "Primary care: iron deficiency",
+      "author_role": "Primary care physician",
+      "text": "Iron deficiency anemia, likely from heavy menstrual bleeding. Celiac serology ordered. Oral iron started. Gynecology referral.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2019-celiac",
+      "date": "2019-02-20",
+      "type": "lab_result",
+      "specialty": "primary care",
+      "title": "Celiac serology",
+      "author_role": "Laboratory",
+      "text": "Tissue transglutaminase IgA negative with normal total IgA.",
+      "observations": [
+        {
+          "name": "Tissue transglutaminase IgA",
+          "value": "negative",
+          "unit": null,
+          "reference_range": "negative",
+          "interpretation": "normal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2019-gyn",
+      "date": "2019-04-03",
+      "type": "clinic_note",
+      "specialty": "obstetrics",
+      "title": "Gynecology: heavy periods",
+      "author_role": "Gynecologist",
+      "text": "Pelvic ultrasound shows a 3 cm intramural fibroid. Hormonal IUD placed.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2019-lab-2",
+      "date": "2019-06-10",
+      "type": "lab_result",
+      "specialty": "primary care",
+      "title": "Follow-up blood count",
+      "author_role": "Laboratory",
+      "text": "Hemoglobin 12.6 g/dL, ferritin 38 ng/mL.",
+      "observations": [
+        {
+          "name": "Hemoglobin",
+          "value": "12.6",
+          "unit": "g/dL",
+          "reference_range": "12-15.5",
+          "interpretation": "normal"
+        },
+        {
+          "name": "Ferritin",
+          "value": "38",
+          "unit": "ng/mL",
+          "reference_range": "15-150",
+          "interpretation": "normal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2020-gi",
+      "date": "2020-11-16",
+      "type": "clinic_note",
+      "specialty": "gastroenterology",
+      "title": "Gastroenterology: bloating",
+      "author_role": "Gastroenterologist",
+      "text": "Intermittent bloating and alternating bowel habits related to stress. No weight loss or bleeding. Impression: irritable bowel syndrome.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2021-derm",
+      "date": "2021-05-24",
+      "type": "clinic_note",
+      "specialty": "dermatology",
+      "title": "Dermatology: hair",
+      "author_role": "Dermatologist",
+      "text": "Hair shedding resolved after iron repletion. No scarring alopecia.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2022-lab",
+      "date": "2022-08-08",
+      "type": "lab_result",
+      "specialty": "primary care",
+      "title": "Annual labs",
+      "author_role": "Laboratory",
+      "text": "Hemoglobin 13.1 g/dL, ferritin 52 ng/mL, TSH normal.",
+      "observations": [
+        {
+          "name": "Hemoglobin",
+          "value": "13.1",
+          "unit": "g/dL",
+          "reference_range": "12-15.5",
+          "interpretation": "normal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2024-pcp",
+      "date": "2024-01-29",
+      "type": "clinic_note",
+      "specialty": "primary care",
+      "title": "Primary care: annual visit",
+      "author_role": "Primary care physician",
+      "text": "Feels well. Periods light with IUD. Energy normal. No further work-up needed.",
+      "observations": []
+    }
+  ]
+}

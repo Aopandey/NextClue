@@ -1,0 +1,62 @@
+{
+  "schema_version": "source.v1",
+  "evidence_version": "evidence-draft-1",
+  "sources": [
+    {
+      "source_id": "src-genereviews-fabry",
+      "source_type": "genereviews",
+      "title": "Fabry Disease",
+      "publisher": "GeneReviews (NCBI Bookshelf)",
+      "year": null,
+      "url": "https://www.ncbi.nlm.nih.gov/books/NBK1292/",
+      "pmid": null,
+      "excerpts": [
+        {
+          "excerpt_id": "exc-fabry-female-enzyme",
+          "text": "[Unverified paraphrase] In females heterozygous for a GLA pathogenic variant, alpha-galactosidase A enzyme activity may be within the normal range, so molecular genetic testing of GLA is needed to identify heterozygotes.",
+          "location": "Diagnosis"
+        },
+        {
+          "excerpt_id": "exc-fabry-features",
+          "text": "[Unverified paraphrase] Classic features include episodic pain in the hands and feet (acroparesthesias), reduced sweating, gastrointestinal symptoms, angiokeratomas, and characteristic corneal opacities (cornea verticillata).",
+          "location": "Clinical Description"
+        },
+        {
+          "excerpt_id": "exc-fabry-kidney",
+          "text": "[Unverified paraphrase] Kidney involvement, beginning with proteinuria and progressing to reduced kidney function, is a major source of morbidity.",
+          "location": "Clinical Description"
+        },
+        {
+          "excerpt_id": "exc-fabry-inheritance",
+          "text": "[Unverified paraphrase] Fabry disease is inherited in an X-linked manner. All daughters of an affected male inherit the pathogenic variant, and heterozygous females range from asymptomatic to severely affected.",
+          "location": "Genetic Counseling"
+        },
+        {
+          "excerpt_id": "exc-fabry-phenocopy",
+          "text": "[Unverified paraphrase] Corneal opacities resembling cornea verticillata can also be caused by medications such as amiodarone and chloroquine.",
+          "location": "Differential Diagnosis"
+        }
+      ],
+      "verification_status": "unverified",
+      "retrieved_on": null
+    },
+    {
+      "source_id": "src-sfn-review",
+      "source_type": "pubmed",
+      "title": "PLACEHOLDER: review of small fiber neuropathy causes (to be selected and verified)",
+      "publisher": "PubMed",
+      "year": null,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/",
+      "pmid": null,
+      "excerpts": [
+        {
+          "excerpt_id": "exc-sfn-causes",
+          "text": "[Unverified paraphrase] Small fiber neuropathy has many causes, including diabetes and immune, infectious, toxic, and genetic conditions, and in many patients no cause is found.",
+          "location": null
+        }
+      ],
+      "verification_status": "unverified",
+      "retrieved_on": null
+    }
+  ]
+}

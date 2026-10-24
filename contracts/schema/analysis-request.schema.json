@@ -1,0 +1,40 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "patient_id": {
+      "title": "Patient Id",
+      "type": "string"
+    },
+    "record_version": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Omit for latest",
+      "title": "Record Version"
+    },
+    "excluded_record_ids": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Excluded Record Ids",
+      "type": "array"
+    },
+    "force_refresh": {
+      "default": false,
+      "title": "Force Refresh",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "patient_id"
+  ],
+  "title": "AnalysisRequest",
+  "type": "object"
+}

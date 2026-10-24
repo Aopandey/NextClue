@@ -1,0 +1,121 @@
+{
+  "schema_version": "patient.v1",
+  "patient_id": "priya-005",
+  "record_version": 1,
+  "synthetic": true,
+  "demographics": {
+    "display_name": "Priya (synthetic)",
+    "sex_at_birth": "female",
+    "birth_year": 1993
+  },
+  "documents": [
+    {
+      "record_id": "rec-2010-er",
+      "date": "2010-08-14",
+      "type": "clinic_note",
+      "specialty": "emergency medicine",
+      "title": "Emergency: abdominal pain",
+      "author_role": "Emergency physician",
+      "text": "17-year-old with severe cramping abdominal pain and vomiting. CT shows bowel wall thickening and free fluid. Resolved over two days without treatment. No diagnosis made.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2012-surg",
+      "date": "2012-03-02",
+      "type": "clinic_note",
+      "specialty": "general surgery",
+      "title": "Surgery: suspected appendicitis",
+      "author_role": "Surgeon",
+      "text": "Severe abdominal pain. Appendectomy performed. Pathology: normal appendix.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2014-er",
+      "date": "2014-11-20",
+      "type": "clinic_note",
+      "specialty": "emergency medicine",
+      "title": "Emergency: hand swelling",
+      "author_role": "Emergency physician",
+      "text": "Swelling of the right hand after carrying groceries. No hives or itching. Treated with antihistamine and steroids without clear benefit. Resolved in three days.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2015-gi",
+      "date": "2015-06-30",
+      "type": "clinic_note",
+      "specialty": "gastroenterology",
+      "title": "Gastroenterology: recurrent attacks",
+      "author_role": "Gastroenterologist",
+      "text": "Recurrent attacks of abdominal pain every few months, each lasting two to three days. Endoscopy and colonoscopy normal. Impression: functional abdominal pain.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2016-allergy",
+      "date": "2016-09-12",
+      "type": "clinic_note",
+      "specialty": "allergy",
+      "title": "Allergy: swelling episodes",
+      "author_role": "Allergist",
+      "text": "Episodes of facial and limb swelling without hives. Not on ACE inhibitor. C4 measured between attacks within reference range; hereditary angioedema considered less likely. Advised to carry antihistamines.",
+      "observations": [
+        {
+          "name": "Complement C4",
+          "value": "16",
+          "unit": "mg/dL",
+          "reference_range": "14-40",
+          "interpretation": "normal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2018-obgyn",
+      "date": "2018-04-25",
+      "type": "clinic_note",
+      "specialty": "obstetrics",
+      "title": "Gynecology: contraception",
+      "author_role": "Gynecologist",
+      "text": "Started combined estrogen-containing oral contraceptive.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2018-er",
+      "date": "2018-07-03",
+      "type": "clinic_note",
+      "specialty": "emergency medicine",
+      "title": "Emergency: facial swelling",
+      "author_role": "Emergency physician",
+      "text": "Lip and tongue swelling with hoarse voice. No hives. Epinephrine, antihistamine, and steroids given with slow improvement over 24 hours. Observed overnight.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2019-pcp",
+      "date": "2019-01-15",
+      "type": "clinic_note",
+      "specialty": "primary care",
+      "title": "Primary care: attack frequency",
+      "author_role": "Primary care physician",
+      "text": "Swelling and abdominal attacks more frequent since starting oral contraceptive. Family history: mother had episodes of throat swelling, never diagnosed.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2021-er",
+      "date": "2021-12-08",
+      "type": "clinic_note",
+      "specialty": "emergency medicine",
+      "title": "Emergency: abdominal attack",
+      "author_role": "Emergency physician",
+      "text": "Severe abdominal pain with ascites on ultrasound. Resolved in 48 hours. Discharged with diagnosis of nonspecific abdominal pain.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2023-pcp",
+      "date": "2023-06-19",
+      "type": "clinic_note",
+      "specialty": "primary care",
+      "title": "Primary care: review",
+      "author_role": "Primary care physician",
+      "text": "Patient asks why antihistamines never help. No C1 inhibitor level or function test is documented in the record.",
+      "observations": []
+    }
+  ]
+}

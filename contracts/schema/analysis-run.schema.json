@@ -1,0 +1,835 @@
+{
+  "$defs": {
+    "AnalysisOutput": {
+      "additionalProperties": false,
+      "properties": {
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/Finding"
+          },
+          "title": "Findings",
+          "type": "array"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Claim"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "prior_results": {
+          "items": {
+            "$ref": "#/$defs/PriorResultReview"
+          },
+          "title": "Prior Results",
+          "type": "array"
+        },
+        "hypotheses": {
+          "items": {
+            "$ref": "#/$defs/Hypothesis"
+          },
+          "maxItems": 3,
+          "minItems": 1,
+          "title": "Hypotheses",
+          "type": "array"
+        },
+        "missing_evidence": {
+          "items": {
+            "$ref": "#/$defs/MissingEvidence"
+          },
+          "title": "Missing Evidence",
+          "type": "array"
+        },
+        "clinician_questions": {
+          "items": {
+            "$ref": "#/$defs/ClinicianQuestion"
+          },
+          "title": "Clinician Questions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "findings",
+        "claims",
+        "prior_results",
+        "hypotheses",
+        "missing_evidence",
+        "clinician_questions"
+      ],
+      "title": "AnalysisOutput",
+      "type": "object"
+    },
+    "Claim": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_id": {
+          "pattern": "^clm-[a-z0-9-]+$",
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "record_refs": {
+          "items": {
+            "$ref": "#/$defs/RecordRef"
+          },
+          "minItems": 1,
+          "title": "Record Refs",
+          "type": "array"
+        },
+        "source_refs": {
+          "items": {
+            "$ref": "#/$defs/SourceRef"
+          },
+          "minItems": 1,
+          "title": "Source Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "claim_id",
+        "text",
+        "record_refs",
+        "source_refs"
+      ],
+      "title": "Claim",
+      "type": "object"
+    },
+    "ClinicianQuestion": {
+      "additionalProperties": false,
+      "properties": {
+        "question_id": {
+          "pattern": "^q-[a-z0-9-]+$",
+          "title": "Question Id",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "missing_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "question_id",
+        "text"
+      ],
+      "title": "ClinicianQuestion",
+      "type": "object"
+    },
+    "ClueGraph": {
+      "additionalProperties": false,
+      "properties": {
+        "nodes": {
+          "items": {
+            "$ref": "#/$defs/GraphNode"
+          },
+          "title": "Nodes",
+          "type": "array"
+        },
+        "edges": {
+          "items": {
+            "$ref": "#/$defs/GraphEdge"
+          },
+          "title": "Edges",
+          "type": "array"
+        }
+      },
+      "required": [
+        "nodes",
+        "edges"
+      ],
+      "title": "ClueGraph",
+      "type": "object"
+    },
+    "Finding": {
+      "additionalProperties": false,
+      "properties": {
+        "finding_id": {
+          "pattern": "^fnd-[a-z0-9-]+$",
+          "title": "Finding Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "symptom",
+            "sign",
+            "lab_result",
+            "imaging",
+            "pathology",
+            "diagnosis",
+            "family_history"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "assertion": {
+          "enum": [
+            "present",
+            "absent",
+            "uncertain"
+          ],
+          "title": "Assertion",
+          "type": "string"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date"
+        },
+        "specialty": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Specialty"
+        },
+        "record_refs": {
+          "items": {
+            "$ref": "#/$defs/RecordRef"
+          },
+          "minItems": 1,
+          "title": "Record Refs",
+          "type": "array"
+        },
+        "hpo_id": {
+          "anyOf": [
+            {
+              "pattern": "^HP:\\d{7}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hpo Id"
+        }
+      },
+      "required": [
+        "finding_id",
+        "label",
+        "kind",
+        "assertion",
+        "record_refs"
+      ],
+      "title": "Finding",
+      "type": "object"
+    },
+    "GraphEdge": {
+      "additionalProperties": false,
+      "properties": {
+        "edge_id": {
+          "title": "Edge Id",
+          "type": "string"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "target": {
+          "title": "Target",
+          "type": "string"
+        },
+        "relation": {
+          "enum": [
+            "supports",
+            "previously_tested",
+            "would_clarify"
+          ],
+          "title": "Relation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "edge_id",
+        "source",
+        "target",
+        "relation"
+      ],
+      "title": "GraphEdge",
+      "type": "object"
+    },
+    "GraphNode": {
+      "additionalProperties": false,
+      "properties": {
+        "node_id": {
+          "title": "Node Id",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "finding",
+            "hypothesis",
+            "prior_result",
+            "missing_evidence"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "node_id",
+        "type",
+        "label"
+      ],
+      "title": "GraphNode",
+      "type": "object"
+    },
+    "Hypothesis": {
+      "additionalProperties": false,
+      "properties": {
+        "hypothesis_id": {
+          "pattern": "^hyp-[a-z0-9-]+$",
+          "title": "Hypothesis Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "is_rare_disease": {
+          "title": "Is Rare Disease",
+          "type": "boolean"
+        },
+        "status": {
+          "enum": [
+            "open",
+            "less_supported",
+            "excluded"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "summary": {
+          "title": "Summary",
+          "type": "string"
+        },
+        "supporting_finding_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Supporting Finding Ids",
+          "type": "array"
+        },
+        "supporting_claim_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Supporting Claim Ids",
+          "type": "array"
+        },
+        "contradicting_claim_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Contradicting Claim Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "hypothesis_id",
+        "name",
+        "is_rare_disease",
+        "status",
+        "summary"
+      ],
+      "title": "Hypothesis",
+      "type": "object"
+    },
+    "MissingEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "missing_id": {
+          "pattern": "^mis-[a-z0-9-]+$",
+          "title": "Missing Id",
+          "type": "string"
+        },
+        "priority": {
+          "description": "1 = investigate first",
+          "minimum": 1,
+          "title": "Priority",
+          "type": "integer"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "why_it_matters": {
+          "title": "Why It Matters",
+          "type": "string"
+        },
+        "check_existing_first": {
+          "title": "Check Existing First",
+          "type": "boolean"
+        },
+        "existing_record_refs": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/RecordRef"
+          },
+          "title": "Existing Record Refs",
+          "type": "array"
+        },
+        "claim_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Claim Ids",
+          "type": "array"
+        },
+        "hypothesis_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Hypothesis Ids",
+          "type": "array"
+        },
+        "possible_outcomes": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/PossibleOutcome"
+          },
+          "title": "Possible Outcomes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "missing_id",
+        "priority",
+        "description",
+        "why_it_matters",
+        "check_existing_first",
+        "claim_ids"
+      ],
+      "title": "MissingEvidence",
+      "type": "object"
+    },
+    "PossibleOutcome": {
+      "additionalProperties": false,
+      "properties": {
+        "outcome": {
+          "title": "Outcome",
+          "type": "string"
+        },
+        "implication": {
+          "title": "Implication",
+          "type": "string"
+        }
+      },
+      "required": [
+        "outcome",
+        "implication"
+      ],
+      "title": "PossibleOutcome",
+      "type": "object"
+    },
+    "PriorResultReview": {
+      "additionalProperties": false,
+      "properties": {
+        "prior_result_id": {
+          "pattern": "^pri-[a-z0-9-]+$",
+          "title": "Prior Result Id",
+          "type": "string"
+        },
+        "test_name": {
+          "title": "Test Name",
+          "type": "string"
+        },
+        "record_refs": {
+          "items": {
+            "$ref": "#/$defs/RecordRef"
+          },
+          "minItems": 1,
+          "title": "Record Refs",
+          "type": "array"
+        },
+        "result_summary": {
+          "title": "Result Summary",
+          "type": "string"
+        },
+        "interpretation_at_the_time": {
+          "title": "Interpretation At The Time",
+          "type": "string"
+        },
+        "what_it_established": {
+          "title": "What It Established",
+          "type": "string"
+        },
+        "limitation_claim_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Limitation Claim Ids",
+          "type": "array"
+        },
+        "hypothesis_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Hypothesis Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "prior_result_id",
+        "test_name",
+        "record_refs",
+        "result_summary",
+        "interpretation_at_the_time",
+        "what_it_established",
+        "limitation_claim_ids"
+      ],
+      "title": "PriorResultReview",
+      "type": "object"
+    },
+    "RecordRef": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "pattern": "^rec-[a-z0-9-]+$",
+          "title": "Record Id",
+          "type": "string"
+        },
+        "excerpt": {
+          "description": "Exact quote from the document text",
+          "title": "Excerpt",
+          "type": "string"
+        }
+      },
+      "required": [
+        "record_id",
+        "excerpt"
+      ],
+      "title": "RecordRef",
+      "type": "object"
+    },
+    "RunError": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "timeout",
+            "model_error",
+            "validation_failed",
+            "retrieval_failed",
+            "not_found",
+            "internal"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "retryable": {
+          "title": "Retryable",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "retryable"
+      ],
+      "title": "RunError",
+      "type": "object"
+    },
+    "RunVersions": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "model": {
+          "title": "Model",
+          "type": "string"
+        },
+        "prompt": {
+          "title": "Prompt",
+          "type": "string"
+        },
+        "evidence": {
+          "title": "Evidence",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema_version",
+        "model",
+        "prompt",
+        "evidence"
+      ],
+      "title": "RunVersions",
+      "type": "object"
+    },
+    "SourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "pattern": "^src-[a-z0-9-]+$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "excerpt_id": {
+          "pattern": "^exc-[a-z0-9-]+$",
+          "title": "Excerpt Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "excerpt_id"
+      ],
+      "title": "SourceRef",
+      "type": "object"
+    },
+    "TimelineEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "title": "Record Id",
+          "type": "string"
+        },
+        "date": {
+          "format": "date",
+          "title": "Date",
+          "type": "string"
+        },
+        "specialty": {
+          "title": "Specialty",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "finding_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Finding Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "record_id",
+        "date",
+        "specialty",
+        "title",
+        "finding_ids"
+      ],
+      "title": "TimelineEvent",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "analysis.v1",
+      "default": "analysis.v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "queued",
+        "running",
+        "completed",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "provenance": {
+      "enum": [
+        "live",
+        "replayed",
+        "fixture"
+      ],
+      "title": "Provenance",
+      "type": "string"
+    },
+    "replayed_from_run_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Replayed From Run Id"
+    },
+    "fallback_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Fallback Reason"
+    },
+    "evidence_mode": {
+      "enum": [
+        "live",
+        "cached"
+      ],
+      "title": "Evidence Mode",
+      "type": "string"
+    },
+    "patient_id": {
+      "title": "Patient Id",
+      "type": "string"
+    },
+    "record_version": {
+      "title": "Record Version",
+      "type": "integer"
+    },
+    "excluded_record_ids": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Excluded Record Ids",
+      "type": "array"
+    },
+    "cache_key": {
+      "title": "Cache Key",
+      "type": "string"
+    },
+    "versions": {
+      "$ref": "#/$defs/RunVersions"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "completed_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Completed At"
+    },
+    "error": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RunError"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "output": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AnalysisOutput"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "timeline": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/TimelineEvent"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Timeline"
+    },
+    "graph": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ClueGraph"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "disclaimer": {
+      "default": "Clinical decision support prototype using synthetic data. Not clinically validated. Findings are unconfirmed and require clinician review.",
+      "title": "Disclaimer",
+      "type": "string"
+    }
+  },
+  "required": [
+    "run_id",
+    "status",
+    "provenance",
+    "evidence_mode",
+    "patient_id",
+    "record_version",
+    "cache_key",
+    "versions",
+    "created_at"
+  ],
+  "title": "AnalysisRun",
+  "type": "object"
+}

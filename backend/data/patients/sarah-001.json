@@ -1,0 +1,160 @@
+{
+  "schema_version": "patient.v1",
+  "patient_id": "sarah-001",
+  "record_version": 1,
+  "synthetic": true,
+  "demographics": {
+    "display_name": "Sarah (synthetic)",
+    "sex_at_birth": "female",
+    "birth_year": 1986
+  },
+  "documents": [
+    {
+      "record_id": "rec-2012-pcp",
+      "date": "2012-05-10",
+      "type": "clinic_note",
+      "specialty": "primary care",
+      "title": "Primary care visit: limb pain",
+      "author_role": "Primary care physician",
+      "text": "26-year-old woman reports burning pain in her hands and feet since adolescence. Pain is worse with heat, fever, and exercise. She also reports that she rarely sweats. Neurological exam is unremarkable. Plan: trial of gabapentin and follow-up in three months.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2014-gi",
+      "date": "2014-09-22",
+      "type": "clinic_note",
+      "specialty": "gastroenterology",
+      "title": "Gastroenterology consult: abdominal pain",
+      "author_role": "Gastroenterologist",
+      "text": "Several years of recurrent abdominal pain after meals, bloating, and episodes of diarrhea. Colonoscopy with biopsies was normal. Celiac serology negative. Impression: symptoms most consistent with irritable bowel syndrome. Dietary changes advised.",
+      "observations": [
+        {
+          "name": "Tissue transglutaminase IgA",
+          "value": "negative",
+          "unit": null,
+          "reference_range": "negative",
+          "interpretation": "normal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2016-neuro",
+      "date": "2016-02-03",
+      "type": "clinic_note",
+      "specialty": "neurology",
+      "title": "Neurology consult: small fiber neuropathy",
+      "author_role": "Neurologist",
+      "text": "Skin biopsy shows reduced intraepidermal nerve fiber density, consistent with small fiber neuropathy. HbA1c 5.2%, vitamin B12 normal, thyroid function normal. Etiology unclear. Will screen for Fabry disease with alpha-galactosidase A enzyme activity.",
+      "observations": [
+        {
+          "name": "HbA1c",
+          "value": "5.2",
+          "unit": "%",
+          "reference_range": "<5.7",
+          "interpretation": "normal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2016-enzyme",
+      "date": "2016-03-01",
+      "type": "lab_result",
+      "specialty": "neurology",
+      "title": "Alpha-galactosidase A enzyme activity",
+      "author_role": "Reference laboratory",
+      "text": "Leukocyte alpha-galactosidase A enzyme activity within the laboratory reference range. No molecular testing performed on this sample.",
+      "observations": [
+        {
+          "name": "Alpha-galactosidase A activity (leukocytes)",
+          "value": "within reference range",
+          "unit": null,
+          "reference_range": "laboratory-specific",
+          "interpretation": "normal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2016-neuro-fu",
+      "date": "2016-03-29",
+      "type": "clinic_note",
+      "specialty": "neurology",
+      "title": "Neurology follow-up",
+      "author_role": "Neurologist",
+      "text": "Fabry enzyme screen normal. Fabry disease considered unlikely. Small fiber neuropathy of unknown cause. Continue symptomatic management.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2018-derm",
+      "date": "2018-07-02",
+      "type": "clinic_note",
+      "specialty": "dermatology",
+      "title": "Dermatology: skin spots",
+      "author_role": "Dermatologist",
+      "text": "Several small dark red papules on the lower trunk and upper thighs, present for years. Assessed as cherry angiomas. Biopsy not performed. Reassurance given.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2021-nephro",
+      "date": "2021-11-08",
+      "type": "referral",
+      "specialty": "nephrology",
+      "title": "Nephrology consult: proteinuria",
+      "author_role": "Nephrologist",
+      "text": "Referred for persistent proteinuria. Urine albumin-to-creatinine ratio 410 mg/g. eGFR 78. Blood pressure normal. Family history: father started dialysis at age 48, cause not documented. Kidney biopsy deferred.",
+      "observations": [
+        {
+          "name": "Urine albumin-to-creatinine ratio",
+          "value": "410",
+          "unit": "mg/g",
+          "reference_range": "<30",
+          "interpretation": "abnormal"
+        },
+        {
+          "name": "eGFR",
+          "value": "78",
+          "unit": "mL/min/1.73m2",
+          "reference_range": ">=90",
+          "interpretation": "borderline"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2022-cardio",
+      "date": "2022-09-14",
+      "type": "clinic_note",
+      "specialty": "cardiology",
+      "title": "Cardiology: palpitations",
+      "author_role": "Cardiologist",
+      "text": "Intermittent palpitations. ECG shows sinus rhythm with a short PR interval. Echocardiogram shows mild left ventricular wall thickening. Blood pressure normal. Cause of wall thickening not determined; repeat echo in one year.",
+      "observations": [
+        {
+          "name": "Interventricular septum thickness",
+          "value": "12",
+          "unit": "mm",
+          "reference_range": "6-10",
+          "interpretation": "abnormal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2023-eye",
+      "date": "2023-04-19",
+      "type": "clinic_note",
+      "specialty": "ophthalmology",
+      "title": "Ophthalmology: routine exam",
+      "author_role": "Ophthalmologist",
+      "text": "Slit lamp exam shows bilateral whorl-like corneal opacities (cornea verticillata). Visual acuity unaffected. Patient takes no amiodarone or chloroquine. No treatment needed.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2024-pcp",
+      "date": "2024-01-12",
+      "type": "clinic_note",
+      "specialty": "primary care",
+      "title": "Primary care follow-up",
+      "author_role": "Primary care physician",
+      "text": "Patient asks whether earlier tests ruled out a genetic cause of her symptoms. She recalls a visit to an outside genetics clinic in 2019, but no report from that visit is in our chart. Will request outside records.",
+      "observations": []
+    }
+  ]
+}

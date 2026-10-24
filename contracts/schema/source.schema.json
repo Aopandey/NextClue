@@ -1,0 +1,132 @@
+{
+  "$defs": {
+    "SourceExcerpt": {
+      "additionalProperties": false,
+      "properties": {
+        "excerpt_id": {
+          "pattern": "^exc-[a-z0-9-]+$",
+          "title": "Excerpt Id",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location"
+        }
+      },
+      "required": [
+        "excerpt_id",
+        "text"
+      ],
+      "title": "SourceExcerpt",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "source_id": {
+      "pattern": "^src-[a-z0-9-]+$",
+      "title": "Source Id",
+      "type": "string"
+    },
+    "source_type": {
+      "enum": [
+        "genereviews",
+        "pubmed",
+        "guideline",
+        "hpo",
+        "other"
+      ],
+      "title": "Source Type",
+      "type": "string"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "publisher": {
+      "title": "Publisher",
+      "type": "string"
+    },
+    "year": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Year"
+    },
+    "url": {
+      "pattern": "^https://",
+      "title": "Url",
+      "type": "string"
+    },
+    "pmid": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Pmid"
+    },
+    "excerpts": {
+      "items": {
+        "$ref": "#/$defs/SourceExcerpt"
+      },
+      "minItems": 1,
+      "title": "Excerpts",
+      "type": "array"
+    },
+    "verification_status": {
+      "enum": [
+        "verified",
+        "unverified"
+      ],
+      "title": "Verification Status",
+      "type": "string"
+    },
+    "retrieved_on": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Retrieved On"
+    }
+  },
+  "required": [
+    "source_id",
+    "source_type",
+    "title",
+    "publisher",
+    "url",
+    "excerpts",
+    "verification_status"
+  ],
+  "title": "Source",
+  "type": "object"
+}

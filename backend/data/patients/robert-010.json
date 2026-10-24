@@ -1,0 +1,137 @@
+{
+  "schema_version": "patient.v1",
+  "patient_id": "robert-010",
+  "record_version": 1,
+  "synthetic": true,
+  "demographics": {
+    "display_name": "Robert (synthetic)",
+    "sex_at_birth": "male",
+    "birth_year": 1962
+  },
+  "documents": [
+    {
+      "record_id": "rec-2012-hand",
+      "date": "2012-03-27",
+      "type": "clinic_note",
+      "specialty": "hand surgery",
+      "title": "Hand surgery: carpal tunnel",
+      "author_role": "Hand surgeon",
+      "text": "Bilateral carpal tunnel syndrome confirmed on nerve conduction. Right release performed.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2013-hand",
+      "date": "2013-02-19",
+      "type": "clinic_note",
+      "specialty": "hand surgery",
+      "title": "Hand surgery: left release",
+      "author_role": "Hand surgeon",
+      "text": "Left carpal tunnel release performed. No tissue sent for staining.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2016-ortho",
+      "date": "2016-08-30",
+      "type": "clinic_note",
+      "specialty": "orthopedics",
+      "title": "Spine: back and leg pain",
+      "author_role": "Spine surgeon",
+      "text": "Lumbar spinal stenosis on MRI. Decompression surgery performed.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2018-neuro",
+      "date": "2018-05-15",
+      "type": "clinic_note",
+      "specialty": "neurology",
+      "title": "Neurology: numb feet",
+      "author_role": "Neurologist",
+      "text": "Numbness and burning in both feet with reduced vibration sense. HbA1c 5.6%, B12 normal. Impression: idiopathic axonal neuropathy.",
+      "observations": [
+        {
+          "name": "HbA1c",
+          "value": "5.6",
+          "unit": "%",
+          "reference_range": "<5.7",
+          "interpretation": "normal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2019-gi",
+      "date": "2019-10-08",
+      "type": "clinic_note",
+      "specialty": "gastroenterology",
+      "title": "Gastroenterology: bowel changes",
+      "author_role": "Gastroenterologist",
+      "text": "Alternating diarrhea and constipation with early satiety and 6 kg weight loss. Colonoscopy normal.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2020-card",
+      "date": "2020-06-23",
+      "type": "clinic_note",
+      "specialty": "cardiology",
+      "title": "Cardiology: breathlessness",
+      "author_role": "Cardiologist",
+      "text": "Exertional breathlessness and ankle swelling. Echocardiogram shows concentric left ventricular wall thickening of 15 mm with preserved ejection fraction. Attributed to hypertensive heart disease.",
+      "observations": [
+        {
+          "name": "Interventricular septum thickness",
+          "value": "15",
+          "unit": "mm",
+          "reference_range": "6-10",
+          "interpretation": "abnormal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2020-ecg",
+      "date": "2020-06-23",
+      "type": "other",
+      "specialty": "cardiology",
+      "title": "ECG",
+      "author_role": "Cardiologist",
+      "text": "Sinus rhythm with low QRS voltage in limb leads.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2021-heme",
+      "date": "2021-02-09",
+      "type": "lab_result",
+      "specialty": "hematology",
+      "title": "Light chain studies",
+      "author_role": "Laboratory",
+      "text": "Serum protein electrophoresis shows no monoclonal protein. Serum free light chain ratio normal. AL amyloidosis considered unlikely.",
+      "observations": [
+        {
+          "name": "Free light chain ratio",
+          "value": "1.1",
+          "unit": null,
+          "reference_range": "0.26-1.65",
+          "interpretation": "normal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2022-pcp",
+      "date": "2022-11-01",
+      "type": "clinic_note",
+      "specialty": "primary care",
+      "title": "Primary care: dizziness",
+      "author_role": "Primary care physician",
+      "text": "Lightheaded on standing. Blood pressure 138/82 lying and 104/70 standing. Antihypertensive stopped. Family history: father died of heart failure at 66.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2024-card",
+      "date": "2024-01-16",
+      "type": "clinic_note",
+      "specialty": "cardiology",
+      "title": "Cardiology: follow-up",
+      "author_role": "Cardiologist",
+      "text": "Worsening heart failure despite blood pressure now low. Wall thickening is out of proportion to blood pressure history. No technetium pyrophosphate scan or TTR genetic testing on record.",
+      "observations": []
+    }
+  ]
+}

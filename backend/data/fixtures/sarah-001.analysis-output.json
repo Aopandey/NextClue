@@ -1,0 +1,258 @@
+{
+  "findings": [
+    {
+      "finding_id": "fnd-limb-pain",
+      "label": "Burning pain in hands and feet since adolescence",
+      "kind": "symptom",
+      "assertion": "present",
+      "date": "2012-05-10",
+      "specialty": "primary care",
+      "record_refs": [{ "record_id": "rec-2012-pcp", "excerpt": "burning pain in her hands and feet since adolescence" }],
+      "hpo_id": null
+    },
+    {
+      "finding_id": "fnd-reduced-sweating",
+      "label": "Rarely sweats",
+      "kind": "symptom",
+      "assertion": "present",
+      "date": "2012-05-10",
+      "specialty": "primary care",
+      "record_refs": [{ "record_id": "rec-2012-pcp", "excerpt": "she rarely sweats" }],
+      "hpo_id": null
+    },
+    {
+      "finding_id": "fnd-gi-symptoms",
+      "label": "Recurrent post-meal abdominal pain and diarrhea",
+      "kind": "symptom",
+      "assertion": "present",
+      "date": "2014-09-22",
+      "specialty": "gastroenterology",
+      "record_refs": [{ "record_id": "rec-2014-gi", "excerpt": "recurrent abdominal pain after meals, bloating, and episodes of diarrhea" }],
+      "hpo_id": null
+    },
+    {
+      "finding_id": "fnd-celiac-negative",
+      "label": "Celiac serology negative",
+      "kind": "lab_result",
+      "assertion": "absent",
+      "date": "2014-09-22",
+      "specialty": "gastroenterology",
+      "record_refs": [{ "record_id": "rec-2014-gi", "excerpt": "Celiac serology negative" }],
+      "hpo_id": null
+    },
+    {
+      "finding_id": "fnd-small-fiber-neuropathy",
+      "label": "Small fiber neuropathy on skin biopsy",
+      "kind": "pathology",
+      "assertion": "present",
+      "date": "2016-02-03",
+      "specialty": "neurology",
+      "record_refs": [{ "record_id": "rec-2016-neuro", "excerpt": "reduced intraepidermal nerve fiber density, consistent with small fiber neuropathy" }],
+      "hpo_id": null
+    },
+    {
+      "finding_id": "fnd-diabetes-absent",
+      "label": "No diabetes (HbA1c 5.2%)",
+      "kind": "lab_result",
+      "assertion": "absent",
+      "date": "2016-02-03",
+      "specialty": "neurology",
+      "record_refs": [{ "record_id": "rec-2016-neuro", "excerpt": "HbA1c 5.2%" }],
+      "hpo_id": null
+    },
+    {
+      "finding_id": "fnd-enzyme-normal",
+      "label": "Alpha-Gal A enzyme activity in normal range",
+      "kind": "lab_result",
+      "assertion": "present",
+      "date": "2016-03-01",
+      "specialty": "neurology",
+      "record_refs": [{ "record_id": "rec-2016-enzyme", "excerpt": "within the laboratory reference range" }],
+      "hpo_id": null
+    },
+    {
+      "finding_id": "fnd-proteinuria",
+      "label": "Persistent proteinuria (UACR 410 mg/g)",
+      "kind": "lab_result",
+      "assertion": "present",
+      "date": "2021-11-08",
+      "specialty": "nephrology",
+      "record_refs": [{ "record_id": "rec-2021-nephro", "excerpt": "Urine albumin-to-creatinine ratio 410 mg/g" }],
+      "hpo_id": null
+    },
+    {
+      "finding_id": "fnd-father-dialysis",
+      "label": "Father on dialysis from age 48, cause unknown",
+      "kind": "family_history",
+      "assertion": "present",
+      "date": "2021-11-08",
+      "specialty": "nephrology",
+      "record_refs": [{ "record_id": "rec-2021-nephro", "excerpt": "father started dialysis at age 48, cause not documented" }],
+      "hpo_id": null
+    },
+    {
+      "finding_id": "fnd-cornea-verticillata",
+      "label": "Cornea verticillata, no causative medication",
+      "kind": "sign",
+      "assertion": "present",
+      "date": "2023-04-19",
+      "specialty": "ophthalmology",
+      "record_refs": [
+        { "record_id": "rec-2023-eye", "excerpt": "bilateral whorl-like corneal opacities (cornea verticillata)" },
+        { "record_id": "rec-2023-eye", "excerpt": "Patient takes no amiodarone or chloroquine" }
+      ],
+      "hpo_id": null
+    }
+  ],
+  "claims": [
+    {
+      "claim_id": "clm-enzyme-limit",
+      "text": "A normal enzyme result does not exclude Fabry disease in a woman, because heterozygous females can have enzyme activity in the normal range.",
+      "record_refs": [
+        { "record_id": "rec-2016-enzyme", "excerpt": "within the laboratory reference range" },
+        { "record_id": "rec-2016-neuro-fu", "excerpt": "Fabry disease considered unlikely" }
+      ],
+      "source_refs": [{ "source_id": "src-genereviews-fabry", "excerpt_id": "exc-fabry-female-enzyme" }]
+    },
+    {
+      "claim_id": "clm-no-molecular-test",
+      "text": "No GLA molecular test is on record, and molecular testing is how heterozygous females are identified.",
+      "record_refs": [{ "record_id": "rec-2016-enzyme", "excerpt": "No molecular testing performed on this sample." }],
+      "source_refs": [{ "source_id": "src-genereviews-fabry", "excerpt_id": "exc-fabry-female-enzyme" }]
+    },
+    {
+      "claim_id": "clm-features-match",
+      "text": "Limb pain, reduced sweating, GI symptoms, and corneal opacities, recorded by four different specialties, are each described features of Fabry disease.",
+      "record_refs": [
+        { "record_id": "rec-2012-pcp", "excerpt": "burning pain in her hands and feet since adolescence" },
+        { "record_id": "rec-2012-pcp", "excerpt": "she rarely sweats" },
+        { "record_id": "rec-2014-gi", "excerpt": "recurrent abdominal pain after meals" },
+        { "record_id": "rec-2023-eye", "excerpt": "cornea verticillata" }
+      ],
+      "source_refs": [{ "source_id": "src-genereviews-fabry", "excerpt_id": "exc-fabry-features" }]
+    },
+    {
+      "claim_id": "clm-kidney-involvement",
+      "text": "Persistent proteinuria with normal blood pressure is consistent with the kidney involvement described in Fabry disease.",
+      "record_refs": [
+        { "record_id": "rec-2021-nephro", "excerpt": "persistent proteinuria" },
+        { "record_id": "rec-2021-nephro", "excerpt": "Blood pressure normal" }
+      ],
+      "source_refs": [{ "source_id": "src-genereviews-fabry", "excerpt_id": "exc-fabry-kidney" }]
+    },
+    {
+      "claim_id": "clm-father-inheritance",
+      "text": "Her father's kidney failure of undocumented cause is compatible with X-linked inheritance but does not establish it.",
+      "record_refs": [{ "record_id": "rec-2021-nephro", "excerpt": "father started dialysis at age 48, cause not documented" }],
+      "source_refs": [{ "source_id": "src-genereviews-fabry", "excerpt_id": "exc-fabry-inheritance" }]
+    },
+    {
+      "claim_id": "clm-no-drug-cause-cornea",
+      "text": "Medications can cause similar corneal changes, but the record documents no amiodarone or chloroquine use.",
+      "record_refs": [{ "record_id": "rec-2023-eye", "excerpt": "Patient takes no amiodarone or chloroquine" }],
+      "source_refs": [{ "source_id": "src-genereviews-fabry", "excerpt_id": "exc-fabry-phenocopy" }]
+    },
+    {
+      "claim_id": "clm-sfn-often-idiopathic",
+      "text": "Small fiber neuropathy often has no identified cause, so separate common conditions remain possible.",
+      "record_refs": [{ "record_id": "rec-2016-neuro-fu", "excerpt": "Small fiber neuropathy of unknown cause" }],
+      "source_refs": [{ "source_id": "src-sfn-review", "excerpt_id": "exc-sfn-causes" }]
+    }
+  ],
+  "prior_results": [
+    {
+      "prior_result_id": "pri-enzyme-2016",
+      "test_name": "2016 alpha-Gal A enzyme screen",
+      "record_refs": [
+        { "record_id": "rec-2016-enzyme", "excerpt": "within the laboratory reference range" },
+        { "record_id": "rec-2016-neuro-fu", "excerpt": "Fabry disease considered unlikely" }
+      ],
+      "result_summary": "Leukocyte enzyme activity within the reference range.",
+      "interpretation_at_the_time": "Fabry disease considered unlikely.",
+      "what_it_established": "Enzyme activity was not low. In a woman this does not settle the Fabry question, and no genetic test was performed.",
+      "limitation_claim_ids": ["clm-enzyme-limit", "clm-no-molecular-test"],
+      "hypothesis_ids": ["hyp-fabry"]
+    }
+  ],
+  "hypotheses": [
+    {
+      "hypothesis_id": "hyp-fabry",
+      "name": "Fabry disease",
+      "is_rare_disease": true,
+      "status": "open",
+      "summary": "Findings from four specialties are compatible with Fabry disease. The 2016 normal enzyme screen does not exclude it in a woman, and no molecular test is on record. Unconfirmed.",
+      "supporting_finding_ids": [
+        "fnd-limb-pain",
+        "fnd-reduced-sweating",
+        "fnd-gi-symptoms",
+        "fnd-small-fiber-neuropathy",
+        "fnd-proteinuria",
+        "fnd-father-dialysis",
+        "fnd-cornea-verticillata"
+      ],
+      "supporting_claim_ids": [
+        "clm-features-match",
+        "clm-kidney-involvement",
+        "clm-father-inheritance",
+        "clm-no-drug-cause-cornea",
+        "clm-enzyme-limit"
+      ],
+      "contradicting_claim_ids": []
+    },
+    {
+      "hypothesis_id": "hyp-separate-conditions",
+      "name": "Separate common conditions",
+      "is_rare_disease": false,
+      "status": "open",
+      "summary": "Irritable bowel syndrome, idiopathic small fiber neuropathy, and an unrelated kidney condition could each explain part of the picture. This would not account for the corneal opacities without a medication cause.",
+      "supporting_finding_ids": ["fnd-gi-symptoms", "fnd-small-fiber-neuropathy"],
+      "supporting_claim_ids": ["clm-sfn-often-idiopathic"],
+      "contradicting_claim_ids": ["clm-no-drug-cause-cornea"]
+    }
+  ],
+  "missing_evidence": [
+    {
+      "missing_id": "mis-gla-report",
+      "priority": 1,
+      "description": "GLA gene molecular testing report",
+      "why_it_matters": "Molecular testing identifies heterozygous females, which the 2016 enzyme screen could not do.",
+      "check_existing_first": true,
+      "existing_record_refs": [
+        { "record_id": "rec-2024-pcp", "excerpt": "She recalls a visit to an outside genetics clinic in 2019, but no report from that visit is in our chart." }
+      ],
+      "claim_ids": ["clm-enzyme-limit", "clm-no-molecular-test"],
+      "hypothesis_ids": ["hyp-fabry", "hyp-separate-conditions"],
+      "possible_outcomes": [
+        { "outcome": "A report exists with a pathogenic GLA variant", "implication": "Fabry disease becomes the leading question, pending clinician confirmation." },
+        { "outcome": "A report exists with no GLA variant found", "implication": "Fabry disease becomes much less likely and separate causes deserve more attention." },
+        { "outcome": "No report exists", "implication": "The clinician decides whether molecular testing is warranted." }
+      ]
+    },
+    {
+      "missing_id": "mis-father-diagnosis",
+      "priority": 2,
+      "description": "Cause of father's kidney failure",
+      "why_it_matters": "A documented cause in the father would strengthen or weaken the inheritance link.",
+      "check_existing_first": false,
+      "existing_record_refs": [],
+      "claim_ids": ["clm-father-inheritance"],
+      "hypothesis_ids": ["hyp-fabry"],
+      "possible_outcomes": [
+        { "outcome": "Father had a Fabry diagnosis", "implication": "Strongly supports the inheritance link." },
+        { "outcome": "Father had a different documented cause", "implication": "Removes family history as supporting evidence." }
+      ]
+    }
+  ],
+  "clinician_questions": [
+    {
+      "question_id": "q-outside-report",
+      "text": "Can the 2019 outside genetics clinic report be obtained, and did it include GLA testing?",
+      "missing_ids": ["mis-gla-report"]
+    },
+    {
+      "question_id": "q-father-records",
+      "text": "Is the cause of the father's kidney failure documented anywhere the family can share?",
+      "missing_ids": ["mis-father-diagnosis"]
+    }
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "schema_version": "patient.v1",
+  "patient_id": "kevin-008",
+  "record_version": 1,
+  "synthetic": true,
+  "demographics": {
+    "display_name": "Kevin (synthetic)",
+    "sex_at_birth": "male",
+    "birth_year": 1996
+  },
+  "documents": [
+    {
+      "record_id": "rec-2004-peds",
+      "date": "2004-04-12",
+      "type": "clinic_note",
+      "specialty": "pediatrics",
+      "title": "Pediatrics: recurrent fevers",
+      "author_role": "Pediatrician",
+      "text": "8-year-old with fevers to 39.5 C every few weeks lasting one to three days, with abdominal pain. Normal between episodes. Attributed to viral infections.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2009-surg",
+      "date": "2009-09-03",
+      "type": "clinic_note",
+      "specialty": "general surgery",
+      "title": "Surgery: abdominal pain",
+      "author_role": "Surgeon",
+      "text": "Fever and right lower abdominal pain. Appendectomy performed. Pathology: normal appendix.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2012-er",
+      "date": "2012-02-17",
+      "type": "clinic_note",
+      "specialty": "emergency medicine",
+      "title": "Emergency: chest pain",
+      "author_role": "Emergency physician",
+      "text": "Pleuritic chest pain with fever. Small left pleural effusion. Resolved in two days. Diagnosed as viral pleurisy.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2014-lab",
+      "date": "2014-06-05",
+      "type": "lab_result",
+      "specialty": "primary care",
+      "title": "Inflammatory markers during attack",
+      "author_role": "Laboratory",
+      "text": "CRP 142 mg/L and white cell count 15.2 during a fever episode.",
+      "observations": [
+        {
+          "name": "CRP",
+          "value": "142",
+          "unit": "mg/L",
+          "reference_range": "<5",
+          "interpretation": "abnormal"
+        },
+        {
+          "name": "White blood cells",
+          "value": "15.2",
+          "unit": "x10^9/L",
+          "reference_range": "4-11",
+          "interpretation": "abnormal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2014-lab-2",
+      "date": "2014-06-24",
+      "type": "lab_result",
+      "specialty": "primary care",
+      "title": "Inflammatory markers between attacks",
+      "author_role": "Laboratory",
+      "text": "CRP 3 mg/L and white cell count normal two weeks after the episode.",
+      "observations": [
+        {
+          "name": "CRP",
+          "value": "3",
+          "unit": "mg/L",
+          "reference_range": "<5",
+          "interpretation": "normal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2016-rheum",
+      "date": "2016-10-11",
+      "type": "clinic_note",
+      "specialty": "rheumatology",
+      "title": "Rheumatology: ankle swelling",
+      "author_role": "Rheumatologist",
+      "text": "Episodic swelling of the left ankle lasting two days with fever. Joint fluid sterile. Impression: reactive arthritis.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2018-id",
+      "date": "2018-05-22",
+      "type": "clinic_note",
+      "specialty": "infectious disease",
+      "title": "Infectious disease: periodic fever",
+      "author_role": "Infectious disease physician",
+      "text": "Extensive infection work-up negative. Periodic fever syndrome possible but not pursued. Family of Armenian descent.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2020-pcp",
+      "date": "2020-03-09",
+      "type": "clinic_note",
+      "specialty": "primary care",
+      "title": "Primary care: follow-up",
+      "author_role": "Primary care physician",
+      "text": "Episodes continue about monthly. Uncle reportedly had kidney failure in his forties.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2023-neph",
+      "date": "2023-07-18",
+      "type": "referral",
+      "specialty": "nephrology",
+      "title": "Nephrology: proteinuria",
+      "author_role": "Nephrologist",
+      "text": "Urine protein-to-creatinine ratio 1.8 g/g. eGFR 88. Kidney biopsy recommended to evaluate cause.",
+      "observations": [
+        {
+          "name": "Urine protein-to-creatinine ratio",
+          "value": "1.8",
+          "unit": "g/g",
+          "reference_range": "<0.2",
+          "interpretation": "abnormal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2023-pcp",
+      "date": "2023-09-01",
+      "type": "clinic_note",
+      "specialty": "primary care",
+      "title": "Primary care: review",
+      "author_role": "Primary care physician",
+      "text": "Patient asks whether the fevers and new kidney findings are related. MEFV genetic testing has not been performed. Kidney biopsy result pending.",
+      "observations": []
+    }
+  ]
+}

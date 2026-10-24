@@ -1,0 +1,167 @@
+{
+  "schema_version": "patient.v1",
+  "patient_id": "james-002",
+  "record_version": 1,
+  "synthetic": true,
+  "demographics": {
+    "display_name": "James (synthetic, negative control)",
+    "sex_at_birth": "male",
+    "birth_year": 1968
+  },
+  "documents": [
+    {
+      "record_id": "rec-2015-pcp",
+      "date": "2015-03-04",
+      "type": "clinic_note",
+      "specialty": "primary care",
+      "title": "Primary care: new diagnosis of type 2 diabetes",
+      "author_role": "Primary care physician",
+      "text": "47-year-old man with fatigue and increased thirst. HbA1c 9.1%. Diagnosis: type 2 diabetes. Blood pressure 148/92, started on lisinopril. Family history: mother with type 2 diabetes. Started metformin.",
+      "observations": [
+        {
+          "name": "HbA1c",
+          "value": "9.1",
+          "unit": "%",
+          "reference_range": "<5.7",
+          "interpretation": "abnormal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2016-lab",
+      "date": "2016-04-12",
+      "type": "lab_result",
+      "specialty": "primary care",
+      "title": "Lipid panel and HbA1c",
+      "author_role": "Laboratory",
+      "text": "LDL cholesterol 142 mg/dL. HbA1c 8.0%. Statin started.",
+      "observations": [
+        {
+          "name": "LDL cholesterol",
+          "value": "142",
+          "unit": "mg/dL",
+          "reference_range": "<100",
+          "interpretation": "abnormal"
+        },
+        {
+          "name": "HbA1c",
+          "value": "8.0",
+          "unit": "%",
+          "reference_range": "<5.7",
+          "interpretation": "abnormal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2017-pcp",
+      "date": "2017-09-20",
+      "type": "clinic_note",
+      "specialty": "primary care",
+      "title": "Primary care: diabetes follow-up",
+      "author_role": "Primary care physician",
+      "text": "Adherence to metformin inconsistent. Diet counseling provided. Weight 104 kg. Foot exam normal at this visit.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2018-pcp",
+      "date": "2018-10-16",
+      "type": "clinic_note",
+      "specialty": "primary care",
+      "title": "Primary care: foot numbness",
+      "author_role": "Primary care physician",
+      "text": "Numbness and tingling in both feet for one year, in a stocking distribution. Reduced ankle reflexes and reduced monofilament sensation bilaterally. HbA1c 8.4%. Vitamin B12 normal. Impression: diabetic peripheral neuropathy.",
+      "observations": [
+        {
+          "name": "HbA1c",
+          "value": "8.4",
+          "unit": "%",
+          "reference_range": "<5.7",
+          "interpretation": "abnormal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2019-gi",
+      "date": "2019-06-11",
+      "type": "clinic_note",
+      "specialty": "gastroenterology",
+      "title": "Gastroenterology: heartburn",
+      "author_role": "Gastroenterologist",
+      "text": "Heartburn after meals and when lying down for two years. Upper endoscopy shows mild erosive esophagitis. No diarrhea or weight loss. Impression: gastroesophageal reflux disease. Started proton pump inhibitor.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2020-cardio",
+      "date": "2020-08-05",
+      "type": "clinic_note",
+      "specialty": "cardiology",
+      "title": "Cardiology: exertional chest tightness",
+      "author_role": "Cardiologist",
+      "text": "Chest tightness climbing stairs. Stress test shows no ischemia. Echocardiogram shows mild left ventricular hypertrophy consistent with long-standing hypertension. Continue current medications.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2021-eye",
+      "date": "2021-12-07",
+      "type": "clinic_note",
+      "specialty": "ophthalmology",
+      "title": "Ophthalmology: diabetic eye exam",
+      "author_role": "Ophthalmologist",
+      "text": "Dilated exam shows moderate nonproliferative diabetic retinopathy in both eyes. Corneas clear. No macular edema. Repeat exam in six months.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2022-nephro",
+      "date": "2022-02-23",
+      "type": "referral",
+      "specialty": "nephrology",
+      "title": "Nephrology consult: albuminuria",
+      "author_role": "Nephrologist",
+      "text": "Referred for albuminuria. Urine albumin-to-creatinine ratio 180 mg/g. eGFR 64. Long-standing type 2 diabetes and hypertension, with diabetic retinopathy on recent eye exam. Impression: diabetic kidney disease. Biopsy not indicated.",
+      "observations": [
+        {
+          "name": "Urine albumin-to-creatinine ratio",
+          "value": "180",
+          "unit": "mg/g",
+          "reference_range": "<30",
+          "interpretation": "abnormal"
+        },
+        {
+          "name": "eGFR",
+          "value": "64",
+          "unit": "mL/min/1.73m2",
+          "reference_range": ">=90",
+          "interpretation": "abnormal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2023-pcp",
+      "date": "2023-05-30",
+      "type": "clinic_note",
+      "specialty": "primary care",
+      "title": "Primary care: annual visit",
+      "author_role": "Primary care physician",
+      "text": "HbA1c 7.6%. Neuropathy symptoms stable. Reflux controlled on proton pump inhibitor. Blood pressure 134/84. Started SGLT2 inhibitor for kidney protection.",
+      "observations": [
+        {
+          "name": "HbA1c",
+          "value": "7.6",
+          "unit": "%",
+          "reference_range": "<5.7",
+          "interpretation": "abnormal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2024-podiatry",
+      "date": "2024-02-14",
+      "type": "clinic_note",
+      "specialty": "podiatry",
+      "title": "Podiatry: foot care",
+      "author_role": "Podiatrist",
+      "text": "Loss of protective sensation in both feet on monofilament testing. Callus on right first metatarsal head, debrided. No ulcer. Diabetic footwear recommended.",
+      "observations": []
+    }
+  ]
+}

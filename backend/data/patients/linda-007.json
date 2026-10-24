@@ -1,0 +1,144 @@
+{
+  "schema_version": "patient.v1",
+  "patient_id": "linda-007",
+  "record_version": 1,
+  "synthetic": true,
+  "demographics": {
+    "display_name": "Linda (synthetic, negative control)",
+    "sex_at_birth": "female",
+    "birth_year": 1975
+  },
+  "documents": [
+    {
+      "record_id": "rec-2017-pcp",
+      "date": "2017-01-23",
+      "type": "clinic_note",
+      "specialty": "primary care",
+      "title": "Primary care: fatigue and weight gain",
+      "author_role": "Primary care physician",
+      "text": "Fatigue, cold intolerance, constipation, and 5 kg weight gain over a year. Dry skin. Thyroid tests ordered.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2017-lab",
+      "date": "2017-01-30",
+      "type": "lab_result",
+      "specialty": "primary care",
+      "title": "Thyroid panel",
+      "author_role": "Laboratory",
+      "text": "TSH 14.2 mIU/L, free T4 low. Thyroid peroxidase antibodies positive.",
+      "observations": [
+        {
+          "name": "TSH",
+          "value": "14.2",
+          "unit": "mIU/L",
+          "reference_range": "0.4-4.0",
+          "interpretation": "abnormal"
+        },
+        {
+          "name": "Free T4",
+          "value": "0.6",
+          "unit": "ng/dL",
+          "reference_range": "0.9-1.7",
+          "interpretation": "abnormal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2017-pcp-fu",
+      "date": "2017-02-06",
+      "type": "clinic_note",
+      "specialty": "primary care",
+      "title": "Primary care: hypothyroidism",
+      "author_role": "Primary care physician",
+      "text": "Diagnosis: Hashimoto hypothyroidism. Started levothyroxine 50 mcg.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2017-lab-2",
+      "date": "2017-05-08",
+      "type": "lab_result",
+      "specialty": "primary care",
+      "title": "Thyroid follow-up",
+      "author_role": "Laboratory",
+      "text": "TSH 3.1 mIU/L on levothyroxine.",
+      "observations": [
+        {
+          "name": "TSH",
+          "value": "3.1",
+          "unit": "mIU/L",
+          "reference_range": "0.4-4.0",
+          "interpretation": "normal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2018-rheum",
+      "date": "2018-03-19",
+      "type": "clinic_note",
+      "specialty": "rheumatology",
+      "title": "Rheumatology: widespread pain",
+      "author_role": "Rheumatologist",
+      "text": "Widespread muscle pain and poor sleep. Inflammatory markers and CK normal. Tender points present. Impression: fibromyalgia. Exercise program recommended.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2019-gi",
+      "date": "2019-07-22",
+      "type": "clinic_note",
+      "specialty": "gastroenterology",
+      "title": "Gastroenterology: constipation",
+      "author_role": "Gastroenterologist",
+      "text": "Constipation improved since thyroid treatment. Colonoscopy for screening normal.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2020-sleep",
+      "date": "2020-10-05",
+      "type": "clinic_note",
+      "specialty": "sleep medicine",
+      "title": "Sleep study",
+      "author_role": "Sleep physician",
+      "text": "Mild obstructive sleep apnea, AHI 9. Positional therapy advised.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2021-lab",
+      "date": "2021-06-14",
+      "type": "lab_result",
+      "specialty": "primary care",
+      "title": "Annual labs",
+      "author_role": "Laboratory",
+      "text": "TSH 2.4 mIU/L. Hemoglobin normal. Vitamin D normal.",
+      "observations": [
+        {
+          "name": "TSH",
+          "value": "2.4",
+          "unit": "mIU/L",
+          "reference_range": "0.4-4.0",
+          "interpretation": "normal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2022-psych",
+      "date": "2022-02-28",
+      "type": "clinic_note",
+      "specialty": "psychiatry",
+      "title": "Psychology: stress",
+      "author_role": "Psychologist",
+      "text": "Work stress and low mood. Cognitive behavioral therapy started with good response.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2024-pcp",
+      "date": "2024-03-11",
+      "type": "clinic_note",
+      "specialty": "primary care",
+      "title": "Primary care: annual visit",
+      "author_role": "Primary care physician",
+      "text": "Energy improved. Pain manageable with exercise. Thyroid stable on levothyroxine. No new concerns.",
+      "observations": []
+    }
+  ]
+}

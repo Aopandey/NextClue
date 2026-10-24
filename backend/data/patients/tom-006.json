@@ -1,0 +1,129 @@
+{
+  "schema_version": "patient.v1",
+  "patient_id": "tom-006",
+  "record_version": 1,
+  "synthetic": true,
+  "demographics": {
+    "display_name": "Tom (synthetic)",
+    "sex_at_birth": "male",
+    "birth_year": 1980
+  },
+  "documents": [
+    {
+      "record_id": "rec-1986-dent",
+      "date": "1986-05-20",
+      "type": "clinic_note",
+      "specialty": "dentistry",
+      "title": "Dentistry: early tooth loss",
+      "author_role": "Dentist",
+      "text": "6-year-old lost several baby teeth early with roots intact. No trauma. Parents reassured.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2008-lab",
+      "date": "2008-02-14",
+      "type": "lab_result",
+      "specialty": "primary care",
+      "title": "Metabolic panel",
+      "author_role": "Laboratory",
+      "text": "Alkaline phosphatase 28 U/L, flagged low. Calcium and phosphate normal.",
+      "observations": [
+        {
+          "name": "Alkaline phosphatase",
+          "value": "28",
+          "unit": "U/L",
+          "reference_range": "40-129",
+          "interpretation": "abnormal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2008-pcp",
+      "date": "2008-03-01",
+      "type": "clinic_note",
+      "specialty": "primary care",
+      "title": "Primary care: routine check",
+      "author_role": "Primary care physician",
+      "text": "Routine labs unremarkable. No action needed.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2013-ortho",
+      "date": "2013-09-10",
+      "type": "clinic_note",
+      "specialty": "orthopedics",
+      "title": "Orthopedics: foot pain",
+      "author_role": "Orthopedic surgeon",
+      "text": "Metatarsal stress fracture without unusual activity. Treated with boot.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2015-lab",
+      "date": "2015-06-18",
+      "type": "lab_result",
+      "specialty": "primary care",
+      "title": "Metabolic panel",
+      "author_role": "Laboratory",
+      "text": "Alkaline phosphatase 25 U/L, flagged low.",
+      "observations": [
+        {
+          "name": "Alkaline phosphatase",
+          "value": "25",
+          "unit": "U/L",
+          "reference_range": "40-129",
+          "interpretation": "abnormal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2016-ortho",
+      "date": "2016-11-02",
+      "type": "clinic_note",
+      "specialty": "orthopedics",
+      "title": "Orthopedics: thigh pain",
+      "author_role": "Orthopedic surgeon",
+      "text": "Thigh pain for months. X-ray shows lateral femoral cortex stress fracture. Not taking bisphosphonates. Vitamin D normal.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2017-dexa",
+      "date": "2017-01-24",
+      "type": "imaging",
+      "specialty": "radiology",
+      "title": "Bone density scan",
+      "author_role": "Radiologist",
+      "text": "Lumbar spine T-score -2.1. Femoral neck T-score -1.8.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2017-endo",
+      "date": "2017-03-15",
+      "type": "clinic_note",
+      "specialty": "endocrinology",
+      "title": "Endocrinology: low bone density",
+      "author_role": "Endocrinologist",
+      "text": "Low bone mass with fractures. Plan: consider bisphosphonate therapy. Alkaline phosphatase level not commented on.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2020-rheum",
+      "date": "2020-08-27",
+      "type": "clinic_note",
+      "specialty": "rheumatology",
+      "title": "Rheumatology: joint and muscle pain",
+      "author_role": "Rheumatologist",
+      "text": "Chronic muscle aches and joint pain. Chondrocalcinosis on knee X-ray. Inflammatory markers normal.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2023-pcp",
+      "date": "2023-04-11",
+      "type": "clinic_note",
+      "specialty": "primary care",
+      "title": "Primary care: review",
+      "author_role": "Primary care physician",
+      "text": "Reviewing repeated low alkaline phosphatase results, which have never been addressed. Patient's daughter also lost baby teeth early. Vitamin B6 (PLP) level and genetic testing not done.",
+      "observations": []
+    }
+  ]
+}

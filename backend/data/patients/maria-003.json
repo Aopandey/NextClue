@@ -1,0 +1,159 @@
+{
+  "schema_version": "patient.v1",
+  "patient_id": "maria-003",
+  "record_version": 1,
+  "synthetic": true,
+  "demographics": {
+    "display_name": "Maria (synthetic)",
+    "sex_at_birth": "female",
+    "birth_year": 1999
+  },
+  "documents": [
+    {
+      "record_id": "rec-2016-pcp",
+      "date": "2016-10-03",
+      "type": "clinic_note",
+      "specialty": "primary care",
+      "title": "Primary care: abnormal liver tests",
+      "author_role": "Primary care physician",
+      "text": "17-year-old with ALT 96 U/L found on sports physical. No alcohol use. Hepatitis B and C serologies negative. Repeat in three months.",
+      "observations": [
+        {
+          "name": "ALT",
+          "value": "96",
+          "unit": "U/L",
+          "reference_range": "7-35",
+          "interpretation": "abnormal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2017-lab",
+      "date": "2017-01-16",
+      "type": "lab_result",
+      "specialty": "primary care",
+      "title": "Repeat liver panel",
+      "author_role": "Laboratory",
+      "text": "ALT 88 U/L, AST 71 U/L. Bilirubin normal. Albumin normal.",
+      "observations": [
+        {
+          "name": "ALT",
+          "value": "88",
+          "unit": "U/L",
+          "reference_range": "7-35",
+          "interpretation": "abnormal"
+        },
+        {
+          "name": "AST",
+          "value": "71",
+          "unit": "U/L",
+          "reference_range": "8-33",
+          "interpretation": "abnormal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2017-us",
+      "date": "2017-02-08",
+      "type": "imaging",
+      "specialty": "radiology",
+      "title": "Liver ultrasound",
+      "author_role": "Radiologist",
+      "text": "Mildly echogenic liver suggestive of fatty infiltration. Spleen upper normal size. No focal lesion.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2017-gi",
+      "date": "2017-04-11",
+      "type": "clinic_note",
+      "specialty": "gastroenterology",
+      "title": "Hepatology: elevated transaminases",
+      "author_role": "Hepatologist",
+      "text": "Persistent transaminase elevation with fatty-appearing liver. BMI 22. Ceruloplasmin 22 mg/dL, within reference range, so Wilson disease considered unlikely. Working diagnosis: nonalcoholic fatty liver disease.",
+      "observations": [
+        {
+          "name": "Ceruloplasmin",
+          "value": "22",
+          "unit": "mg/dL",
+          "reference_range": "20-35",
+          "interpretation": "normal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2019-psych",
+      "date": "2019-03-21",
+      "type": "clinic_note",
+      "specialty": "psychiatry",
+      "title": "Psychiatry: mood changes",
+      "author_role": "Psychiatrist",
+      "text": "New irritability, low mood, and declining university grades over six months. Diagnosis: depressive episode. Started sertraline.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2020-pcp",
+      "date": "2020-06-09",
+      "type": "clinic_note",
+      "specialty": "primary care",
+      "title": "Primary care: hand tremor",
+      "author_role": "Primary care physician",
+      "text": "Fine tremor in both hands, worse when writing. Attributed to sertraline. Dose reduced.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2021-neuro",
+      "date": "2021-02-17",
+      "type": "clinic_note",
+      "specialty": "neurology",
+      "title": "Neurology: tremor and speech",
+      "author_role": "Neurologist",
+      "text": "Tremor persists after stopping sertraline. Mild slurring of speech noted by family. Brain MRI ordered. Bedside eye exam without slit lamp shows no obvious corneal ring.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2021-mri",
+      "date": "2021-03-04",
+      "type": "imaging",
+      "specialty": "radiology",
+      "title": "Brain MRI",
+      "author_role": "Radiologist",
+      "text": "Symmetric T2 hyperintensity in the bilateral putamen and thalami. Differential includes metabolic and toxic causes. Clinical correlation recommended.",
+      "observations": []
+    },
+    {
+      "record_id": "rec-2022-lab",
+      "date": "2022-01-25",
+      "type": "lab_result",
+      "specialty": "primary care",
+      "title": "Liver panel and blood count",
+      "author_role": "Laboratory",
+      "text": "ALT 74 U/L. Platelets 128 x10^9/L. Hemoglobin 11.4 g/dL with elevated reticulocyte count.",
+      "observations": [
+        {
+          "name": "Platelets",
+          "value": "128",
+          "unit": "x10^9/L",
+          "reference_range": "150-400",
+          "interpretation": "abnormal"
+        },
+        {
+          "name": "Hemoglobin",
+          "value": "11.4",
+          "unit": "g/dL",
+          "reference_range": "12-15.5",
+          "interpretation": "abnormal"
+        }
+      ]
+    },
+    {
+      "record_id": "rec-2023-pcp",
+      "date": "2023-08-30",
+      "type": "clinic_note",
+      "specialty": "primary care",
+      "title": "Primary care: follow-up",
+      "author_role": "Primary care physician",
+      "text": "Patient asks whether the brain MRI findings were ever explained. No 24-hour urine copper or slit lamp exam is documented. Brother had unexplained liver disease as a teenager per patient.",
+      "observations": []
+    }
+  ]
+}
