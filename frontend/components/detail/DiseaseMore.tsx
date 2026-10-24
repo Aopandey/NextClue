@@ -1,4 +1,4 @@
-import type { AnalysisOutput, Claim, Hypothesis, PatientDocument, Source } from "@/lib/contracts";
+import type { AnalysisOutput, Claim, Hypothesis, Source } from "@/lib/contracts";
 import { systemFor } from "@/lib/constellation/systems";
 import { CitationLine } from "./CitationLine";
 import { Section } from "./Section";
@@ -22,13 +22,11 @@ export function DiseaseMore({
   hypothesis,
   output,
   sources,
-  documents,
   onSelect,
 }: {
   hypothesis: Hypothesis;
   output: AnalysisOutput;
   sources: Record<string, Source>;
-  documents: PatientDocument[];
   onSelect: (id: string) => void;
 }) {
   const claim = (id: string) => output.claims.find((c) => c.claim_id === id);
@@ -41,7 +39,6 @@ export function DiseaseMore({
     .sort((a, b) => a.priority - b.priority);
   const missingIds = new Set(missing.map((m) => m.missing_id));
   const questions = output.clinician_questions.filter((q) => q.missing_ids.some((id) => missingIds.has(id)));
-  const specialty = (recordId: string | undefined) => documents.find((d) => d.record_id === recordId)?.specialty;
 
   return (
     <>
@@ -54,7 +51,7 @@ export function DiseaseMore({
                 <button type="button" onClick={() => onSelect(f.finding_id)}>
                   {f.label}
                 </button>
-                <span className="sp">{specialty(f.record_refs[0]?.record_id)}</span>
+                {f.specialty && <span className="sp">{f.specialty}</span>}
               </li>
             ))}
           </ul>

@@ -197,7 +197,7 @@ function Body({
         </details>
       )}
       {doc && view.quote && <RecordMore doc={doc} excerpt={view.quote.excerpt} alsoIn={alsoIn} onSelect={onSelect} />}
-      {hypothesis && <DiseaseMore hypothesis={hypothesis} output={out} sources={sources} documents={patient.documents} onSelect={onSelect} />}
+      {hypothesis && <DiseaseMore hypothesis={hypothesis} output={out} sources={sources} onSelect={onSelect} />}
     </div>
   );
 }
