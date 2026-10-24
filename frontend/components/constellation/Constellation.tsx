@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type RefObject } from "react";
 import type { AnalysisRun } from "@/lib/contracts";
 import { VIEW_NARROW, type EdgePos, type HubPos, type Layout, type NodePos } from "@/lib/constellation/layout";
 import { CheckFirst, checkFirstBox, checkFirstItem } from "./CheckFirst";
@@ -17,6 +17,9 @@ type Props = {
   selectedId: string | null;
   onSelect: (id: string) => void;
   zoomScale: number;
+  /** Pan and zoom applied to the drawn content; labels counter-scale through `zoomScale`, not this. */
+  transform?: { x: number; y: number; k: number };
+  svgRef?: RefObject<SVGSVGElement | null>;
 };
 
 /** A node, the edges touching it, and the nodes at their other ends. */
@@ -88,7 +91,7 @@ function placeLabels(layout: Layout, narrow: boolean, blocked: Box[]): Map<strin
 const EDGE_COLOR = { previously_tested: "var(--blood)", would_clarify: "var(--sig)" } as const;
 
 /** The clue constellation drawn from a layout: edges, open-question hubs, nodes and the Check first marker. */
-export function Constellation({ run, layout, selectedId, onSelect, zoomScale }: Props) {
+export function Constellation({ run, layout, selectedId, onSelect, zoomScale, transform = { x: 0, y: 0, k: 1 }, svgRef }: Props) {
   const [hoverId, setHoverId] = useState<string | null>(null);
   const [focusId, setFocusId] = useState<string | null>(null);
   const activeId = hoverId ?? focusId;
@@ -113,7 +116,8 @@ export function Constellation({ run, layout, selectedId, onSelect, zoomScale }: 
   const events = { onSelect, onHover: setHoverId, onFocus: setFocusId };
 
   return (
-    <svg className="cn" viewBox={`0 0 ${layout.view.w} ${layout.view.h}`} role="group" aria-label="Clue constellation">
+    <svg ref={svgRef} className="cn" viewBox={`0 0 ${layout.view.w} ${layout.view.h}`} role="group" aria-label="Clue constellation">
+      <g data-zoom-layer transform={`translate(${transform.x} ${transform.y}) scale(${transform.k})`}>
       <g>
         {layout.edges.map((e) => (
           <Edge
@@ -148,6 +152,7 @@ export function Constellation({ run, layout, selectedId, onSelect, zoomScale }: 
           {layout.emptyMessage}
         </text>
       )}
+      </g>
       {checkFirst && <CheckFirst item={checkFirst} view={layout.view} narrow={narrow} />}
     </svg>
   );
