@@ -5,8 +5,10 @@ import { SYSTEM_LABEL } from "@/lib/constellation/systems";
 import { Icon, SYSTEM_ICON } from "./icons";
 
 export type ZoomLevel = "icons" | "labels" | "detail";
+/** Zoom past which findings add their detail line. */
+export const DETAIL_SCALE = 1.6;
 /** Semantic zoom: > 1.6 adds finding detail, < 0.8 hides every label but hub names. */
-export const zoomLevel = (scale: number): ZoomLevel => (scale > 1.6 ? "detail" : scale < 0.8 ? "icons" : "labels");
+export const zoomLevel = (scale: number): ZoomLevel => (scale > DETAIL_SCALE ? "detail" : scale < 0.8 ? "icons" : "labels");
 
 /** Where a label sits around its node: top, bottom, left or right. */
 export type Side = "t" | "b" | "l" | "r";
@@ -273,23 +275,23 @@ function Shape({ node, missing }: { node: NodePos; missing?: MissingEvidence }) 
 
 type NodeProps = NodeEvents & {
   node: NodePos;
+  /** The label block, as placed by the owner (`labelLines`, minus a detail line that fits nowhere). */
+  lines: Line[];
   side: Side;
   narrow: boolean;
-  zoom: ZoomLevel;
   scale: number;
   selected: boolean;
   dim: boolean;
   order: number;
-  finding?: Finding;
   missing?: MissingEvidence;
 };
 
 /** A finding, negative, prior result or missing item, with its label. */
-export function Node({ node, side, narrow, zoom, scale, finding, missing, ...button }: NodeProps) {
+export function Node({ node, lines, side, narrow, scale, missing, ...button }: NodeProps) {
   return (
     <NodeButton id={node.id} x={node.x} y={node.y} r={node.r} name={node.label} narrow={narrow} {...button}>
       <Shape node={node} missing={missing} />
-      <NodeLabel lines={labelLines(node, narrow, zoom, finding)} side={side} r={node.r} scale={scale} />
+      <NodeLabel lines={lines} side={side} r={node.r} scale={scale} />
     </NodeButton>
   );
 }

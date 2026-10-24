@@ -1,6 +1,13 @@
 /* Clue constellation. Colours are design tokens (app/globals.css); motion lives only in the guard at the end. */
 
-.cn { display: block; width: 100%; height: auto; overflow: visible; font-family: var(--font-ui); }
+/* Zoomed and panned content is clipped to the canvas, never drawn over the header, footer or panel. */
+.cn { display: block; width: 100%; height: auto; overflow: hidden; font-family: var(--font-ui); }
+
+/* Desktop: the canvas takes the height the page leaves it (header, zoom controls and footer stay in one
+   viewport); the viewBox letterboxes inside. Phone keeps the full-width canvas and scrolls. */
+@media (min-width: 640px) {
+  .cn-view, .cn-view > .cn { height: 100%; }
+}
 
 /* Edges */
 .cn-edge-supports { opacity: .62; }
@@ -12,6 +19,7 @@
 .cn-ring { fill: none; stroke: var(--ink); stroke-width: 2; opacity: 0; }
 .cn-node:focus-visible .cn-ring { opacity: 1; }
 .cn-node[data-selected] .cn-ring { opacity: 1; stroke-width: 1.5; stroke-dasharray: 2 4; }
+.cn-check:focus-visible rect { stroke: var(--ink); stroke-width: 2; stroke-dasharray: none; }
 
 /* Hover / focus dim */
 .cn [data-dim="true"] { opacity: .25; }

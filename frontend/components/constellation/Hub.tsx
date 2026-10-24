@@ -55,11 +55,14 @@ const statusText = (hub: HubPos, narrow: boolean) =>
   narrow ? `open · ${hub.supportCount}` : `open · ${hub.supportCount} ${hub.supportCount === 1 ? "finding" : "findings"}`;
 const statusBaseline = (r: number) => r + STATUS_GAP + ASCENT * STATUS_SIZE;
 
-/** The status line's estimated text box, in view units (it sits under the hub). */
-export function hubStatusBox(hub: HubPos, narrow: boolean): Box {
-  const w = textWidth(statusText(hub, narrow), STATUS_SIZE, "mono");
-  const y = hub.y + statusBaseline(hub.r);
-  return { x0: hub.x - w / 2, y0: y - ASCENT * STATUS_SIZE, x1: hub.x + w / 2, y1: y + DESCENT * STATUS_SIZE };
+/**
+ * The status line's estimated text box, in layout units, at zoom `k` (it sits under the hub and is
+ * counter-scaled, so it keeps its screen size while the hub grows).
+ */
+export function hubStatusBox(hub: HubPos, narrow: boolean, k = 1): Box {
+  const w = textWidth(statusText(hub, narrow), STATUS_SIZE, "mono") / k;
+  const y = hub.y + statusBaseline(hub.r * k) / k;
+  return { x0: hub.x - w / 2, y0: y - (ASCENT * STATUS_SIZE) / k, x1: hub.x + w / 2, y1: y + (DESCENT * STATUS_SIZE) / k };
 }
 
 type HubProps = NodeEvents & {

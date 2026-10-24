@@ -8,6 +8,7 @@ import type { AnalysisRun } from "@/lib/contracts";
 import { layoutConstellation, type Layout } from "@/lib/constellation/layout";
 import { Constellation, truncate } from "../Constellation";
 import { hubName } from "../Hub";
+import { ASCENT, DESCENT, textWidth } from "../Node";
 
 const fixtureRun = fixtureJson as AnalysisRun;
 
@@ -40,6 +41,58 @@ function endpoints(d: string) {
 }
 
 const circlesOf = (layout: Layout) => [...layout.hubs, ...layout.nodes];
+
+type Rect = { text: string; x0: number; y0: number; x1: number; y1: number };
+const TSPAN_FONT: Record<string, [number, "sans" | "serif" | "mono"]> = {
+  "cn-l-label": [13, "sans"],
+  "cn-l-negative": [13, "sans"],
+  "cn-l-year": [11, "mono"],
+  "cn-l-signal": [12, "sans"],
+};
+const translateOf = (el: Element) => {
+  const m = el.getAttribute("transform")?.match(/translate\(([-\d.]+) ([-\d.]+)\)/);
+  return m ? { x: Number(m[1]), y: Number(m[2]) } : { x: 0, y: 0 };
+};
+
+/**
+ * Screen-space text boxes (view units, zoom k applied) of every node label block and hub status line, rebuilt
+ * from the rendered SVG with the same text metrics the layout estimates with. The fixed CHECK FIRST overlay is
+ * not part of the zoomed graph and is left out.
+ */
+function labelRects(k: number): Rect[] {
+  const rects: Rect[] = [];
+  for (const g of document.querySelectorAll("[data-node-id]")) {
+    const c = translateOf(g);
+    for (const text of g.querySelectorAll("text.cn-label, text.cn-hub-status")) {
+      const anchor = text.getAttribute("text-anchor") ?? "start";
+      const lines = text.classList.contains("cn-hub-status") ? [text] : [...text.children];
+      let box: Omit<Rect, "text"> | null = null;
+      for (const line of lines) {
+        const y = Number(line.getAttribute("y"));
+        const x = Number(line.getAttribute("x") ?? 0);
+        const quote = line.querySelector("[data-quote]")?.textContent ?? "";
+        const own = (line.textContent ?? "").slice(0, (line.textContent ?? "").length - quote.length);
+        const [size, font] = line === text ? [11, "mono" as const] : line.getAttribute("data-testid") === "finding-detail" ? [13, "mono" as const] : TSPAN_FONT[line.getAttribute("class")!];
+        const w = line.getAttribute("data-testid") === "finding-detail" ? textWidth(own, 11, "mono") + textWidth(quote, 13, "serif") : textWidth(own, size, font);
+        const x0 = anchor === "end" ? x - w : anchor === "middle" ? x - w / 2 : x;
+        const b = { x0, y0: y - ASCENT * size, x1: x0 + w, y1: y + DESCENT * size };
+        box = box ? { x0: Math.min(box.x0, b.x0), y0: Math.min(box.y0, b.y0), x1: Math.max(box.x1, b.x1), y1: Math.max(box.y1, b.y1) } : b;
+      }
+      if (box) rects.push({ text: text.textContent ?? "", x0: box.x0 + c.x * k, y0: box.y0 + c.y * k, x1: box.x1 + c.x * k, y1: box.y1 + c.y * k });
+    }
+  }
+  return rects;
+}
+
+function overlapping(rects: Rect[]): string[] {
+  const out: string[] = [];
+  for (let i = 0; i < rects.length; i++)
+    for (let j = i + 1; j < rects.length; j++) {
+      const [a, b] = [rects[i], rects[j]];
+      if (a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1) out.push(`${a.text} | ${b.text}`);
+    }
+  return out;
+}
 
 describe("Constellation", () => {
   it("renders 2 hubs, 12 graph nodes + 2 negatives, 13 edges for Sarah", () => {
@@ -104,6 +157,24 @@ describe("Constellation", () => {
   it.each([false, true])("CHECK FIRST names the item by its first and last word (narrow: %s)", (narrow) => {
     draw({ narrow });
     expect(screen.getByTestId("check-first-body").textContent).toBe("GLA report · may already exist");
+  });
+
+  it("CHECK FIRST is a button named by the item that selects it on click, Enter and Space", async () => {
+    const { onSelect } = draw();
+    const user = userEvent.setup();
+    const box = screen.getByTestId("check-first");
+    expect(box).toHaveAttribute("role", "button");
+    expect(box).toHaveAccessibleName("GLA gene molecular testing report");
+    expect(box.getAttribute("tabindex")).toBe("0");
+    await user.click(box);
+    expect(onSelect).toHaveBeenLastCalledWith("mis-gla-report");
+    onSelect.mockClear();
+    box.focus();
+    await user.keyboard("{Enter}");
+    expect(onSelect).toHaveBeenLastCalledWith("mis-gla-report");
+    onSelect.mockClear();
+    await user.keyboard(" ");
+    expect(onSelect).toHaveBeenLastCalledWith("mis-gla-report");
   });
 
   it("shows no CHECK FIRST when the priority-1 item needs no check", () => {
@@ -192,6 +263,17 @@ describe("Constellation", () => {
     expect(screen.queryByText("open · 7 findings")).toBeNull();
     expect(screen.getByText("Fabry")).toBeInTheDocument();
     expect(screen.queryAllByTestId("finding-detail")).toHaveLength(0);
+  });
+
+  it.each([
+    [false, 1], [false, 1.4], [false, 1.96], [false, 2.744], [false, 4],
+    [true, 1], [true, 1.4], [true, 1.96], [true, 2.744], [true, 4],
+  ])("no two label blocks intersect (narrow: %s, zoom %s)", (narrow, k) => {
+    const run = fixtureRun;
+    const layout = layoutConstellation(run, { narrow });
+    render(<Constellation run={run} layout={layout} selectedId={null} onSelect={vi.fn()} zoomScale={k} transform={{ x: 0, y: 0, k }} />);
+    expect(overlapping(labelRects(k))).toEqual([]);
+    if (k > 1.6 && !narrow) expect(screen.queryAllByTestId("finding-detail").length).toBeGreaterThan(0);
   });
 
   it("truncates long labels to 28 chars + …", () => {

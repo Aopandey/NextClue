@@ -21,7 +21,7 @@ export function HealthScreen({ patientId }: { patientId: string }) {
     <div className="flex min-h-dvh items-start">
       <div
         data-testid="screen-body"
-        className="min-w-0 flex-1 px-4 py-4 sm:px-8"
+        className="min-w-0 flex-1 px-4 py-4 sm:flex sm:h-dvh sm:flex-col sm:px-8"
         style={narrow && panelOpen ? { paddingBottom: "45vh" } : undefined}
       >
         <div className="space-y-3">
@@ -29,7 +29,7 @@ export function HealthScreen({ patientId }: { patientId: string }) {
           <RunStatus phase={phase} run={run} error={error} elapsedMs={elapsedMs} retry={retry} patientId={patientId} />
         </div>
         {drawable && (
-          <main className="mt-3">
+          <main className="mt-3 sm:min-h-[240px] sm:flex-1">
             <ConstellationView run={drawable.run} selectedId={selectedId} onSelect={setSelectedId} narrow={narrow} />
           </main>
         )}

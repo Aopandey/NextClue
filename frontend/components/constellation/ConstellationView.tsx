@@ -24,7 +24,7 @@ export function ConstellationView({ run, selectedId, onSelect, narrow }: Props) 
   };
 
   return (
-    <div style={{ position: "relative" }} onDoubleClick={onDoubleClick}>
+    <div className="cn-view" style={{ position: "relative" }} onDoubleClick={onDoubleClick}>
       <Constellation
         run={run}
         layout={layout}

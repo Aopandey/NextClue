@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import type { AnalysisRun, Claim, PatientRecord, RecordRef, Source, SourceRef } from "@/lib/contracts";
+import type { AnalysisRun, Claim, Finding, PatientRecord, RecordRef, Source, SourceRef } from "@/lib/contracts";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { citationFor, shortClaim } from "@/lib/constellation/citations";
 import { systemFor } from "@/lib/constellation/systems";
@@ -36,6 +36,24 @@ type View = {
 const firstSentence = (text: string) => text.split(/(?<=[.!?])\s+/)[0] ?? text;
 const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 
+const overlap = (a: string, b: string) => {
+  const [x, y] = [a.trim().toLowerCase(), b.trim().toLowerCase()];
+  return Boolean(x && y) && (x.includes(y) || y.includes(x));
+};
+
+/**
+ * The claim about a finding. Several findings can share one record, so a claim quoting the same excerpt wins;
+ * only a present finding falls back to any claim on its record, because a negative is not what such a claim
+ * is about. Claims an open question relies on are preferred at each step.
+ */
+function claimForFinding(finding: Finding, claims: Claim[], openClaimIds: Set<string>): Claim | undefined {
+  const pick = (match: (r: RecordRef, cr: RecordRef) => boolean) => {
+    const hits = claims.filter((c) => c.record_refs.some((cr) => finding.record_refs.some((r) => r.record_id === cr.record_id && match(r, cr))));
+    return hits.find((c) => openClaimIds.has(c.claim_id)) ?? hits[0];
+  };
+  return pick((r, cr) => overlap(r.excerpt, cr.excerpt)) ?? (finding.assertion === "absent" ? undefined : pick(() => true));
+}
+
 function resolve(run: AnalysisRun, patient: PatientRecord, nodeId: string): View | null {
   const out = run.output;
   if (!out) return null;
@@ -65,10 +83,8 @@ function resolve(run: AnalysisRun, patient: PatientRecord, nodeId: string): View
   const finding = out.findings.find((f) => f.finding_id === nodeId);
   if (finding) {
     const quote = finding.record_refs[0] ?? null;
-    const open = out.hypotheses.filter((h) => h.status === "open");
-    const supportingIds = new Set(open.flatMap((h) => h.supporting_claim_ids));
-    const sharing = out.claims.filter((c) => quote && c.record_refs.some((r) => r.record_id === quote.record_id));
-    const linked: Claim | undefined = sharing.find((c) => supportingIds.has(c.claim_id)) ?? sharing[0];
+    const openClaimIds = new Set(out.hypotheses.filter((h) => h.status === "open").flatMap((h) => h.supporting_claim_ids));
+    const linked = claimForFinding(finding, out.claims, openClaimIds);
     return {
       ...base,
       label: finding.label,
@@ -152,7 +168,7 @@ function Body({
         {view.cite && <CitationLine source={sources[view.cite.source_id]} excerptId={view.cite.excerpt_id} />}
       </div>
 
-      {cite?.quote && (
+      {cite?.quote?.trim() && (
         <details>
           <summary>Source quote</summary>
           <p className="font-serif text-[14px] text-[var(--ink)]">
@@ -172,10 +188,19 @@ function CloseButton({ onClose }: { onClose: () => void }) {
       type="button"
       aria-label="Close"
       onClick={onClose}
-      className="absolute right-1 top-1 flex size-10 items-center justify-center text-[22px] leading-none text-[var(--mut)] hover:text-[var(--ink)]"
+      className="absolute right-1 top-1 z-10 flex size-10 items-center justify-center bg-[var(--bg)] text-[22px] leading-none text-[var(--mut)] hover:text-[var(--ink)]"
     >
       <span aria-hidden>×</span>
     </button>
+  );
+}
+
+/** The panel's only scrolling part: Close stays outside it, so it is always reachable. */
+function Scroll({ children }: { children: React.ReactNode }) {
+  return (
+    <div data-testid="panel-scroll" className="min-h-0 flex-1 overflow-y-auto p-3.5">
+      {children}
+    </div>
   );
 }
 
@@ -203,9 +228,11 @@ export function DetailPanel(props: DetailPanelProps) {
           aria-describedby={undefined}
           onInteractOutside={(e) => e.preventDefault()}
           style={style}
-          className="detail-panel max-h-[45vh] gap-0 overflow-y-auto border-t-[3px] border-[var(--line)] bg-[var(--bg)] p-3.5 text-[14px] text-[var(--ink)] shadow-none"
+          className="detail-panel max-h-[45vh] gap-0 overflow-hidden border-t-[3px] border-[var(--line)] bg-[var(--bg)] text-[14px] text-[var(--ink)] shadow-none"
         >
-          <Body view={view} props={props} Heading={SheetTitle} />
+          <Scroll>
+            <Body view={view} props={props} Heading={SheetTitle} />
+          </Scroll>
           <CloseButton onClose={onClose} />
         </SheetContent>
       </Sheet>
@@ -216,9 +243,11 @@ export function DetailPanel(props: DetailPanelProps) {
     <aside
       aria-label="Detail"
       style={style}
-      className="detail-panel sticky top-0 h-dvh w-[380px] shrink-0 overflow-y-auto border-l border-t-[3px] border-[var(--line)] bg-[var(--bg)] p-3.5 text-[14px] text-[var(--ink)]"
+      className="detail-panel sticky top-0 flex h-dvh w-[380px] shrink-0 flex-col border-l border-t-[3px] border-[var(--line)] bg-[var(--bg)] text-[14px] text-[var(--ink)]"
     >
-      <Body view={view} props={props} Heading="h2" />
+      <Scroll>
+        <Body view={view} props={props} Heading="h2" />
+      </Scroll>
       <CloseButton onClose={onClose} />
     </aside>
   );

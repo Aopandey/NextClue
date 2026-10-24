@@ -79,8 +79,8 @@ export function DiseaseMore({
                   </tr>
                 </thead>
                 <tbody>
-                  {m.possible_outcomes.map((o) => (
-                    <tr key={o.outcome} data-testid="outcome-row">
+                  {m.possible_outcomes.map((o, i) => (
+                    <tr key={`${m.missing_id}-${i}`} data-testid="outcome-row">
                       <td>{o.outcome}</td>
                       <td>{o.implication}</td>
                     </tr>

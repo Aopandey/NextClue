@@ -22,7 +22,8 @@ const barBelow: CSSProperties = { display: "flex", gap: 6, justifyContent: "flex
 /** Zoom in, zoom out and fit: over the canvas's bottom right, or `below` it (phone: Check first sits there). */
 export function ZoomControls({ onZoomIn, onZoomOut, onFit, below }: Props) {
   return (
-    <div style={below ? barBelow : bar}>
+    // The wheel zooms only with Ctrl/⌘ held (plain scrolling scrolls the page), so say so on hover.
+    <div role="group" aria-label="Zoom" title="Ctrl/⌘ + scroll to zoom" style={below ? barBelow : bar}>
       <button type="button" aria-label="Zoom in" style={button} onClick={onZoomIn}>+</button>
       <button type="button" aria-label="Zoom out" style={button} onClick={onZoomOut}>−</button>
       <button type="button" aria-label="Fit" style={{ ...button, fontSize: 13 }} onClick={onFit}>Fit</button>

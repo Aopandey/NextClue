@@ -44,6 +44,17 @@ describe.each([false, true])("DetailPanel (narrow=%s)", (narrow) => {
     await user.click(close);
     expect(onClose).toHaveBeenCalled();
   });
+
+  it("Close sits outside the scrolling body, so it never scrolls out of view", () => {
+    renderPanel("hyp-fabry", narrow);
+    const close = screen.getByRole("button", { name: "Close" });
+    const scroller = screen.getByTestId("panel-scroll");
+    expect(scroller.className).toContain("overflow-y-auto");
+    expect(scroller.contains(close)).toBe(false);
+    const panel = screen.getByRole(narrow ? "dialog" : "complementary");
+    expect(panel.contains(close)).toBe(true);
+    expect(panel.className).not.toContain("overflow-y-auto");
+  });
 });
 
 describe("DetailPanel content", () => {
@@ -87,6 +98,52 @@ describe("DetailPanel content", () => {
     render(<DetailPanel run={bare} patient={patient} sources={sources} nodeId="fnd-diabetes-absent" onClose={vi.fn()} onSelect={vi.fn()} />);
     expect(within(screen.getByTestId("condensed")).getByText(/^“HbA1c 5\.2%”/)).toBeInTheDocument();
     expect(screen.queryByTestId("citation")).toBeNull();
+  });
+
+  const why = () => within(screen.getByTestId("condensed")).queryByText("Why it matters:")?.parentElement?.textContent ?? null;
+  const citation = () => screen.queryByTestId("citation")?.textContent ?? null;
+
+  it("finding sharing a record with other claims gets the claim whose excerpt matches (father → inheritance)", () => {
+    renderPanel("fnd-father-dialysis");
+    expect(why()).toMatch(/X-linked|inherit/i);
+    expect(why()).not.toMatch(/proteinuria/i);
+    expect(citation()).toContain("Genetic Counseling");
+  });
+
+  it("proteinuria keeps the kidney claim (record-only fallback for present findings)", () => {
+    renderPanel("fnd-proteinuria");
+    expect(why()).toMatch(/proteinuria/i);
+    expect(citation()).toContain("Clinical Description");
+  });
+
+  it.each(["fnd-celiac-negative", "fnd-diabetes-absent"])("negative %s with no claim of its own shows no why and no citation", (id) => {
+    renderPanel(id);
+    expect(why()).toBeNull();
+    expect(citation()).toBeNull();
+  });
+
+  it("a missing item with nothing to quote renders no Source quote disclosure", () => {
+    const blank = structuredClone(sources);
+    blank["src-genereviews-fabry"].excerpts!.forEach((e) => { e.text = "[Unverified paraphrase]   "; });
+    render(<DetailPanel run={run} patient={patient} sources={blank} nodeId="mis-father-diagnosis" onClose={vi.fn()} onSelect={vi.fn()} />);
+    expect(screen.queryByText("Source quote", { selector: "summary" })).toBeNull();
+    const noClaim = structuredClone(run);
+    noClaim.output!.missing_evidence.find((m) => m.missing_id === "mis-father-diagnosis")!.claim_ids = [];
+    document.body.innerHTML = "";
+    render(<DetailPanel run={noClaim} patient={patient} sources={sources} nodeId="mis-father-diagnosis" onClose={vi.fn()} onSelect={vi.fn()} />);
+    expect(screen.queryByText("Source quote", { selector: "summary" })).toBeNull();
+  });
+
+  it("outcome rows render without duplicate-key warnings when two outcomes share text", () => {
+    const dup = structuredClone(run);
+    const gla = dup.output!.missing_evidence.find((m) => m.missing_id === "mis-gla-report")!;
+    gla.possible_outcomes = [gla.possible_outcomes[0], { ...gla.possible_outcomes[0] }];
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+    render(<DetailPanel run={dup} patient={patient} sources={sources} nodeId="hyp-fabry" onClose={vi.fn()} onSelect={vi.fn()} />);
+    const keyWarnings = error.mock.calls.filter((c) => String(c[0]).includes("same key"));
+    error.mockRestore();
+    expect(keyWarnings).toEqual([]);
+    expect(screen.getAllByTestId("outcome-row").length).toBeGreaterThanOrEqual(2);
   });
 
   it("disclosures are closed by default", () => {

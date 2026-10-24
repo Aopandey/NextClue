@@ -1,12 +1,13 @@
 "use client";
 
 import { useMemo, useState, type RefObject } from "react";
-import type { AnalysisRun } from "@/lib/contracts";
+import type { AnalysisRun, Finding } from "@/lib/contracts";
 import { VIEW_NARROW, type EdgePos, type HubPos, type Layout, type NodePos } from "@/lib/constellation/layout";
 import { CheckFirst, checkFirstBox, checkFirstItem } from "./CheckFirst";
 import { Edge } from "./Edge";
 import { Hub, hubStatusBox } from "./Hub";
-import { Node, labelGeometry, labelLines, zoomLevel, type Box, type Side } from "./Node";
+import { DETAIL_SCALE, Node, labelGeometry, labelLines, zoomLevel, type Box, type Line, type Side, type ZoomLevel } from "./Node";
+import { SCALE_EXTENT } from "./useZoom";
 import "./constellation.css";
 
 export { truncate } from "./Node";
@@ -61,31 +62,74 @@ const overlaps = (a: Box, b: Box) =>
 const hitsCircle = (b: Box, c: { x: number; y: number; r: number }) =>
   Math.hypot(c.x - Math.max(b.x0, Math.min(c.x, b.x1)), c.y - Math.max(b.y0, Math.min(c.y, b.y1))) < c.r + CLEARANCE;
 
+/** Label block placed for one node: its side and the lines it shows. */
+export type Placement = { side: Side; lines: Line[] };
+
+/** A label block's box in layout units at zoom `k` (labels are counter-scaled, so they shrink in layout units). */
+function blockBox(n: NodePos, lines: Line[], side: Side, k: number): Box {
+  const { box } = labelGeometry(lines, side, n.r * k);
+  return { x0: n.x + box.x0 / k, y0: n.y + box.y0 / k, x1: n.x + box.x1 / k, y1: n.y + box.y1 / k };
+}
+const union = (boxes: Box[]): Box => ({
+  x0: Math.min(...boxes.map((b) => b.x0)),
+  y0: Math.min(...boxes.map((b) => b.y0)),
+  x1: Math.max(...boxes.map((b) => b.x1)),
+  y1: Math.max(...boxes.map((b) => b.y1)),
+});
+
 /**
- * Label side per node, decided once from the at-rest labels so labels never jump while zooming: the first
- * preferred side whose estimated text box stays inside the view and clears every other circle, every label
- * placed before it, the hub status lines and the Check first box. When no side is clear, the first preference.
+ * The zooms a placement must hold at. Detail: every edge of a box moves monotonically with the zoom, so the union
+ * of the boxes at the threshold and at the maximum zoom bounds the box at every zoom in between, and one
+ * placement holds for the whole detail range (labels do not jump while zooming in further).
  */
-function placeLabels(layout: Layout, narrow: boolean, blocked: Box[]): Map<string, Side> {
+const scalesFor = (zoom: ZoomLevel) => (zoom === "detail" ? [DETAIL_SCALE, SCALE_EXTENT[1]] : [1]);
+
+/**
+ * Label placement per node for a zoom level: the first preferred side whose estimated text box stays inside the
+ * view and clears every other circle, every other label and the `blocked` boxes; when no side is clear, the first
+ * preference. At rest it is decided once, so labels never jump while zooming between 0.8× and 1.6×. At detail
+ * zoom the plain labels are placed first, then each finding gets its detail line only on a side where the whole
+ * block still clears everything; a detail line that fits nowhere is dropped.
+ */
+export function placeLabels(
+  layout: Layout,
+  narrow: boolean,
+  zoom: ZoomLevel,
+  findings: Map<string, Finding>,
+  blocked: Box[],
+): Map<string, Placement> {
+  const scales = scalesFor(zoom);
   const circles = [...layout.hubs, ...layout.nodes];
-  const placed = [...blocked];
-  const sides = new Map<string, Side>();
+  const boxes = new Map<string, Box>();
+  const out = new Map<string, Placement>();
+  const boxAt = (n: NodePos, lines: Line[], side: Side) => union(scales.map((k) => blockBox(n, lines, side, k)));
+  const fits = (n: NodePos, b: Box) =>
+    b.x0 >= 0 && b.y0 >= 0 && b.x1 <= layout.view.w && b.y1 <= layout.view.h &&
+    circles.every((c) => c.id === n.id || !hitsCircle(b, c)) &&
+    blocked.every((p) => !overlaps(p, b)) &&
+    [...boxes].every(([id, p]) => id === n.id || !overlaps(p, b));
+
+  const plain = zoom === "detail" ? "labels" : zoom;
   for (const n of layout.nodes) {
-    const lines = labelLines(n, narrow, "labels");
-    const boxAt = (side: Side) => {
-      const { box } = labelGeometry(lines, side, n.r);
-      return { x0: box.x0 + n.x, y0: box.y0 + n.y, x1: box.x1 + n.x, y1: box.y1 + n.y };
-    };
-    const fits = (b: Box) =>
-      b.x0 >= 0 && b.y0 >= 0 && b.x1 <= layout.view.w && b.y1 <= layout.view.h &&
-      circles.every((c) => c.id === n.id || !hitsCircle(b, c)) &&
-      placed.every((p) => !overlaps(p, b));
+    const lines = labelLines(n, narrow, plain);
+    if (!lines.length) continue;
     const options = sidePreference(n, layout.view, layout.hubs, narrow);
-    const side = options.find((s) => fits(boxAt(s))) ?? options[0];
-    sides.set(n.id, side);
-    placed.push(boxAt(side));
+    const side = options.find((s) => fits(n, boxAt(n, lines, s))) ?? options[0];
+    out.set(n.id, { side, lines });
+    boxes.set(n.id, boxAt(n, lines, side));
   }
-  return sides;
+  if (zoom !== "detail") return out;
+
+  for (const n of layout.nodes) {
+    const lines = labelLines(n, narrow, "detail", findings.get(n.id));
+    if (lines.length === out.get(n.id)?.lines.length) continue;
+    const options = sidePreference(n, layout.view, layout.hubs, narrow);
+    const side = options.find((s) => fits(n, boxAt(n, lines, s)));
+    if (!side) continue;
+    out.set(n.id, { side, lines });
+    boxes.set(n.id, boxAt(n, lines, side));
+  }
+  return out;
 }
 
 const EDGE_COLOR = { previously_tested: "var(--blood)", would_clarify: "var(--sig)" } as const;
@@ -104,14 +148,12 @@ export function Constellation({ run, layout, selectedId, onSelect, zoomScale, tr
   const findings = useMemo(() => new Map(output?.findings.map((f) => [f.finding_id, f])), [output]);
   const missing = useMemo(() => new Map(output?.missing_evidence.map((m) => [m.missing_id, m])), [output]);
   const checkFirst = output ? checkFirstItem(output.missing_evidence) : null;
-  const sides = useMemo(
-    () =>
-      placeLabels(layout, narrow, [
-        ...layout.hubs.map((h) => hubStatusBox(h, narrow)),
-        ...(checkFirst ? [checkFirstBox(layout.view, narrow)] : []),
-      ]),
-    [layout, narrow, checkFirst],
-  );
+  const placements = useMemo(() => {
+    const status = layout.hubs.flatMap((h) => scalesFor(zoom).map((k) => hubStatusBox(h, narrow, k)));
+    // Check first is a fixed overlay: it shares the view's coordinates only at rest; zoomed content passes under it.
+    const fixed = checkFirst && zoom !== "detail" ? [checkFirstBox(layout.view, narrow)] : [];
+    return placeLabels(layout, narrow, zoom, findings, [...status, ...fixed]);
+  }, [layout, narrow, zoom, findings, checkFirst]);
   const systemOf = new Map(layout.nodes.map((n) => [n.id, n.system]));
   const events = { onSelect, onHover: setHoverId, onFocus: setFocusId };
 
@@ -135,14 +177,13 @@ export function Constellation({ run, layout, selectedId, onSelect, zoomScale, tr
         <Node
           key={n.id}
           node={n}
-          side={sides.get(n.id) ?? "b"}
+          lines={placements.get(n.id)?.lines ?? []}
+          side={placements.get(n.id)?.side ?? "b"}
           narrow={narrow}
-          zoom={zoom}
           scale={zoomScale}
           selected={n.id === selectedId}
           dim={dim(n.id)}
           order={i + 1}
-          finding={findings.get(n.id)}
           missing={missing.get(n.id)}
           {...events}
         />
@@ -153,7 +194,7 @@ export function Constellation({ run, layout, selectedId, onSelect, zoomScale, tr
         </text>
       )}
       </g>
-      {checkFirst && <CheckFirst item={checkFirst} view={layout.view} narrow={narrow} />}
+      {checkFirst && <CheckFirst item={checkFirst} view={layout.view} narrow={narrow} onSelect={onSelect} />}
     </svg>
   );
 }

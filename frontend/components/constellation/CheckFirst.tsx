@@ -24,12 +24,34 @@ export function checkFirstBox(view: { w: number; h: number }, narrow: boolean): 
 }
 
 /** A fixed dashed marker naming the item to look for in existing records before anything is ordered. */
-export function CheckFirst({ item, view, narrow }: { item: MissingEvidence; view: { w: number; h: number }; narrow: boolean }) {
+export function CheckFirst({
+  item,
+  view,
+  narrow,
+  onSelect,
+}: {
+  item: MissingEvidence;
+  view: { w: number; h: number };
+  narrow: boolean;
+  onSelect: (id: string) => void;
+}) {
   const { x0, y0, x1, y1 } = checkFirstBox(view, narrow);
   const textX = x0 + (narrow ? 9 : 40);
   const name = shortName(item.description);
   return (
-    <g data-testid="check-first">
+    <g
+      data-testid="check-first"
+      role="button"
+      tabIndex={0}
+      aria-label={item.description}
+      className="cn-node cn-check"
+      onClick={() => onSelect(item.missing_id)}
+      onKeyDown={(e) => {
+        if (e.key !== "Enter" && e.key !== " ") return;
+        e.preventDefault();
+        onSelect(item.missing_id);
+      }}
+    >
       <rect x={x0} y={y0} width={x1 - x0} height={y1 - y0} fill="var(--bg)" stroke="var(--sig)" strokeWidth={1.2} strokeDasharray="4 3" />
       {!narrow && (
         <g transform={`translate(${x0 + 20} ${(y0 + y1) / 2})`}>
