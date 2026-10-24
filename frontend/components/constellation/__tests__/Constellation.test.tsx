@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import fixtureJson from "@/fixtures/sarah-001.run.json";
@@ -410,10 +410,14 @@ describe("Constellation", () => {
       draw();
       fireEvent.pointerEnter(node("fnd-proteinuria"), { pointerType: "mouse", buttons: 0 });
       fireEvent.pointerLeave(node("fnd-proteinuria"), { pointerType: "mouse" });
-      vi.advanceTimersByTime(99);
+      act(() => {
+        vi.advanceTimersByTime(99);
+      });
       expect(document.querySelectorAll("[data-dim]").length).toBeGreaterThan(0);
       fireEvent.pointerEnter(node("hyp-separate-conditions"), { pointerType: "mouse", buttons: 0 });
-      vi.advanceTimersByTime(500);
+      act(() => {
+        vi.advanceTimersByTime(500);
+      });
       expect(node("hyp-separate-conditions")).not.toHaveAttribute("data-dim");
       expect(node("fnd-proteinuria")).toHaveAttribute("data-dim", "true");
     } finally {
