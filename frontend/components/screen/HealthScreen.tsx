@@ -37,9 +37,8 @@ export function HealthScreen({ patientId }: { patientId: string }) {
             <ConstellationView run={drawable.run} selectedId={selectedId} onSelect={setSelectedId} narrow={narrow} />
           </main>
         )}
-        <footer className="mt-4 space-y-1 text-[12.5px] text-[var(--mut)]">
-          <p>*{run?.disclaimer || FALLBACK_DISCLAIMER}</p>
-          <p>The clinician decides; nothing here is confirmed.</p>
+        <footer className="mt-4 text-[12.5px] text-[var(--mut)]">
+          <p>The clinician decides; nothing here is confirmed. *{run?.disclaimer || FALLBACK_DISCLAIMER}</p>
         </footer>
       </div>
       {drawable && selectedId && (
