@@ -327,6 +327,54 @@ def test_force_refresh_with_in_flight_run_returns_it(api):
     assert run.run_id == first.run_id and needs_execution is False
 
 
+def _age_in_flight_run(fake, run, multiple):
+    import datetime as dt
+
+    from app.config import get_settings
+
+    age = dt.timedelta(seconds=multiple * get_settings().analysis_timeout_seconds)
+    fake.runs[run.run_id].created_at = run.created_at - age
+
+
+def test_stale_in_flight_run_is_expired_and_replaced(api):
+    from app.analyses import start_analysis
+    from app.contracts import AnalysisRequest
+
+    _, fake = api
+    old, _ = start_analysis(AnalysisRequest(patient_id="sarah-001"))
+    _age_in_flight_run(fake, old, 3)
+
+    run, needs_execution = start_analysis(AnalysisRequest(patient_id="sarah-001"))
+    assert needs_execution is True and run.run_id != old.run_id
+    expired = fake.runs[old.run_id]
+    assert expired.status == "failed" and expired.error.code == "timeout"
+
+
+def test_force_refresh_escapes_stale_in_flight_run(api):
+    from app.analyses import start_analysis
+    from app.contracts import AnalysisRequest
+
+    _, fake = api
+    old, _ = start_analysis(AnalysisRequest(patient_id="sarah-001"))
+    _age_in_flight_run(fake, old, 3)
+
+    run, needs_execution = start_analysis(AnalysisRequest(patient_id="sarah-001", force_refresh=True))
+    assert needs_execution is True and run.run_id != old.run_id
+    assert fake.runs[old.run_id].status == "failed"
+
+
+def test_fresh_in_flight_run_is_still_reused(api):
+    from app.analyses import start_analysis
+    from app.contracts import AnalysisRequest
+
+    _, fake = api
+    first, _ = start_analysis(AnalysisRequest(patient_id="sarah-001"))
+
+    run, needs_execution = start_analysis(AnalysisRequest(patient_id="sarah-001"))
+    assert run.run_id == first.run_id and needs_execution is False
+    assert fake.runs[first.run_id].status == "queued"
+
+
 def _unique_violation_client(code, rows):
     from unittest.mock import MagicMock
 
