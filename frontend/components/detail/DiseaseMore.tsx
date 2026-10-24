@@ -63,6 +63,7 @@ export function DiseaseMore({
           {missing.map((m) => (
             <div key={m.missing_id} className="mi" data-testid="missing-item">
               <span className="p">P{m.priority}</span>
+              <span className="sr-only"> </span>
               <span className="d">{m.description}</span>
               <p className="w">{m.why_it_matters}</p>
               {m.possible_outcomes.length > 0 && (

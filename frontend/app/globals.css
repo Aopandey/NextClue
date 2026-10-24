@@ -152,7 +152,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font-ui)}
 .detail-panel .mi .d{font-size:14px;font-weight:600;color:var(--ink)}
 .detail-panel .mi .w{margin:4px 0 0;font-size:13.5px;color:var(--ink)}
 .detail-panel .oc{margin-top:8px;font-size:12.5px}
-.detail-panel .oc li{display:grid;grid-template-columns:minmax(0,1fr);padding:5px 0 5px 10px;border-left:2px solid var(--line)}
+.detail-panel .oc li{display:grid;grid-template-columns:minmax(0,1fr);padding:5px 0 5px 10px}
 .detail-panel .oc li+li{margin-top:4px}
 .detail-panel .oc .o{font-weight:600;color:var(--ink)}
 .detail-panel .oc .i{color:var(--mut)}

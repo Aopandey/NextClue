@@ -169,7 +169,7 @@ function Body({
         </div>
         {view.stats && (
           <div data-testid="stats" className="mt-2 flex flex-wrap gap-1.5">
-            <Chip n={view.stats.findings} one="finding" many="findings" />
+            <Chip n={view.stats.findings} one="finding" many="findings" />{" "}
             <Chip n={view.stats.specialties} one="specialty" many="specialties" />
           </div>
         )}
@@ -251,7 +251,7 @@ export function DetailPanel(props: DetailPanelProps) {
           className="detail-panel max-h-[45vh] gap-0 overflow-hidden border-t-[3px] border-[var(--line)] bg-[var(--bg)] text-[14px] text-[var(--ink)] shadow-none"
         >
           <Scroll narrow>
-            <Body view={view} props={props} Heading={SheetTitle} />
+            <Body key={nodeId} view={view} props={props} Heading={SheetTitle} />
           </Scroll>
           <CloseButton onClose={onClose} />
         </SheetContent>
@@ -266,7 +266,7 @@ export function DetailPanel(props: DetailPanelProps) {
       className="detail-panel sticky top-0 flex h-dvh w-[380px] shrink-0 flex-col border-l border-t-[3px] border-[var(--line)] bg-[var(--bg)] text-[14px] text-[var(--ink)]"
     >
       <Scroll narrow={false}>
-        <Body view={view} props={props} Heading="h2" />
+        <Body key={nodeId} view={view} props={props} Heading="h2" />
       </Scroll>
       <CloseButton onClose={onClose} />
     </aside>

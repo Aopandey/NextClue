@@ -85,6 +85,7 @@ describe("DetailPanel content", () => {
     renderPanel("hyp-fabry");
     const row = screen.getByTestId("stats");
     expect([...row.children].map((c) => c.textContent)).toEqual(["7 findings", "5 specialties"]);
+    expect(row.textContent).toBe("7 findings 5 specialties");
     expect(lines()).toBeLessThanOrEqual(4);
   });
 
@@ -179,6 +180,18 @@ describe("DetailPanel content", () => {
     expect(state.filter(([, open]) => open)).toHaveLength(2);
   });
 
+  it("switching nodes resets the disclosure state", async () => {
+    const props = { run, patient, sources, onClose: vi.fn(), onSelect: vi.fn() };
+    const user = userEvent.setup();
+    const { rerender } = render(<DetailPanel {...props} nodeId="hyp-fabry" />);
+    await user.click(screen.getByText("Summary", { selector: "summary" }));
+    await user.click(screen.getByText("Supporting findings", { selector: "summary" }));
+    const open = () => Object.fromEntries([...document.querySelectorAll("details")].map((d) => [d.querySelector("summary")!.firstChild!.textContent, d.open]));
+    expect(open()).toMatchObject({ Summary: true, "Supporting findings": false });
+    rerender(<DetailPanel {...props} nodeId="hyp-separate-conditions" />);
+    expect(open()).toMatchObject({ "Supporting findings": true, "Missing evidence": true, Summary: false });
+  });
+
   it("on a finding, every disclosure is closed", () => {
     renderPanel("fnd-proteinuria");
     expect(document.querySelectorAll("details").length).toBeGreaterThan(0);
@@ -269,7 +282,7 @@ describe("DetailPanel content", () => {
     const items = [...document.querySelectorAll("[data-testid=missing-item]")].map((el) => el.textContent ?? "");
     expect(items).toHaveLength(2);
     expect(items[0]).toContain(b.description);
-    expect(items[0]).toContain("P1");
+    expect(items[0]).toContain(`P1 ${b.description}`);
     expect(items[1]).toContain(a.description);
     expect(items[1]).toContain("P2");
   });
