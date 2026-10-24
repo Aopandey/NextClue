@@ -138,7 +138,7 @@ def test_prior_result_limitation_must_concern_that_test(sarah, sample, test_sour
 
 
 def test_competing_explanations_cannot_share_a_claim(sarah, sample, test_sources):
-    # Seen in a real run: the common alternative rested on rare-disease evidence.
+    # Hypotheses may share findings, but a claim (an interpretation) supports only one.
     extraction, handoff = stage_responses(sample)
     handoff["hypotheses"][0]["supporting_claim_ids"].append("clm-sfn-often-idiopathic")
     _rejected_twice(sarah, test_sources, extraction, handoff, "supports both")
@@ -179,6 +179,20 @@ def test_overconfident_outcome_gets_one_correction(sarah, sample, test_sources):
         run_pipeline(sarah, test_sources)
     retry_payload = generate.call_args_list[2].kwargs["payload"]
     assert any("possible_outcomes" in e for e in retry_payload["validation_errors_from_previous_attempt"])
+
+
+def test_one_correction_reports_topic_and_wording_errors_together(sarah, sample, test_sources):
+    extraction, handoff = stage_responses(sample)
+    bad = deepcopy(handoff)
+    claim = next(c for c in bad["claims"] if c["claim_id"] == "clm-kidney-involvement")
+    claim["text"] = "The patient has gastroesophageal reflux disease."
+    claim["source_refs"] = [{"source_id": "src-genereviews-fabry", "excerpt_id": "exc-fabry-gi"}]
+    bad["missing_evidence"][1]["possible_outcomes"][0]["implication"] = "would confirm the diagnosis."
+    with patch("ai.pipeline.generate_json", side_effect=[extraction, bad, handoff]) as generate:
+        run_pipeline(sarah, test_sources)
+    errors = generate.call_args_list[2].kwargs["payload"]["validation_errors_from_previous_attempt"]
+    assert any("cites src-" in e for e in errors)
+    assert any("possible_outcomes" in e for e in errors)
 
 
 def test_unrelated_source_gets_one_correction(sarah, sample, test_sources):

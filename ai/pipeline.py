@@ -15,7 +15,7 @@ from app.contracts import (
     AnalysisOutput, Claim, ClinicianQuestion, Contract, Finding, Hypothesis,
     MissingEvidence, PatientRecord, PriorResultReview, Source,
 )
-from app.validation import AnalysisReferenceError, validate_analysis
+from app.validation import AnalysisReferenceError, find_reference_errors
 
 from ai.gemini_client import generate_json, load_prompt
 from ai.retrieval import EvidenceSelection, reviewed_sources, select_evidence
@@ -171,11 +171,12 @@ def run_analysis(patient: PatientRecord, sources: list[Source]) -> tuple[Analysi
 
 def check_output(output: AnalysisOutput, patient: PatientRecord, sources: list[Source]) -> None:
     """Daniel's validator plus the AI-side reasoning rules below."""
-    validate_analysis(output, patient, sources)
+    errors = find_reference_errors(output, patient, sources)
     refs = [r for c in output.claims for r in c.record_refs]
     refs += [r for p in output.prior_results for r in p.record_refs]
     refs += [r for m in output.missing_evidence for r in m.existing_record_refs]
-    errors = ["Record excerpts must not be blank."] if any(not r.excerpt.strip() for r in refs) else []
+    if any(not r.excerpt.strip() for r in refs):
+        errors.append("Record excerpts must not be blank.")
     errors += _limitation_errors(output) + _shared_support_errors(output) + _existing_first_errors(output)
     errors += _outcome_wording_errors(output)
     errors += [
