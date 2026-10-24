@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Show SDD ledger handoff at session start",
+      "trigger": "SessionStart",
+      "description": "If a subagent-driven-development ledger exists for the current branch, adds its latest entries and last handoff note to the new session's context.",
+      "action": {
+        "type": "command",
+        "command": "node .kiro/hooks/scripts/ledger-note.mjs",
+        "timeout": 10
+      }
+    }
+  ]
+}
