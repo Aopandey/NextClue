@@ -93,3 +93,9 @@ def test_cache_key_changes_with_any_input(sarah):
     edited = sarah.model_copy(deep=True)
     edited.documents[0].text += " Edited."
     assert key != compute_cache_key(edited, [], **base)
+
+
+def test_small_fiber_biopsy_record_is_cited_by_a_claim(fixture_output):
+    finding = next(f for f in fixture_output.findings if f.finding_id == "fnd-small-fiber-neuropathy")
+    claim_records = {r.record_id for c in fixture_output.claims for r in c.record_refs}
+    assert {r.record_id for r in finding.record_refs} <= claim_records
