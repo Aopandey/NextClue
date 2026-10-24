@@ -99,3 +99,13 @@ def test_small_fiber_biopsy_record_is_cited_by_a_claim(fixture_output):
     finding = next(f for f in fixture_output.findings if f.finding_id == "fnd-small-fiber-neuropathy")
     claim_records = {r.record_id for c in fixture_output.claims for r in c.record_refs}
     assert {r.record_id for r in finding.record_refs} <= claim_records
+
+
+def test_graph_omits_unlinked_findings(fixture_output):
+    graph = build_graph(fixture_output)
+    finding_nodes = {n.node_id for n in graph.nodes if n.type == "finding"}
+    linked = {fid for h in fixture_output.hypotheses for fid in h.supporting_finding_ids}
+    assert finding_nodes == linked
+    unlinked = {"fnd-celiac-negative", "fnd-diabetes-absent", "fnd-enzyme-normal"}
+    assert unlinked <= {f.finding_id for f in fixture_output.findings}
+    assert not unlinked & finding_nodes
