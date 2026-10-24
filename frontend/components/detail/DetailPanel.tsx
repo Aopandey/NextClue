@@ -162,40 +162,47 @@ function Body({
 
   return (
     <div className="pt-1">
+      {/* Each .blk is one group (what it is, why it matters, where it comes from), divided by a hairline. */}
       <div data-testid="condensed">
-        <div className="pr-10">
-          <Heading className="text-[19px] font-bold leading-[1.25] text-[var(--ink)]">{view.label}</Heading>
-          {view.meta && <p className="mt-1 font-mono text-[11.5px] text-[var(--mut)]">{view.meta}</p>}
-        </div>
-        {view.stats && (
-          <div data-testid="stats" className="mt-2 flex flex-wrap gap-1.5">
-            <Chip n={view.stats.findings} one="finding" many="findings" />{" "}
-            <Chip n={view.stats.specialties} one="specialty" many="specialties" />
+        <div className="blk">
+          <div className="pr-10">
+            <Heading className="text-[19px] font-bold leading-[1.25] text-[var(--ink)]">{view.label}</Heading>
+            {view.meta && <p className="mt-1 font-mono text-[11.5px] text-[var(--mut)]">{view.meta}</p>}
           </div>
-        )}
-        {view.note && <p className="mt-2 text-[13.5px] text-[var(--mut)]">{view.note}</p>}
-        {view.quote && (
-          <p className="mt-3 font-serif text-[15px]">
-            “{view.quote.excerpt}” <code className="ml-1.5 font-mono text-[10.5px] text-[var(--mut)]">{view.quote.record_id}</code>
-          </p>
-        )}
+          {view.stats && (
+            <div data-testid="stats" className="mt-2 flex flex-wrap gap-1.5">
+              <Chip n={view.stats.findings} one="finding" many="findings" />{" "}
+              <Chip n={view.stats.specialties} one="specialty" many="specialties" />
+            </div>
+          )}
+          {view.note && <p className="mt-2 text-[13.5px] text-[var(--mut)]">{view.note}</p>}
+          {view.quote && (
+            <p className="mt-3 font-serif text-[15px]">
+              “{view.quote.excerpt}” <code className="ml-1.5 font-mono text-[10.5px] text-[var(--mut)]">{view.quote.record_id}</code>
+            </p>
+          )}
+        </div>
         {view.why && (
-          <div data-testid="why">
+          <div data-testid="why" className="blk">
             <div className="hd">{view.hypothesisId ? "Something you might have missed" : "Why it matters"}</div>
             <p className="text-[15px] leading-[1.55] text-[var(--ink)]">{view.why}</p>
           </div>
         )}
-        {view.cite && <CitationLine variant="block" source={sources[view.cite.source_id]} excerptId={view.cite.excerpt_id} />}
+        {view.cite && (
+          <div className="blk">
+            <CitationLine variant="block" source={sources[view.cite.source_id]} excerptId={view.cite.excerpt_id} />
+            {cite?.quote?.trim() && (
+              <details className="sq">
+                <summary>Source quote</summary>
+                <p className="font-serif text-[14px] text-[var(--ink)]">
+                  “{cite.quote}”{cite.location && <span className="ml-2 font-mono text-[11px] text-[var(--mut)]">{cite.location}</span>}
+                </p>
+              </details>
+            )}
+          </div>
+        )}
       </div>
 
-      {cite?.quote?.trim() && (
-        <details className="sq">
-          <summary>Source quote</summary>
-          <p className="font-serif text-[14px] text-[var(--ink)]">
-            “{cite.quote}”{cite.location && <span className="ml-2 font-mono text-[11px] text-[var(--mut)]">{cite.location}</span>}
-          </p>
-        </details>
-      )}
       {doc && view.quote && <RecordMore doc={doc} excerpt={view.quote.excerpt} alsoIn={alsoIn} onSelect={onSelect} />}
       {hypothesis && <DiseaseMore hypothesis={hypothesis} output={out} sources={sources} onSelect={onSelect} />}
     </div>
