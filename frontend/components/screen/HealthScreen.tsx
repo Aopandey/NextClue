@@ -10,7 +10,7 @@ import { useNarrow } from "./useNarrow";
 
 // backend/app/contracts.py DISCLAIMER, shown until a run brings its own (spec Decision 10: always visible).
 const FALLBACK_DISCLAIMER =
-  "Clinical decision support prototype using synthetic data. Not clinically validated. Findings are unconfirmed and require clinician review.";
+  "Clinical decision support prototype using synthetic data. Not clinically validated.";
 
 /** The patient health screen: header, run state, constellation, and the detail panel for the selected node. */
 export function HealthScreen({ patientId }: { patientId: string }) {
@@ -38,7 +38,7 @@ export function HealthScreen({ patientId }: { patientId: string }) {
           </main>
         )}
         <footer className="mt-4 space-y-1 text-[12.5px] text-[var(--mut)]">
-          <p>{run?.disclaimer || FALLBACK_DISCLAIMER}</p>
+          <p>*{run?.disclaimer || FALLBACK_DISCLAIMER}</p>
           <p>The clinician decides; nothing here is confirmed.</p>
         </footer>
       </div>

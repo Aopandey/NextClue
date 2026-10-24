@@ -88,7 +88,7 @@ describe("HealthScreen run states", () => {
     show();
     expect(nodes()).toHaveLength(0);
     expect(screen.getByText("The analysis completed without output.")).toBeInTheDocument();
-    expect(screen.getByText(run.disclaimer)).toBeInTheDocument();
+    expect(screen.getByText(`*${run.disclaimer}`)).toBeInTheDocument();
     await userEvent.click(screen.getByRole("button", { name: "Retry" }));
     expect(retry).toHaveBeenCalledOnce();
   });
@@ -123,7 +123,7 @@ describe("HealthScreen run states", () => {
     ]) {
       state(patch);
       const { unmount } = show();
-      expect(screen.getByText(run.disclaimer)).toBeInTheDocument();
+      expect(screen.getByText(`*${run.disclaimer}`)).toBeInTheDocument();
       unmount();
     }
   });
@@ -188,7 +188,7 @@ describe("HealthScreen completed", () => {
   it("footer shows the disclaimer and the clinician line", () => {
     state({});
     show();
-    expect(screen.getByText(run.disclaimer)).toBeInTheDocument();
+    expect(screen.getByText(`*${run.disclaimer}`)).toBeInTheDocument();
     expect(screen.getByText("The clinician decides; nothing here is confirmed.")).toBeInTheDocument();
   });
 

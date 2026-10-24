@@ -24,7 +24,7 @@ const OUT_DIR = join(HERE, "..", "fixtures");
 const ANALYSIS_SCHEMA_VERSION = "analysis.v1";
 const DISCLAIMER =
   "Clinical decision support prototype using synthetic data. Not clinically " +
-  "validated. Findings are unconfirmed and require clinician review.";
+  "validated.";
 // backend/app/main.py: dt.datetime(2026, 10, 24, tzinfo=dt.timezone.utc), serialised by Pydantic.
 const FIXTURE_TIMESTAMP = "2026-10-24T00:00:00Z";
 
