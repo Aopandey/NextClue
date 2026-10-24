@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { ConstellationView } from "@/components/constellation/ConstellationView";
 import { DetailPanel } from "@/components/detail/DetailPanel";
@@ -25,6 +26,12 @@ export function HealthScreen({ patientId }: { patientId: string }) {
         className="min-w-0 flex-1 px-4 py-4 sm:flex sm:h-dvh sm:flex-col sm:px-8"
         style={narrow && panelOpen ? { paddingBottom: "45vh" } : undefined}
       >
+        <Link
+          href="/"
+          className="inline-flex min-h-11 items-center self-start text-[13px] text-[var(--mut)] hover:text-[var(--ink)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ink)] sm:min-h-8"
+        >
+          ← Patients
+        </Link>
         <div className="space-y-3">
           {drawable && <PatientHeader patient={drawable.patient} run={drawable.run} />}
           <RunStatus phase={phase} run={run} error={error} httpError={httpError} elapsedMs={elapsedMs} retry={retry} patientId={patientId} />

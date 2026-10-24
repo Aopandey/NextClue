@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
+import { LandingScreen } from "@/components/landing/LandingScreen";
 
 export default function Home() {
-  redirect("/patients/sarah-001");
+  return <LandingScreen />;
 }

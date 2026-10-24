@@ -156,6 +156,17 @@ describe("HealthScreen run states", () => {
   });
 });
 
+describe("HealthScreen back link", () => {
+  it.each([
+    ["loading", { phase: "loading" as const, run: null, patient: null }],
+    ["completed", {}],
+  ])("links back to the patient list while %s", (_name, patch) => {
+    state(patch);
+    show();
+    expect(screen.getByRole("link", { name: "← Patients" })).toHaveAttribute("href", "/");
+  });
+});
+
 describe("HealthScreen completed", () => {
   it("fixture: header line and provenance tag", () => {
     state({ run: { ...run, evidence_mode: "live" } });
