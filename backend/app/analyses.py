@@ -63,6 +63,7 @@ def _expire_if_stale(run: AnalysisRun) -> bool:
     )
     run.completed_at = _now()
     db.save_run(run)
+    log.warning("expired stale run %s", run.run_id)
     return True
 
 
