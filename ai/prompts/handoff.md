@@ -134,7 +134,7 @@ generalization if one of its linked claims cites evidence for it.
    all such items have lower priority numbers than items with false.
 7. At least one hypothesis has is_rare_disease=false.
 8. Each source_ref's excerpt topic terms (for example "diarrhea", "proteinuria",
-   "enzyme") must appear in the claim text or its record quotes. A hypothesis with
-   is_rare_disease=false cannot rest only on rare-disease sources.
+   "enzyme") must appear in the claim text or its record quotes. No supporting
+   claim of an is_rare_disease=false hypothesis may cite only rare-disease sources.
 9. Possible outcomes (outcome and implication text) never say a result would
    establish, confirm, prove, diagnose, rule out or exclude a diagnosis.

@@ -45,7 +45,11 @@
       "cornea",
       "lenticular",
       "whorl",
-      "corneal"
+      "corneal",
+      "acroparesthesia",
+      "angiokeratoma",
+      "hypohidrosis",
+      "abdominal pain"
     ],
     "exc-fabry-angiokeratoma": [
       "angiokeratoma"
@@ -82,7 +86,8 @@
       "septum",
       "ecg",
       "pr interval",
-      "cardiac"
+      "cardiac",
+      "ekg"
     ],
     "exc-fabry-inheritance": [
       "x-linked",
@@ -129,7 +134,8 @@
     ],
     "exc-dn-dspn-definition": [
       "neuropathy",
-      "dspn"
+      "dspn",
+      "nerve"
     ]
   }
 }
