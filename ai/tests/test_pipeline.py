@@ -140,8 +140,17 @@ def test_prior_result_limitation_must_concern_that_test(sarah, sample, test_sour
 def test_competing_explanations_cannot_share_a_claim(sarah, sample, test_sources):
     # Seen in a real run: the common alternative rested on rare-disease evidence.
     extraction, handoff = stage_responses(sample)
-    handoff["hypotheses"][1]["supporting_claim_ids"].append("clm-features-match")
+    handoff["hypotheses"][0]["supporting_claim_ids"].append("clm-sfn-often-idiopathic")
     _rejected_twice(sarah, test_sources, extraction, handoff, "supports both")
+
+
+def test_unrelated_source_gets_one_correction(sarah, sample, test_sources):
+    # Seen in a real run: a heartburn claim cited the diarrhea excerpt.
+    extraction, handoff = stage_responses(sample)
+    claim = next(c for c in handoff["claims"] if c["claim_id"] == "clm-kidney-involvement")
+    claim["text"] = "The patient has gastroesophageal reflux disease."
+    claim["source_refs"] = [{"source_id": "src-genereviews-fabry", "excerpt_id": "exc-fabry-gi"}]
+    _rejected_twice(sarah, test_sources, extraction, handoff, "cites src-")
 
 
 def test_existing_reports_are_checked_before_new_information(sarah, sample, test_sources):

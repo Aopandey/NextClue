@@ -5,8 +5,8 @@ from __future__ import annotations
 import pytest
 
 from app.contracts import AnalysisOutput
-from app.data_files import load_fixture_output, load_patient_files, load_source_registry
-from app.validation import compute_cache_key, find_reference_errors
+from app.data_files import load_fixture_output, load_patient_files, load_source_registry, load_source_topics
+from app.validation import compute_cache_key, find_reference_errors, find_source_topic_errors
 from app.views import build_graph, build_timeline
 
 
@@ -36,6 +36,43 @@ def test_all_patient_files_are_synthetic_and_unique():
 
 def test_fixture_references_resolve(fixture_output, sarah, sources):
     assert find_reference_errors(fixture_output, sarah, sources) == []
+
+
+def _errors_after(sarah, sources, edit):
+    data = load_fixture_output("sarah-001").model_dump(mode="json")
+    edit({c["claim_id"]: c for c in data["claims"]})
+    return find_reference_errors(AnalysisOutput.model_validate(data), sarah, sources)
+
+
+def test_claim_cannot_cite_excerpt_about_another_finding(sarah, sources):
+    def edit(claims):
+        claim = claims["clm-kidney-involvement"]
+        claim["text"] = "The patient has gastroesophageal reflux disease."
+        claim["source_refs"] = [{"source_id": "src-genereviews-fabry", "excerpt_id": "exc-fabry-gi"}]
+
+    errors = _errors_after(sarah, sources, edit)
+    assert any("clm-kidney-involvement" in e and "exc-fabry-gi" in e for e in errors)
+
+
+def test_excerpt_missing_from_topic_table_is_skipped():
+    # The hosted sources table may hold excerpts this side file does not list yet.
+    topics = load_source_topics()
+    topics["excerpts"].pop("exc-fabry-gi")
+    data = load_fixture_output("sarah-001").model_dump(mode="json")
+    claim = next(c for c in data["claims"] if c["claim_id"] == "clm-kidney-involvement")
+    claim["text"] = "The patient has gastroesophageal reflux disease."
+    claim["source_refs"] = [{"source_id": "src-genereviews-fabry", "excerpt_id": "exc-fabry-gi"}]
+    assert find_source_topic_errors(AnalysisOutput.model_validate(data), topics) == []
+
+
+def test_common_hypothesis_cannot_rest_on_rare_only_source(sarah, sources):
+    def edit(claims):
+        claims["clm-sfn-often-idiopathic"]["source_refs"] = [
+            {"source_id": "src-genereviews-fabry", "excerpt_id": "exc-fabry-sfn"}
+        ]
+
+    errors = _errors_after(sarah, sources, edit)
+    assert any("supports non-rare" in e for e in errors)
 
 
 def test_graph_stays_small(fixture_output):

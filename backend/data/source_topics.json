@@ -1,0 +1,135 @@
+{
+  "conditions": {
+    "src-genereviews-fabry": "fabry",
+    "src-fabry-female-strategy": "fabry",
+    "src-sfn-review": "small_fiber_neuropathy",
+    "src-ada-diabetic-neuropathy": "diabetes"
+  },
+  "rare_only_conditions": [
+    "fabry"
+  ],
+  "excerpts": {
+    "exc-fabry-female-enzyme": [
+      "enzyme",
+      "\u03b1-gal",
+      "alpha-galactosidase",
+      "molecular"
+    ],
+    "exc-fabry-female-molecular": [
+      "molecular",
+      "gla",
+      "variant",
+      "sequenc"
+    ],
+    "exc-fabry-male-enzyme": [
+      "enzyme",
+      "alpha-galactosidase"
+    ],
+    "exc-fabry-vus": [
+      "variant",
+      "gla"
+    ],
+    "exc-fabry-suspicion": [
+      "multisystem",
+      "multiple organ",
+      "fabry"
+    ],
+    "exc-fabry-features": [
+      "pain",
+      "sweat",
+      "angiokeratoma",
+      "cornea",
+      "acroparesthesia"
+    ],
+    "exc-fabry-female-features": [
+      "cornea",
+      "lenticular",
+      "whorl",
+      "corneal"
+    ],
+    "exc-fabry-angiokeratoma": [
+      "angiokeratoma"
+    ],
+    "exc-fabry-sfn": [
+      "small fiber",
+      "neuropathy",
+      "nerve"
+    ],
+    "exc-fabry-gi": [
+      "diarrhea",
+      "nausea",
+      "vomiting",
+      "bloating",
+      "cramping",
+      "abdominal pain",
+      "malabsorption",
+      "irritable bowel"
+    ],
+    "exc-fabry-kidney": [
+      "proteinuria",
+      "renal",
+      "kidney"
+    ],
+    "exc-fabry-female-kidney": [
+      "proteinuria",
+      "renal",
+      "kidney",
+      "albumin"
+    ],
+    "exc-fabry-cardiac": [
+      "hypertrophy",
+      "lvh",
+      "septum",
+      "ecg",
+      "pr interval",
+      "cardiac"
+    ],
+    "exc-fabry-inheritance": [
+      "x-linked",
+      "inherit",
+      "family",
+      "father",
+      "mother",
+      "relative"
+    ],
+    "exc-fabry-father-daughters": [
+      "father",
+      "daughter"
+    ],
+    "exc-fabry-family-history": [
+      "family",
+      "x-linked",
+      "male-to-male",
+      "father",
+      "mother"
+    ],
+    "exc-fabry-phenocopy": [
+      "amiodarone"
+    ],
+    "exc-sfn-causes": [
+      "small fiber",
+      "neuropathy"
+    ],
+    "exc-dbs-combined": [
+      "enzyme",
+      "lyso"
+    ],
+    "exc-dbs-negative": [
+      "enzyme",
+      "lyso",
+      "negative"
+    ],
+    "exc-dn-prevalent": [
+      "diabetic neuropathy",
+      "diabetes",
+      "neuropathy"
+    ],
+    "exc-dn-exclusion": [
+      "neuropathy"
+    ],
+    "exc-dn-dspn-definition": [
+      "neuropathy",
+      "dspn"
+    ]
+  }
+}

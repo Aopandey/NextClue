@@ -48,6 +48,10 @@ and what the next clinician should review. Return JSON matching the supplied sch
 - Match evidence to the same finding, not just the same organ: an excerpt about
   one symptom (for example diarrhea) does not support a different one (for
   example heartburn). If no excerpt describes the patient's finding, cite none.
+- Before writing each source_ref, name the finding the claim is about and confirm
+  the excerpt text mentions that same finding or condition. The claim text or its
+  record quote must use the excerpt's own subject words. If no supplied excerpt
+  covers the finding, omit the claim.
 - When a record already attributes a finding to a documented cause (for example
   "Impression: ..." or "consistent with long-standing hypertension"), that is the
   documented explanation. Such a finding supports a different explanation only
@@ -128,3 +132,6 @@ generalization if one of its linked claims cites evidence for it.
 6. Every missing item with check_existing_first=true has existing_record_refs, and
    all such items have lower priority numbers than items with false.
 7. At least one hypothesis has is_rare_disease=false.
+8. Each source_ref's excerpt topic terms (for example "diarrhea", "proteinuria",
+   "enzyme") must appear in the claim text or its record quotes. A hypothesis with
+   is_rare_disease=false cannot rest only on rare-disease sources.
