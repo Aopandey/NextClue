@@ -87,6 +87,8 @@ def test_cache_key_changes_with_any_input(sarah):
     assert key == compute_cache_key(sarah, [], **base)
     assert key != compute_cache_key(sarah, ["rec-2024-pcp"], **base)
     assert key != compute_cache_key(sarah, [], **{**base, "model": "m2"})
+    assert key == compute_cache_key(sarah, [], retrieval_mode="cached", **base)
+    assert key != compute_cache_key(sarah, [], retrieval_mode="pubmed", **base)
 
     edited = sarah.model_copy(deep=True)
     edited.documents[0].text += " Edited."

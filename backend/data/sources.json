@@ -1,62 +1,173 @@
 {
   "schema_version": "source.v1",
-  "evidence_version": "evidence-draft-1",
+  "evidence_version": "evidence-2026-10-24.1",
   "sources": [
     {
       "source_id": "src-genereviews-fabry",
       "source_type": "genereviews",
       "title": "Fabry Disease",
       "publisher": "GeneReviews (NCBI Bookshelf)",
-      "year": null,
+      "year": 2024,
       "url": "https://www.ncbi.nlm.nih.gov/books/NBK1292/",
-      "pmid": null,
+      "pmid": "20301469",
       "excerpts": [
         {
           "excerpt_id": "exc-fabry-female-enzyme",
-          "text": "[Unverified paraphrase] In females heterozygous for a GLA pathogenic variant, alpha-galactosidase A enzyme activity may be within the normal range, so molecular genetic testing of GLA is needed to identify heterozygotes.",
-          "location": "Diagnosis"
+          "text": "Measurement of α-Gal A enzyme activity is unreliable for identification of heterozygous females. Although demonstration of markedly decreased α-Gal A enzyme activity in a female is diagnostic of the heterozygous state, some heterozygotes have α-Gal A activity in the normal range.",
+          "location": "Diagnosis > Establishing the Diagnosis (female proband, note 1)"
+        },
+        {
+          "excerpt_id": "exc-fabry-female-molecular",
+          "text": "The diagnosis of Fabry disease is established in a female proband by identification of a heterozygous pathogenic (or likely pathogenic) variant in GLA by molecular genetic testing",
+          "location": "Diagnosis > Establishing the Diagnosis > Female proband"
+        },
+        {
+          "excerpt_id": "exc-fabry-male-enzyme",
+          "text": "Identification of deficient α-Gal A enzyme activity in plasma, isolated leukocytes, and/or cultured cells is the most efficient and reliable method of diagnosing Fabry disease in males.",
+          "location": "Summary (PubMed abstract): Diagnosis/testing"
+        },
+        {
+          "excerpt_id": "exc-fabry-vus",
+          "text": "Identification of a hemizygous or heterozygous GLA variant of uncertain significance does not establish or rule out the diagnosis.",
+          "location": "Diagnosis > Establishing the Diagnosis (note 3)"
+        },
+        {
+          "excerpt_id": "exc-fabry-suspicion",
+          "text": "Fabry disease typically affects more than one organ system and should be suspected in males and females with the following clinical features, particularly if more than one is present",
+          "location": "Diagnosis > Suggestive Findings"
         },
         {
           "excerpt_id": "exc-fabry-features",
-          "text": "[Unverified paraphrase] Classic features include episodic pain in the hands and feet (acroparesthesias), reduced sweating, gastrointestinal symptoms, angiokeratomas, and characteristic corneal opacities (cornea verticillata).",
-          "location": "Clinical Description"
+          "text": "Onset of symptoms usually occurs in childhood or adolescence with the appearance of angiokeratomas, periodic crises of severe pain in the extremities (acroparesthesia), hypohidrosis, and the characteristic corneal and lenticular opacities.",
+          "location": "Clinical Description > Classic Fabry Disease"
+        },
+        {
+          "excerpt_id": "exc-fabry-female-features",
+          "text": "Mild manifestations include the characteristic cornea verticillata (70%-90%) and lenticular opacities that do not impair vision; acroparesthesia (50%-90%); angiokeratomas (10%-50%) that are usually isolated or sparse; hypohidrosis; and chronic abdominal pain.",
+          "location": "Clinical Description > Heterozygous Females"
+        },
+        {
+          "excerpt_id": "exc-fabry-angiokeratoma",
+          "text": "Angiokeratomas are an early manifestation of Fabry disease, typically seen in children and young adolescents [Luna et al 2016]. They appear as clusters of punctate, dark red to blue-black angiectases in the superficial layers of the skin.",
+          "location": "Clinical Description > Classic Fabry Disease"
+        },
+        {
+          "excerpt_id": "exc-fabry-sfn",
+          "text": "Nerve conduction studies show evidence of a small fiber neuropathy [Biegstraaten et al 2012] affecting small myelinated and unmyelinated neurons [Soliman et al 2016].",
+          "location": "Clinical Description > Classic Fabry Disease"
+        },
+        {
+          "excerpt_id": "exc-fabry-gi",
+          "text": "Glycosphingolipid deposition in intestinal small vessels and in the autonomic ganglia of the bowel may cause episodic diarrhea, nausea, vomiting, bloating, cramping abdominal pain, and/or intestinal malabsorption [Hoffmann et al 2007, Politei et al 2016]. Symptoms resembling irritable bowel syndrome are reported in nearly 20% of individuals in the Fabry Registry [Eng et al 2007].",
+          "location": "Clinical Description > Classic Fabry Disease > Gastrointestinal"
         },
         {
           "excerpt_id": "exc-fabry-kidney",
-          "text": "[Unverified paraphrase] Kidney involvement, beginning with proteinuria and progressing to reduced kidney function, is a major source of morbidity.",
-          "location": "Clinical Description"
+          "text": "Although proteinuria may be detected early, renal insufficiency usually occurs in the third to fifth decade of life.",
+          "location": "Clinical Description > Classic Fabry Disease"
+        },
+        {
+          "excerpt_id": "exc-fabry-female-kidney",
+          "text": "Renal findings in heterozygotes include isosthenuria; the presence of erythrocytes, leukocytes, and granular and hyaline casts in the urinary sediment; and proteinuria. According to the United States and European dialysis and transplantation registries, approximately 10% of heterozygotes develop kidney failure requiring dialysis or transplantation.",
+          "location": "Clinical Description > Heterozygous Females"
+        },
+        {
+          "excerpt_id": "exc-fabry-cardiac",
+          "text": "Left ventricular hypertrophy (LVH), often associated with hypertrophy of the interventricular septum and appearing similar to hypertrophic cardiomyopathy (HCM), is progressive and occurs earlier in males than females [Kampmann et al 2005]. EKG changes including ST segment changes, T-wave inversion, and dysrhythmias such as a short PR interval and intermittent supraventricular tachycardias may be caused by infiltration of the conduction system.",
+          "location": "Clinical Description > Classic Fabry Disease"
         },
         {
           "excerpt_id": "exc-fabry-inheritance",
-          "text": "[Unverified paraphrase] Fabry disease is inherited in an X-linked manner. All daughters of an affected male inherit the pathogenic variant, and heterozygous females range from asymptomatic to severely affected.",
-          "location": "Genetic Counseling"
+          "text": "Fabry disease is inherited in an X-linked manner: hemizygous males are affected; heterozygous females may be as severely affected as males or asymptomatic throughout a normal life span.",
+          "location": "Genetic Counseling > Mode of Inheritance"
+        },
+        {
+          "excerpt_id": "exc-fabry-father-daughters",
+          "text": "If the father has a GLA pathogenic variant, he will transmit it to all his daughters and none of his sons.",
+          "location": "Genetic Counseling > Risk to Family Members"
+        },
+        {
+          "excerpt_id": "exc-fabry-family-history",
+          "text": "Family history is consistent with X-linked inheritance (e.g., no male-to-male transmission). Absence of a known family history does not preclude the diagnosis.",
+          "location": "Diagnosis > Suggestive Findings"
         },
         {
           "excerpt_id": "exc-fabry-phenocopy",
-          "text": "[Unverified paraphrase] Corneal opacities resembling cornea verticillata can also be caused by medications such as amiodarone and chloroquine.",
-          "location": "Differential Diagnosis"
+          "text": "Amiodarone has been reported to induce cellular and biochemical changes resulting in a phenocopy in particular of the keratopathy of Fabry disease [Whitley et al 1983].",
+          "location": "Management > Agents/Circumstances to Avoid"
         }
       ],
-      "verification_status": "unverified",
-      "retrieved_on": null
+      "verification_status": "verified",
+      "retrieved_on": "2026-10-24"
     },
     {
       "source_id": "src-sfn-review",
       "source_type": "pubmed",
-      "title": "PLACEHOLDER: review of small fiber neuropathy causes (to be selected and verified)",
-      "publisher": "PubMed",
-      "year": null,
-      "url": "https://pubmed.ncbi.nlm.nih.gov/",
-      "pmid": null,
+      "title": "Associated conditions in small fiber neuropathy - a large cohort study and review of the literature",
+      "publisher": "European Journal of Neurology",
+      "year": 2018,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/29112785/",
+      "pmid": "29112785",
       "excerpts": [
         {
           "excerpt_id": "exc-sfn-causes",
-          "text": "[Unverified paraphrase] Small fiber neuropathy has many causes, including diabetes and immune, infectious, toxic, and genetic conditions, and in many patients no cause is found.",
-          "location": null
+          "text": "No associated condition could be found in 53% of the patients. Autoimmune diseases, sodium channel gene mutations, diabetes mellitus including glucose intolerance, and vitamin B12 deficiencies were more prevalent than reported literature findings, followed by alcohol abuse, chemotherapy, monoclonal gammopathy of undetermined significance, and haemochromatosis.",
+          "location": "Abstract: RESULTS"
         }
       ],
-      "verification_status": "unverified",
-      "retrieved_on": null
+      "verification_status": "verified",
+      "retrieved_on": "2026-10-24"
+    },
+    {
+      "source_id": "src-fabry-female-strategy",
+      "source_type": "pubmed",
+      "title": "Diagnostic strategy for females suspected of Fabry disease",
+      "publisher": "Clinical Genetics",
+      "year": 2020,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/31860127/",
+      "pmid": "31860127",
+      "excerpts": [
+        {
+          "excerpt_id": "exc-dbs-combined",
+          "text": "The enzyme activity, together with the concentration of lyso-GL-3 (lyso-Gb3) biomarker in dried blood spots (DBS), substantially improved the diagnostic detection of Fabry disease in females compared to the enzyme activity alone.",
+          "location": "Abstract"
+        },
+        {
+          "excerpt_id": "exc-dbs-negative",
+          "text": "Cases with clearly negative results for both biochemical parameters are unlikely to have Fabry disease, even in clinically highly suspicious cases.",
+          "location": "Abstract"
+        }
+      ],
+      "verification_status": "verified",
+      "retrieved_on": "2026-10-24"
+    },
+    {
+      "source_id": "src-ada-diabetic-neuropathy",
+      "source_type": "guideline",
+      "title": "Diabetic Neuropathy: A Position Statement by the American Diabetes Association",
+      "publisher": "Diabetes Care",
+      "year": 2017,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/27999003/",
+      "pmid": "27999003",
+      "excerpts": [
+        {
+          "excerpt_id": "exc-dn-prevalent",
+          "text": "Diabetic neuropathies are the most prevalent chronic complications of diabetes.",
+          "location": "Full text (PMC6977405): Introduction"
+        },
+        {
+          "excerpt_id": "exc-dn-exclusion",
+          "text": "Diabetic neuropathy is a diagnosis of exclusion. Nondiabetic neuropathies may be present in patients with diabetes and may be treatable by specific measures.",
+          "location": "Full text (PMC6977405): Introduction"
+        },
+        {
+          "excerpt_id": "exc-dn-dspn-definition",
+          "text": "A simple definition of DSPN for clinical practice is the presence of symptoms and/or signs of peripheral nerve dysfunction in people with diabetes after the exclusion of other causes.",
+          "location": "Full text (PMC6977405): DSPN"
+        }
+      ],
+      "verification_status": "verified",
+      "retrieved_on": "2026-10-24"
     }
   ]
 }

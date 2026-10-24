@@ -4,7 +4,9 @@
 
 **Healthcare & Biotech · H3 — Improving healthcare access and coordination.** Our focus is the handoff between neurology and genetics.
 
-**Status:** project plan; the app has not been implemented.
+**Status:** backend contracts and Gemini integration are in place; the full demo is in progress.
+
+**Setup:** [Backend + hosted database](backend/README.md) · [AI checks](ai/README.md).
 
 ## The idea, simply
 
@@ -30,7 +32,7 @@ The key moment: an old normal enzyme screen may not settle Sarah's case. NextClu
 
 These are build tasks, not claims of completed work. Use a small Kiro spec and steering guidance; add hooks only when useful.
 
-**Stack:** Next.js, TypeScript, React Flow, FastAPI, SQLite, one LLM, and PubMed with cached evidence. Skip real EHR integration, accounts, treatment advice, and extra infrastructure.
+**Stack:** Next.js, TypeScript, React Flow, FastAPI, Supabase/Postgres, Gemini, and PubMed with cached evidence. Skip real EHR integration, accounts, treatment advice, and extra infrastructure.
 
 ## Team and schedule
 

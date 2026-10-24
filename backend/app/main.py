@@ -4,12 +4,15 @@ from __future__ import annotations
 
 import datetime as dt
 
-from fastapi import BackgroundTasks, FastAPI, HTTPException, Response
+from fastapi import BackgroundTasks, FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+
+from ai.configuration import ConfigurationError
 
 from . import db
 from .analyses import InvalidRequest, PatientNotFound, execute_run, start_analysis
-from .config import get_settings
+from .config import get_cors_origins, get_settings
 from .contracts import ANALYSIS_SCHEMA_VERSION, AnalysisRequest, AnalysisRun, PatientRecord, RunVersions, Source
 from .data_files import load_fixture_output
 from .validation import compute_cache_key, find_reference_errors
@@ -18,20 +21,28 @@ from .views import build_graph, build_timeline
 app = FastAPI(title="NextClue API", version="0.1.0")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=get_settings().cors_origins,
+    allow_origins=get_cors_origins(),
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
 
 
+@app.exception_handler(ConfigurationError)
+async def configuration_error(request: Request, exc: ConfigurationError) -> JSONResponse:
+    return JSONResponse(status_code=503, content={"detail": {
+        "code": "configuration_error", "message": str(exc), "retryable": False,
+    }})
+
+
 @app.get("/health")
 def health(response: Response) -> dict:
+    settings = get_settings()
     try:
         db.ping()
     except Exception as exc:  # noqa: BLE001
         response.status_code = 503
         return {"status": "degraded", "database": f"unreachable: {type(exc).__name__}"}
-    return {"status": "ok", "database": "ok", "model": get_settings().model}
+    return {"status": "ok", "database": "ok", "model": settings.model}
 
 
 @app.get("/patients")

@@ -129,6 +129,7 @@ def compute_cache_key(
     model: str,
     prompt_version: str,
     evidence_version: str,
+    retrieval_mode: str = "cached",
 ) -> str:
     """Identity of an analysis; any changed input yields a new key.
 
@@ -142,4 +143,5 @@ def compute_cache_key(
         "model": model,
         "prompt_version": prompt_version,
         "evidence_version": evidence_version,
+        "retrieval_mode": retrieval_mode,
     })
