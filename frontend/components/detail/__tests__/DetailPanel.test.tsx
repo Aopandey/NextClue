@@ -81,10 +81,28 @@ describe("DetailPanel content", () => {
     expect(screen.getByText(/Molecular testing identifies heterozygous females/)).toBeInTheDocument();
   });
 
-  it("hub panel computes the supporting count and specialties", () => {
+  it("hub panel shows the supporting count and specialties as chips", () => {
     renderPanel("hyp-fabry");
-    expect(screen.getByText("7 supporting findings across 5 specialties")).toBeInTheDocument();
+    const row = screen.getByText("7").closest("b")!.parentElement!.parentElement!;
+    expect([...row.children].map((c) => c.textContent)).toEqual(["7 findings", "5 specialties"]);
     expect(lines()).toBeLessThanOrEqual(4);
+  });
+
+  it("hub labels its text 'Something you might have missed'; a finding keeps 'Why it matters'", () => {
+    renderPanel("hyp-fabry");
+    expect(within(screen.getByTestId("why")).getByText("Something you might have missed")).toBeInTheDocument();
+    expect(screen.queryByText("Why it matters")).toBeNull();
+    document.body.innerHTML = "";
+    renderPanel("fnd-proteinuria");
+    expect(within(screen.getByTestId("why")).getByText("Why it matters")).toBeInTheDocument();
+  });
+
+  it("the citation block holds the ID tag and the unverified badge", () => {
+    renderPanel("fnd-cornea-verticillata");
+    const block = screen.getByTestId("citation");
+    expect(within(block).getByText("Source")).toBeInTheDocument();
+    expect(within(block).getByRole("link", { name: "NBK1292 ↗" })).toHaveAttribute("href", "https://www.ncbi.nlm.nih.gov/books/NBK1292/");
+    expect(within(block).getByText("Unverified paraphrase")).toBeInTheDocument();
   });
 
   it("placeholder source shows PMID pending + Search PubMed", () => {
@@ -102,7 +120,7 @@ describe("DetailPanel content", () => {
     expect(screen.queryByTestId("citation")).toBeNull();
   });
 
-  const why = () => within(screen.getByTestId("condensed")).queryByText("Why it matters:")?.parentElement?.textContent ?? null;
+  const why = () => screen.queryByTestId("why")?.querySelector("p")?.textContent ?? null;
   const citation = () => screen.queryByTestId("citation")?.textContent ?? null;
 
   it("finding sharing a record with other claims gets the claim whose excerpt matches (father → inheritance)", () => {
@@ -214,7 +232,7 @@ describe("DetailPanel content", () => {
 
   it("hub Why it matters is capped at 14 words", () => {
     show(sarahLive, "hyp-01");
-    const text = why()!.replace("Why it matters:", "").trim();
+    const text = why()!;
     expect(text.split(/\s+/).length).toBeLessThanOrEqual(14);
     expect(text.endsWith("…")).toBe(true);
   });

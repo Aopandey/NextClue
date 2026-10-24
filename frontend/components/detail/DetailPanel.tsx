@@ -25,8 +25,10 @@ type View = {
   label: string;
   color: string;
   meta: string | null;
-  /** Line 2: the record quote, or for a hub a computed count. */
-  count: string | null;
+  /** Hub only: the numbers behind the stat chips. */
+  stats: { findings: number; specialties: number } | null;
+  /** Missing items: plain line under the title. */
+  note: string | null;
   quote: RecordRef | null;
   why: string | null;
   cite: SourceRef | null;
@@ -34,7 +36,6 @@ type View = {
 };
 
 const firstSentence = (text: string) => text.split(/(?<=[.!?])\s+/)[0] ?? text;
-const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 
 const overlap = (a: string, b: string) => {
   const [x, y] = [a.trim().toLowerCase(), b.trim().toLowerCase()];
@@ -66,7 +67,7 @@ function resolve(run: AnalysisRun, patient: PatientRecord, nodeId: string): View
   const claim = (id: string | undefined) => out.claims.find((c) => c.claim_id === id);
   const meta = (date: string | null | undefined, specialty: string | null | undefined) =>
     [date && formatDate(date), specialty].filter(Boolean).join(" · ") || null;
-  const base = { color: "var(--ink)", count: null, quote: null, why: null, cite: null, hypothesisId: null };
+  const base = { color: "var(--ink)", stats: null, note: null, quote: null, why: null, cite: null, hypothesisId: null };
 
   const hyp = out.hypotheses.find((h) => h.hypothesis_id === nodeId);
   if (hyp) {
@@ -78,7 +79,7 @@ function resolve(run: AnalysisRun, patient: PatientRecord, nodeId: string): View
       ...base,
       label: hyp.name,
       meta: null,
-      count: `${plural(supporting.length, "supporting finding")} across ${plural(specialties.size, "specialty", "specialties")}`,
+      stats: { findings: supporting.length, specialties: specialties.size },
       why: shortClaim(firstSentence(hyp.summary)),
       cite: first?.source_refs[0] ?? null,
       hypothesisId: hyp.hypothesis_id,
@@ -124,13 +125,21 @@ function resolve(run: AnalysisRun, patient: PatientRecord, nodeId: string): View
       label: missing.description,
       color: "var(--sig)",
       meta: meta(d?.date, d?.specialty),
-      count: missing.check_existing_first ? "Check existing records first" : null,
+      note: missing.check_existing_first ? "Check existing records first" : null,
       quote,
       why: missing.why_it_matters,
       cite: claim(missing.claim_ids[0])?.source_refs[0] ?? null,
     };
   }
   return null;
+}
+
+function Chip({ n, one, many }: { n: number; one: string; many: string }) {
+  return (
+    <span className="rounded-[4px] border border-[var(--line)] bg-[#fffdf8] px-[7px] py-0.5 font-mono text-[11.5px] text-[var(--mut)]">
+      <b className="font-semibold text-[var(--ink)]">{n}</b> {n === 1 ? one : many}
+    </span>
+  );
 }
 
 function Body({
@@ -153,29 +162,35 @@ function Body({
 
   return (
     <div className="pt-1">
-      <div data-testid="condensed" className="space-y-1">
-        <div className="flex flex-wrap items-baseline gap-x-2.5 pr-10">
-          <Heading className="text-[15px] font-bold leading-snug text-[var(--ink)]">{view.label}</Heading>
-          {view.meta && <span className="font-mono text-[11.5px] text-[var(--mut)]">{view.meta}</span>}
+      <div data-testid="condensed">
+        <div className="pr-10">
+          <Heading className="text-[19px] font-bold leading-[1.25] text-[var(--ink)]">{view.label}</Heading>
+          {view.meta && <p className="mt-1 font-mono text-[11.5px] text-[var(--mut)]">{view.meta}</p>}
         </div>
+        {view.stats && (
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            <Chip n={view.stats.findings} one="finding" many="findings" />
+            <Chip n={view.stats.specialties} one="specialty" many="specialties" />
+          </div>
+        )}
+        {view.note && <p className="mt-2 text-[13.5px] text-[var(--mut)]">{view.note}</p>}
         {view.quote && (
-          <p className="font-serif text-[15px]">
+          <p className="mt-3 font-serif text-[15px]">
             “{view.quote.excerpt}” <code className="ml-1.5 font-mono text-[10.5px] text-[var(--mut)]">{view.quote.record_id}</code>
           </p>
         )}
-        {view.count && <p className="text-[13.5px] text-[var(--mut)]">{view.count}</p>}
         {view.why && (
-          <p className="text-[13.5px]">
-            <span className="mr-1.5 font-mono text-[10px] uppercase tracking-wider text-[var(--mut)]">Why it matters:</span>
-            {view.why}
-          </p>
+          <div data-testid="why">
+            <div className="hd">{view.hypothesisId ? "Something you might have missed" : "Why it matters"}</div>
+            <p className="text-[15px] leading-[1.55] text-[var(--ink)]">{view.why}</p>
+          </div>
         )}
-        {view.cite && <CitationLine source={sources[view.cite.source_id]} excerptId={view.cite.excerpt_id} />}
+        {view.cite && <CitationLine variant="block" source={sources[view.cite.source_id]} excerptId={view.cite.excerpt_id} />}
       </div>
 
       {cite?.quote?.trim() && (
-        <details>
-          <summary>Source quote</summary>
+        <details className="mt-2">
+          <summary className="!font-normal !text-[var(--mut)]">Source quote</summary>
           <p className="font-serif text-[14px] text-[var(--ink)]">
             “{cite.quote}”{cite.location && <span className="ml-2 font-mono text-[11px] text-[var(--mut)]">{cite.location}</span>}
           </p>
@@ -201,9 +216,9 @@ function CloseButton({ onClose }: { onClose: () => void }) {
 }
 
 /** The panel's only scrolling part: Close stays outside it, so it is always reachable. */
-function Scroll({ children }: { children: React.ReactNode }) {
+function Scroll({ narrow, children }: { narrow: boolean; children: React.ReactNode }) {
   return (
-    <div data-testid="panel-scroll" className="min-h-0 flex-1 overflow-y-auto p-3.5">
+    <div data-testid="panel-scroll" className={`min-h-0 flex-1 overflow-y-auto ${narrow ? "p-4" : "p-5"}`}>
       {children}
     </div>
   );
@@ -235,7 +250,7 @@ export function DetailPanel(props: DetailPanelProps) {
           style={style}
           className="detail-panel max-h-[45vh] gap-0 overflow-hidden border-t-[3px] border-[var(--line)] bg-[var(--bg)] text-[14px] text-[var(--ink)] shadow-none"
         >
-          <Scroll>
+          <Scroll narrow>
             <Body view={view} props={props} Heading={SheetTitle} />
           </Scroll>
           <CloseButton onClose={onClose} />
@@ -250,7 +265,7 @@ export function DetailPanel(props: DetailPanelProps) {
       style={style}
       className="detail-panel sticky top-0 flex h-dvh w-[380px] shrink-0 flex-col border-l border-t-[3px] border-[var(--line)] bg-[var(--bg)] text-[14px] text-[var(--ink)]"
     >
-      <Scroll>
+      <Scroll narrow={false}>
         <Body view={view} props={props} Heading="h2" />
       </Scroll>
       <CloseButton onClose={onClose} />

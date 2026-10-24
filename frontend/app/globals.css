@@ -118,7 +118,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font-ui)}
 /* display:flex drops the native disclosure marker, so draw one: ▸ closed, ▾ open. */
 .detail-panel summary::before{content:"▸";width:1.1em;flex:none;color:var(--mut)}
 .detail-panel details[open]>summary::before{content:"▾"}
-.detail-panel .hd{margin:9px 0 2px;font-family:var(--font-mono);font-size:10px;font-weight:400;letter-spacing:.07em;text-transform:uppercase;color:var(--mut)}
+.detail-panel .hd{margin:20px 0 6px;font-family:var(--font-mono);font-size:10.5px;font-weight:400;letter-spacing:.09em;text-transform:uppercase;color:var(--mut)}
 .detail-panel mark{background:rgba(212,82,12,.17);color:inherit;padding:0 1px;border-bottom:1.5px solid var(--sig)}
 .detail-panel table{border-collapse:collapse;width:100%;font-size:12.5px;color:var(--ink);margin:2px 0 4px}
 .detail-panel th,.detail-panel td{border-top:1px solid var(--line);padding:4px 8px 4px 0;text-align:left;vertical-align:top;font-weight:400}
