@@ -1,40 +1,40 @@
-# Avinash — AI and Evidence
+# Avinash — AI and evidence
 
-**Your job:** turn the patient's history into an understandable, source-backed explanation of what deserves investigation next.
+**Your goal:** turn Sarah's scattered history into a trustworthy brief for the next clinician.
 
-## What you own
+For **H3 healthcare coordination**, the useful result is a clearer neurology-to-genetics handoff: known findings, unresolved questions, and records worth checking next.
 
-- Extract findings from notes, including dates and exact source excerpts.
-- Keep patient findings, family history, negatives, and unknowns separate.
-- Retrieve a small set of useful medical sources; prepare cached evidence.
-- Compare up to three possible explanations, including an alternative to the rare-disease hypothesis.
-- Explain limitations of earlier results and identify the next evidence worth verifying.
+## Own these pieces
 
-Use one strong model with two bounded steps: **extract findings, then synthesize evidence**. Use a small verified HPO subset only if it is quick to implement.
+- Extract findings, dates, and short source excerpts from the synthetic records. Keep patient findings, family history, negatives, and unknowns separate.
+- Retrieve a small set of relevant medical sources; cache them for a reliable demo.
+- Explain what previous tests established and what they left uncertain.
+- Produce a short investigation brief with evidence links and missing reports to check first. Show no more than three possible explanations.
 
-## What you hand off
+Agree on the JSON contract with Daniel first; give Mike a realistic sample immediately. Use one LLM with two bounded steps: extraction, then evidence review.
 
-Agree with Daniel on the patient input and analysis output JSON before building. Return structured findings, evidence-linked claims, candidate explanations, missing information, and suggested clinician questions.
+## Use Kiro
 
-Every claim must reference real record and source IDs. Daniel validates the response; Mike renders it. Keep source URLs and execution metadata under backend control.
+Build the pipeline with Kiro using the shared spec and steering guidance. Commit genuine artifacts into the root `.kiro/` folder. Give Sean a short note on the features you actually used and how they helped.
 
 ## Your schedule
 
-| Time | Deliverable |
+**October 24, Eastern; team milestones, not extra event deadlines.**
+
+| By | Deliver |
 | --- | --- |
-| Hour 0–1 | Working model access, agreed schema, extraction prompt |
-| Hour 1–2 | Validated analysis using curated evidence |
-| Hour 2–3 | Retrieval connected; real output reaches the interface |
-| Hour 3–5 | Reliable missing-evidence reasoning and source review |
-| Hour 5–6 | Run evaluation scenarios with Sean; fix failures |
-| After Hour 6 | Bug fixes and demo support only |
+| 12:30 PM | JSON contract and sample output |
+| 2:30 PM | Real AI output in Mike's interface |
+| 4 PM | Complete evidence-to-handoff demo |
+| 5 PM | Source review and essential fixes; feature freeze |
+| 6 PM | Stable demo output and Kiro notes for submission |
 
-## The key demo result
+After 5 PM, help with fixes and rehearsal. Submission closes at **8 PM**; no changes to the submitted version afterward without organizer approval.
 
-Explain why Sarah's old normal enzyme screen does not independently settle the illustrated Fabry question, then flag the missing molecular report. Start by checking whether that report already exists.
+## Demo check
 
-## Done means
+Sarah's old normal enzyme screen does not settle the case. Highlight the question: **does the relevant genetic testing report already exist?** Keep the case unconfirmed.
 
-The output is readable, every displayed claim is traceable, unknowns stay unknown, and the clinician has a justified next question. Record actual evaluation outcomes without inventing accuracy figures.
+**Done means:** important claims trace back to a record and medical source; uncertainty stays visible; the brief helps a clinician continue the investigation.
 
-**Skip:** model training, multi-agent loops, broad disease coverage, unsupported probabilities, and treatment recommendations.
+**Skip:** model training, complex agent systems, fake probabilities, broad disease coverage, and treatment advice.

@@ -1,42 +1,43 @@
-# Mike — Frontend and Demo Experience
+# Mike — Interface and demo
 
-**Your job:** make the case and its next unanswered question understandable within seconds.
+**Your goal:** make the next clinician understand Sarah's history and open questions in seconds.
 
-## What you own
+For **H3 healthcare coordination**, the interface should make a neurology-to-genetics handoff easier to review.
 
-Build one polished workspace with three connected areas:
+## Own these pieces
 
-1. **Patient timeline:** dated findings from different specialties.
-2. **Clues and evidence:** a small graph, possible explanations, and a drawer showing the original record beside its medical source.
-3. **Next investigation:** missing evidence, why it matters, and what different outcomes could clarify.
+Build one workspace with three clear areas:
 
-Use Next.js, TypeScript, Tailwind, and React Flow. Keep the graph to roughly 8–12 visible nodes with a fixed layout.
+1. **History:** a readable timeline of symptoms, visits, and tests.
+2. **Evidence:** a small clue graph and a drawer showing original records and medical sources.
+3. **Handoff brief:** key findings, unresolved questions, and missing reports to check first.
 
-## Build independently, integrate early
+Use Next.js, TypeScript, Tailwind, and React Flow. Keep the graph to roughly 8–12 fixed nodes. Start with Daniel's sample JSON and connect Avinash's real output early.
 
-Start from the agreed sample JSON while Avinash builds the AI. Connect to Daniel's backend during Hour 1 and render actual AI output by Hour 3.
+Preserve source IDs, show loading and failure states, and label any cached result clearly. Keep clinician review visible.
 
-Keep record IDs, claim IDs, and source IDs intact. Coordinate with Daniel on loading, failure, and replay states. Label sample, live, and replayed results accurately.
+## Use Kiro
+
+Use Kiro to build the workspace from the shared spec and steering guidance. Commit genuine artifacts into the root `.kiro/` folder. Give Sean a short example of how Kiro helped and screenshots of the finished flow.
 
 ## Your schedule
 
-| Time | Deliverable |
+**October 24, Eastern; team milestones, not extra event deadlines.**
+
+| By | Deliver |
 | --- | --- |
-| Hour 0–1 | Workspace shell rendering backend-served sample data |
-| Hour 1–2 | Readable timeline and explanation cards |
-| Hour 2–3 | Working source drawer and real AI output |
-| Hour 3–4.5 | Graph highlights and complete investigation reveal |
-| Hour 4.5–6 | Typography, spacing, loading states, fallback views |
-| After Hour 6 | Fixes and rehearsal only |
+| 12:30 PM | Workspace shell using sample JSON |
+| 2:30 PM | Timeline, source drawer, and real AI output |
+| 4 PM | Complete graph-to-handoff demo |
+| 5 PM | Readability and error-state polish; feature freeze |
+| 6 PM | Recording-ready interface |
 
-## The interaction to perfect
+After 5 PM, fix demo blockers and rehearse with Sean. Submission closes at **8 PM**; no changes to the submitted version afterward without organizer approval.
 
-Click a finding → highlight related events → inspect the old normal result → show its source-backed limitation → reveal the missing report.
+## Demo check
 
-The judge should follow this without reading a paragraph of AI output.
+Click a finding → see related events → open the old normal test → read its limitation → see the missing-report question in the handoff brief.
 
-## Done means
+**Done means:** the story is easy to follow, evidence opens correctly, uncertainty is clear, and the demo works reliably.
 
-The full sequence works on the presenting laptop, text is easy to read, sources open correctly, and the timeline still works if the graph fails. The clinician remains visibly in control.
-
-**Skip:** separate dashboard pages, chat interfaces, complex graph physics, elaborate animations, and account screens.
+**Skip:** extra pages, chat, graph physics, elaborate animation, accounts, and a new design system.
