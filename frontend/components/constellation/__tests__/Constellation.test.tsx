@@ -431,19 +431,22 @@ describe("Constellation", () => {
     expect(document.querySelectorAll("[data-dim], [data-hover]")).toHaveLength(0);
   });
 
-  it("a node grows to 85% of the hub radius and its label slides away from it; a hub does not grow", () => {
+  it("a node grows to 85% of the hub radius and its label slides clear of the hover ring; a hub does not grow", () => {
     const { layout } = draw();
     const hubR = Math.max(...layout.hubs.map((h) => h.r)) * 0.85;
     const n = layout.nodes.find((x) => x.id === "fnd-proteinuria")!;
     const style = node(n.id).style;
     expect(Number(style.getPropertyValue("--grow-s"))).toBeCloseTo(hubR / n.r);
-    const growth = hubR - n.r;
+    const ring = (hubR + 6) / (n.r + 6);
+    expect(Number(style.getPropertyValue("--ring-s"))).toBeCloseTo(ring);
+    // Growth, plus the ring's 6-unit offset, plus half its scaled 2px stroke.
+    const slide = hubR - n.r + 6 + ring;
     const x = parseFloat(style.getPropertyValue("--lab-x"));
     const y = parseFloat(style.getPropertyValue("--lab-y"));
     const anchor = node(n.id).querySelector("[data-label]")!.getAttribute("text-anchor");
-    if (anchor === "end") expect([x, y]).toEqual([-growth, 0]);
-    else if (anchor === "start") expect([x, y]).toEqual([growth, 0]);
-    else expect([x, Math.abs(y)]).toEqual([0, growth]);
+    if (anchor === "end") expect([x, y]).toEqual([-slide, 0]);
+    else if (anchor === "start") expect([x, y]).toEqual([slide, 0]);
+    else expect([x, Math.abs(y)]).toEqual([0, slide]);
     const hub = layout.hubs[0];
     expect(node(hub.id).style.getPropertyValue("--grow-s")).toBe("1");
     expect(node(hub.id).style.getPropertyValue("--lab-x")).toBe("0px");

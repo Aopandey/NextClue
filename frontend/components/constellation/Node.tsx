@@ -336,11 +336,14 @@ const HOVER_GROW = 0.85;
 export function Node({ node, lines, side, narrow, scale, missing, hubR, ...button }: NodeProps) {
   const target = hubR * HOVER_GROW;
   const growth = Math.max(0, target - node.r);
+  const ring = (node.r + growth + 6) / (node.r + 6);
+  // The hover ring sits 6 units outside the grown shape and its 2px stroke scales with it: the label clears both.
+  const slide = growth + 6 + ring;
   const grow = {
     s: Math.max(1, target / node.r),
-    ring: (node.r + growth + 6) / (node.r + 6),
-    x: side === "l" ? -growth : side === "r" ? growth : 0,
-    y: side === "t" ? -growth : side === "b" ? growth : 0,
+    ring,
+    x: side === "l" ? -slide : side === "r" ? slide : 0,
+    y: side === "t" ? -slide : side === "b" ? slide : 0,
   };
   return (
     <NodeButton id={node.id} x={node.x} y={node.y} r={node.r} name={node.label} narrow={narrow} grow={grow} {...button}>
