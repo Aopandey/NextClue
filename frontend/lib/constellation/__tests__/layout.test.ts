@@ -98,7 +98,7 @@ const node = (L: Layout, id: string) => L.nodes.find((n) => n.id === id)!;
 // ---------------------------------------------------------------- plan tests (R14: scale tests removed)
 
 describe("layoutConstellation (Sarah, desktop)", () => {
-  it("Sarah: 2 hubs side by side, Fabry first", () => { expect(sarah.hubs.map(h=>[h.id,h.x,h.y])).toEqual([["hyp-fabry",480,380],["hyp-separate-conditions",720,380]]); });
+  it("Sarah: 2 hubs side by side, Fabry first", () => { expect(sarah.hubs.map(h=>[h.id,h.x,h.y])).toEqual([["hyp-fabry",420,380],["hyp-separate-conditions",780,380]]); });
   it("Sarah: GLA report sits between the two hubs it would clarify; father's diagnosis in the right column", () => { const m = (id:string)=>sarah.nodes.find(n=>n.id===id)!; expect([m("mis-gla-report").x, m("mis-gla-report").y]).toEqual([600,380]); expect(m("mis-father-diagnosis").x).toBe(1080); });
   it("Sarah: 7 findings, 1 unlinked finding, 2 negatives, 1 prior, 2 missing", () => { const k = (t:string)=>sarah.nodes.filter(n=>n.kind===t).length; expect([k("finding"),k("context"),k("negative"),k("prior"),k("missing")]).toEqual([7,1,2,1,2]); });
   it("Sarah: 13 graph edges kept with their relations", () => expect(sarah.edges.map(e=>e.relation).sort()).toEqual([...Array(9).fill("supports"),"previously_tested",...Array(3).fill("would_clarify")].sort()));
