@@ -83,7 +83,7 @@ describe("DetailPanel content", () => {
 
   it("hub panel shows the supporting count and specialties as chips", () => {
     renderPanel("hyp-fabry");
-    const row = screen.getByText("7").closest("b")!.parentElement!.parentElement!;
+    const row = screen.getByTestId("stats");
     expect([...row.children].map((c) => c.textContent)).toEqual(["7 findings", "5 specialties"]);
     expect(lines()).toBeLessThanOrEqual(4);
   });

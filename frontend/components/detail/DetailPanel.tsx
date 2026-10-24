@@ -168,7 +168,7 @@ function Body({
           {view.meta && <p className="mt-1 font-mono text-[11.5px] text-[var(--mut)]">{view.meta}</p>}
         </div>
         {view.stats && (
-          <div className="mt-2 flex flex-wrap gap-1.5">
+          <div data-testid="stats" className="mt-2 flex flex-wrap gap-1.5">
             <Chip n={view.stats.findings} one="finding" many="findings" />
             <Chip n={view.stats.specialties} one="specialty" many="specialties" />
           </div>
@@ -189,8 +189,8 @@ function Body({
       </div>
 
       {cite?.quote?.trim() && (
-        <details className="mt-2">
-          <summary className="!font-normal !text-[var(--mut)]">Source quote</summary>
+        <details className="sq">
+          <summary>Source quote</summary>
           <p className="font-serif text-[14px] text-[var(--ink)]">
             “{cite.quote}”{cite.location && <span className="ml-2 font-mono text-[11px] text-[var(--mut)]">{cite.location}</span>}
           </p>

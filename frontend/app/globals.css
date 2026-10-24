@@ -114,6 +114,9 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font-ui)}
 
 /* Detail panel: disclosures, tables, links (reference.html .v-panel) */
 .detail-panel details{margin-top:4px;font-size:13px;color:var(--mut)}
+/* Source quote: 8px under the source block and quieter than the section disclosures. */
+.detail-panel .sq{margin-top:8px}
+.detail-panel .sq>summary{font-weight:400;color:var(--mut)}
 .detail-panel summary{cursor:pointer;min-height:32px;display:flex;align-items:center;width:max-content;font-size:12.5px;font-weight:600;color:var(--ink)}
 /* display:flex drops the native disclosure marker, so draw one: ▸ closed, ▾ open. */
 .detail-panel summary::before{content:"▸";width:1.1em;flex:none;color:var(--mut)}
